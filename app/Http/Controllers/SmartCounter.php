@@ -13,6 +13,9 @@ class SmartCounter extends Controller
 		}
 		$string = $users->id;
 		$date = Carbon::now();
+		if ($date->year != substr($string,0,-8)) {
+			$string = '';
+		}
 		$number = substr($string,5,-2);
 		$new = ltrim($number, '0');
 		$increment = str_pad(++$new, 5, '0', STR_PAD_LEFT);

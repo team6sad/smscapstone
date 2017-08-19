@@ -19,8 +19,8 @@
 				<li class="active"><a href="#tab_1" data-toggle="tab">Available Claiming</a></li>
 				<li><a href="#tab_2" data-toggle="tab">Undo Checklist</a></li>
 				<li><a href="#tab_3" data-toggle="tab">Essay Question</a></li>
-				<li><a href="#tab_4" data-toggle="tab">Filter Applications</a></li>
-				<li><a href="#tab_5" data-toggle="tab">Backup</a></li>
+				<li><a href="#tab_4" data-toggle="tab">Backup</a></li>
+				<li><a href="#tab_5" data-toggle="tab">Others</a></li>
 			</ul>
 			<div class="tab-content">
 				<div class="tab-pane active row" id="tab_1">
@@ -153,6 +153,40 @@
 				<div class="tab-pane row" id="tab_4">
 				</div>
 				<div class="tab-pane row" id="tab_5">
+					<div class="col-xs-12">
+						Design para dito
+						@if ($utility->apply_status)
+						<div class="callout callout-success">
+							<h4><i class="icon fa fa-info"></i> Application Status</h4>
+							<h5>Renewal Phase Ongoing</h5>
+							<input type='checkbox' id='apply' name='apply' data-toggle='toggle' data-style='android' data-onstyle='success' data-offstyle='danger' data-on="<i class='fa fa-refresh'></i> Start" data-off="<i class='fa fa-remove'></i> End" data-size='large'>
+						</div>
+						@else
+						<div class="callout callout-danger">
+							<h4><i class="icon fa fa-info"></i> Application Status</h4>
+							<h5>Renewal Phase Closed</h5>
+							<input type='checkbox' id='apply' name='apply' data-toggle='toggle' data-style='android' data-onstyle='success' data-offstyle='danger' data-on="<i class='fa fa-refresh'></i> Start" data-off="<i class='fa fa-remove'></i> End" data-size='large' checked='checked'>
+						</div>
+						@endif
+						<label>Filter Application</label>
+						{{ Form::open([
+							'route' => 'coordinatorutilities.question'
+							])
+						}}
+						<div class="checkbox">
+							<label><input type="checkbox" name="criteria[]">Yeah</label>
+						</div>
+						<div class="checkbox">
+							<label><input type="checkbox" name="criteria[]">Yeah</label>
+						</div>
+						<div class="checkbox">
+							<label><input type="checkbox" name="criteria[]">Yeah</label>
+						</div>
+						<div class="checkbox">
+							<label><input type="checkbox" name="criteria[]">Yeah</label>
+						</div>
+						{{ Form::close() }}
+					</div>
 				</div>
 			</div>
 		</div>

@@ -210,8 +210,13 @@ class SMSAccountApplyController extends Controller
   {
     $district = District::join('councilors','districts.id','councilors.district_id')
     ->join('barangay','districts.id','barangay.district_id')
+    ->join('user_councilor','councilors.id','user_councilor.councilor_id')
+    ->join('users','user_councilor.user_id','users.id')
+    ->join('utilities','users.id','utilities.user_id')
     ->where('councilors.is_active',1)
     ->where('barangay.id',$id)
+    ->where('users.type','Coordinator')
+    ->where('utilities.apply_status',1)
     ->select('councilors.*',DB::raw("CONCAT(councilors.last_name,', ',councilors.first_name,' ',IFNULL(councilors.middle_name,'')) as strCounName"),'districts.id as district_id')
     ->get();
     return Response::json($district);

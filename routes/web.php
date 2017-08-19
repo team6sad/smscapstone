@@ -75,6 +75,8 @@ Route::group(['prefix' => 'coordinator/'], function () {
 	Route::get('messages/inboxdata', ['uses' => 'CoordinatorMessagesController@inboxdata', 'as' => 'coordinatorinbox.data']);
 	Route::get('announcements/data', ['uses' => 'CoordinatorAnnouncementsController@data', 'as' => 'coordinatorannouncements.data']);
 	//Coordinator Checkbox Route List
+	Route::post('renewal/checkbox', ['uses' => 'CoordinatorRenewalController@checkbox', 'as' => 'coordinatorrenewal.checkbox']);
+	Route::post('utilities/application', ['uses' => 'CoordinatorUtilitiesController@application', 'as' => 'coordinatorutilities.application']);
 	Route::put('utilities/checkbox/{id}', ['uses' => 'CoordinatorUtilitiesController@checkbox', 'as' => 'coordinatorutilities.checkbox']);
 	Route::put('course/checkbox/{id}', ['uses' => 'CoordinatorCourseController@checkbox', 'as' => 'coordinatorcourse.checkbox']);
 	Route::put('school/checkbox/{id}', ['uses' => 'CoordinatorSchoolController@checkbox', 'as' => 'coordinatorschool.checkbox']);

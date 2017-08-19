@@ -23,16 +23,16 @@
 								<thead>
 									<tr>
 										<th>Name</th>
-										<th>Status</th>
 										<th>Amount</th>
+										<th>Date Claimed</th>
 									</tr>
 								</thead>
 								<tbody>
 									@foreach ($allocation as $allocations)
 									<tr>
 										<td>{{ $allocations->description }}</td>
-										<td><span id="claim{{ $allocations->id }}" class="label label-warning"></span></td>
 										<td>{{ $allocations->amount }}</td>
+										<td>{{ $allocations->date_claimed->format('l M d, Y') }}</td>
 									</tr>
 									@endforeach
 								</tbody>

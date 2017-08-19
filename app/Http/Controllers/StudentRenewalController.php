@@ -13,6 +13,7 @@ use App\GradeDetail;
 use App\Shift;
 use Config;
 use Carbon\Carbon;
+use App\Utility;
 class StudentRenewalController extends Controller
 {
     public function __construct()
@@ -54,7 +55,21 @@ class StudentRenewalController extends Controller
         ->first();
         $school = School::where('is_active',1)->get();
         $course = Course::where('is_active',1)->get();
-        return view('SMS.Student.StudentRenewal')->withApplication($application)->withGrading($grading)->withGrade($grade)->withSchool($school)->withCourse($course);
+        $utility = Utility::where('user_id', function($query) {
+            $query->from('users')
+            ->join('user_councilor','users.id','user_councilor.user_id')
+            ->select('users.id')
+            ->where('user_councilor.councilor_id', function($subquery) {
+                $subquery->from('user_councilor')
+                ->select('councilor_id')
+                ->where('user_id', Auth::id())
+                ->first();
+            })
+            ->where('users.type','Coordinator')
+            ->first();
+        })
+        ->first();
+        return view('SMS.Student.StudentRenewal')->withApplication($application)->withGrading($grading)->withGrade($grade)->withSchool($school)->withCourse($course)->withUtility($utility);
     }
     public function store(Request $request)
     {

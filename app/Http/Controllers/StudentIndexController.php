@@ -1,12 +1,8 @@
 <?php
 namespace App\Http\Controllers;
 use Illuminate\Http\Request;
-use App\Allocation;
-use App\Allocatebudget;
+use App\UserAllocation;
 use Auth;
-use DB;
-use Response;
-use App\Budgtype;
 class StudentIndexController extends Controller
 {
 	public function __construct()
@@ -16,9 +12,9 @@ class StudentIndexController extends Controller
 	}
 	public function index()
 	{
-		$allocation = Allocation::join('allocation_types','allocations.allocation_type_id','allocation_types.id')
-		->leftJoin('user_allocation','allocations.id','user_allocation.allocation_id')
-		->select('allocation_types.description','allocations.amount','user_allocation.id')
+		$allocation = UserAllocation::join('allocations','allocations.id','user_allocation.allocation_id')
+		->join('allocation_types','allocations.allocation_type_id','allocation_types.id')
+		->select('allocation_types.description','allocations.amount','user_allocation.id','user_allocation.date_claimed')
 		->where('allocations.budget_id', function($query){
 			$query->from('budgets')
 			->select('id')

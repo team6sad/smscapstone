@@ -7,6 +7,8 @@ use Auth;
 use Datatables;
 use App\Grade;
 use App\GradingDetail;
+use App\Utility;
+use Response;
 class CoordinatorRenewalController extends Controller
 {
     public function __construct()
@@ -29,7 +31,8 @@ class CoordinatorRenewalController extends Controller
             ->first();
         })
         ->where('student_details.application_status','Accepted')
-        ->where('student_status','Continuing');
+        ->where('student_status','Continuing')
+        ->where('student_details.is_renewal',1);
         return Datatables::of($application)
         ->addColumn('action', function ($data) {
             return "<button class='btn btn-info btn-xs' value='$data->id'><i class='fa fa-eye'></i> View</button> <button class='btn btn-success btn-xs' value='$data->id'><i class='fa fa-check'></i> Accept</button> <button class='btn btn-danger btn-xs' value='$data->id'><i class='fa fa-remove'></i> Decline</button>";
@@ -70,8 +73,20 @@ class CoordinatorRenewalController extends Controller
         ->rawColumns(['strStudName','action'])
         ->make(true);
     }
+    public function checkbox(Request $request)
+    {
+        try {
+            $utility = Utility::findorfail(Auth::id());
+            $utility->renewal_status = $request->is_active;
+            $utility->save();
+            return Response::json($utility);
+        } catch(\Exception $e) {
+            return "Deleted";
+        }
+    }
     public function index()
     {
-        return view('SMS.Coordinator.Services.CoordinatorRenewal');
+        $utility = Utility::find(Auth::id());
+        return view('SMS.Coordinator.Services.CoordinatorRenewal')->withUtility($utility);
     }
 }

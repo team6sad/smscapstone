@@ -11,7 +11,6 @@
 @endsection
 @section('content')
 <div class="content-wrapper">
-	<!-- Content Header (Page header) -->
 	<section class="content-header">
 		<h1>
 			Renewal
@@ -27,10 +26,10 @@
 			<h4><i class="icon fa fa-info"></i> Info</h4>
 			You are free to edit your personal and family data in the Account Settings.
 		</div>
-		@if ($application->is_renewal == 0)
+		@if ($utility->renewal_status)
 		<div class="callout callout-success">
 			<h4><i class="icon fa fa-info"></i> Renewal Status</h4>
-			Renewal Phase Ongoing.
+			Renewal Phase Ongoing
 		</div>
 		<div class="box box-danger">
 			<div class="box-header with-border">
@@ -46,10 +45,10 @@
 				<div class="form-group">
 					<div class="col-md-6 row">
 						<div class="col-md-3">
-							<label class="control-label">School: </label> {{ $application->school_description }}
+							<label class="control-label">School: </label> {{ $utility->school_description }}
 						</div>
 						<div class="col-md-3">
-							<label class="control-label">Course: </label> {{ $application->course_description }}
+							<label class="control-label">Course: </label> {{ $utility->course_description }}
 						</div>
 						<div class="col-md-3">
 							<label class="control-label">Year: </label> {{ $grade->year }}
@@ -136,8 +135,9 @@
 		</div>
 	</div>
 	@else
-	<div>
-		Renewal Currently Not Available
+	<div class="callout callout-danger">
+		<h4><i class="icon fa fa-info"></i> Renewal Status</h4>
+		Renewal Phase Closed.
 	</div>
 	@endif
 </section>

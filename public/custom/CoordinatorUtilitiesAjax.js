@@ -179,4 +179,29 @@ $(document).ready(function() {
     });
   }
   $('.todo-list').todoList();
+  $('#apply').change(function() {
+    var is_active = 1;
+    if ($(this).prop('checked')) {
+        var is_active = 0;
+    }
+    var formData = {
+        is_active: is_active
+    }
+    $.ajax({
+        url: url + "/application",
+        type: "POST",
+        data: formData,
+        success: function(data) {
+            Pace.restart();
+            if (data.apply_status == 0) {
+                $('.callout').removeClass().addClass('callout callout-danger');
+                $('h5').text('Renewal Phase Closed');
+            } else {
+                $('.callout').removeClass().addClass('callout callout-success');
+                $('h5').text('Renewal Phase Ongoing');
+            }
+        },
+        error: function(data) {}
+    });
+});
 });
