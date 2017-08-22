@@ -27,6 +27,7 @@
 			You are free to edit your personal and family data in the Account Settings.
 		</div>
 		@if ($utility->renewal_status)
+		@if (!$application->is_renewal)
 		<div class="callout callout-success">
 			<h4><i class="icon fa fa-info"></i> Renewal Status</h4>
 			Renewal Phase Ongoing
@@ -43,17 +44,17 @@
 					])
 				}}
 				<div class="form-group">
-					<div class="col-md-6 row">
+					<div class="col-md-10 row">
 						<div class="col-md-3">
-							<label class="control-label">School: </label> {{ $utility->school_description }}
+							<label class="control-label">School: </label> {{ $application->school_description }}
 						</div>
 						<div class="col-md-3">
-							<label class="control-label">Course: </label> {{ $utility->course_description }}
+							<label class="control-label">Course: </label> {{ $application->course_description }}
 						</div>
 						<div class="col-md-3">
 							<label class="control-label">Year: </label> {{ $grade->year }}
 						</div>
-						<div class="col-md-3">
+						<div class="col-md-2">
 							<label class="control-label">Semester: </label> {{ $grade->semester }}
 						</div>
 					</div>
@@ -113,7 +114,7 @@
 							<label class="control-label">School Transferred To</label>
 							<select id="school_transfer" name="school_transfer" style="width: 100%;" class="form-control dropdownbox">
 								@foreach ($school as $schools)
-								<option value="{{ $schools->id }}">{{ $schools->description }}</option>
+								<option value="{{ $schools->id }}">{{ $schools->abbreviation }} - {{ $schools->description }}</option>
 								@endforeach
 							</select>
 						</div>
@@ -121,7 +122,7 @@
 							<label class="control-label">Course Shifted To</label> 
 							<select id="course_transfer" name="course_transfer" style="width: 100%;" class="form-control dropdownbox">
 								@foreach ($course as $courses)
-								<option value="{{ $courses->id }}">{{ $courses->description }}</option>
+								<option value="{{ $courses->id }}">{{ $courses->abbreviation }} - {{ $courses->description }}</option>
 								@endforeach
 							</select>
 						</div>
@@ -133,18 +134,89 @@
 				{{ Form::close() }}
 			</div>
 		</div>
+		@else
+		<div class="callout callout-success">
+			<h4><i class="icon fa fa-info"></i> Renewal Status</h4>
+			Renewal request has been submitted
+		</div>
+		<div class="box box-danger">
+			<div class="box-header with-border">
+				<h4><b>Subjects</b></h4>
+			</div>
+			<div class="box-body">
+				<div class="form-group">
+					<div class="col-md-10 row">
+						@if ($shift->school_description != 'N/A')
+						<div class="col-md-3">
+							<label class="control-label">School: </label> {{ $shift->school_description }}
+						</div>
+						<div class="col-md-3">
+							<label class="control-label">Course: </label> {{ $shift->course_description }}
+						</div>
+						@else
+						<div class="col-md-3">
+							<label class="control-label">School: </label> {{ $application->school_description }}
+						</div>
+						<div class="col-md-3">
+							<label class="control-label">Course: </label> {{ $application->course_description }}
+						</div>
+						@endif
+						<div class="col-md-3">
+							<label class="control-label">Year: </label> {{ $grade->year }}
+						</div>
+						<div class="col-md-3">
+							<label class="control-label">Semester: </label> {{ $grade->semester }}
+						</div>
+					</div>
+					<div class="col-md-2">
+						<a href="{{ asset('docs/tms.pdf') }}" target="_blank"><button type="button" class="btn btn-default"><i class="fa fa-eye"></i> Review Grades</button></a>
+					</div>
+				</div>
+				<label class="col-sm-12">Inputted Grades</label>
+				<div class="box-body table-responsive">
+					<table class="table table-bordered table-striped table-hover" cellspacing="0" width="100%">
+						<thead>
+							<th>Description</th>
+							<th>Units</th>
+							<th>Grade</th>
+						</thead>
+						<tbody>
+							@foreach ($gradedetail as $gradedetails)
+							<tr>
+								<td>{{ $gradedetails->description }}</td>
+								<td>{{ $gradedetails->units }}</td>
+								<td>{{ $gradedetails->grade }}</td>
+							</tr>
+							@endforeach
+						</tbody>
+					</table>
+				</div>
+				<div class="row">
+					<div class="col-sm-12">
+						<div class="col-sm-12">
+							<h4><b>For Shiftee/Transferee</b></h4>
+						</div>
+						<div class="form-group col-sm-6">
+							<label class="control-label">School Transferred To</label> <br> {{ $shift->school_description }}
+						</div>
+						<div class="form-group col-sm-6">
+							<label class="control-label">Course Shifted To</label> <br> {{ $shift->course_description }}
+						</div>
+					</div>
+				</div>
+			</div>
+			@endif
+			@else
+			<div class="callout callout-danger">
+				<h4><i class="icon fa fa-info"></i> Renewal Status</h4>
+				Renewal Phase Closed
+			</div>
+			@endif
+		</section>
 	</div>
-	@else
-	<div class="callout callout-danger">
-		<h4><i class="icon fa fa-info"></i> Renewal Status</h4>
-		Renewal Phase Closed.
-	</div>
-	@endif
-</section>
-</div>
-@endsection
-@section('script')
-{!! Html::script("plugins/iCheck/icheck.min.js") !!}
-{!! Html::script("plugins/select2/select2.min.js") !!}
-{!! Html::script("custom/StudentRenewal.min.js") !!}
-@endsection
+	@endsection
+	@section('script')
+	{!! Html::script("plugins/iCheck/icheck.min.js") !!}
+	{!! Html::script("plugins/select2/select2.min.js") !!}
+	{!! Html::script("custom/StudentRenewal.min.js") !!}
+	@endsection

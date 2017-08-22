@@ -14,7 +14,7 @@ class Application extends Model
 	'strUserLastName' => 'required|max:25',
 	'strUserEmail' => 'required|email|max:30|unique:users,email',
 	'strUserCell' => 'required|max:15',
-	'strApplPicture' => 'required|image',
+	'strApplPicture' => 'required|image|mimes:jpeg,png|max:200',
 	'datPersDOB' => 'required|date',
 	'intCounID' => 'exists:councilors,id',
 	'strApplHouseNo' => 'required|max:4',
@@ -56,7 +56,7 @@ class Application extends Model
 	'strSiblDateTo' => 'max:4',
 	'intPersCurrentSchool' => 'required_with:intPersCurrentCourse,strPersGwa,intYearID,intSemID',
 	'strPersGwa' => 'max:4',
-	'strApplGrades' => 'required|file',
+	'strApplGrades' => 'required|mimes:pdf|max:10000',
 	];
 	public static $updateSiblings = [
 	'intPersBrothers' => 'required|numeric',

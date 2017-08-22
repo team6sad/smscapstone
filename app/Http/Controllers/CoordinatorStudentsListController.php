@@ -56,25 +56,6 @@ class CoordinatorStudentsListController extends Controller
             $('[data-toggle=\'toggle\']').bootstrapToggle('destroy');   
             $('[data-toggle=\'toggle\']').bootstrapToggle();</script>";
         })
-        ->editColumn('student_status', function ($data) {
-            $selected1 = '';
-            $selected2 = '';
-            $selected3 = '';
-            if ($data->student_status == 'Continuing') {
-                $color = 'warning';
-                $selected1 = 'selected';
-            }elseif ($data->student_status == 'Graduated') {
-                $color = 'success';
-                $selected2 = 'selected';
-            }else {
-                $color = 'danger';
-                $selected3 = 'selected';
-            }
-            return "<select id='student_status' selectedbox = '$data->id' class='btn-xs btn-$color' name='student_status'>
-            <option value='Continuing' class='btn-warning' $selected1> Continuing</option>
-            <option value='Graduated' class='btn-success' $selected2><i class='fa fa-edit'></i> Graduated</option>
-            <option value='Forfeit' class='btn-danger' $selected3><i class='fa fa-edit'></i> Forfeit</option></select>";
-        })
         ->addColumn('action', function ($data) {
             return "<button class='btn btn-info btn-xs open-modal' value='$data->user_id'><i class='fa fa-eye'></i> View</button>";
         })
@@ -88,7 +69,7 @@ class CoordinatorStudentsListController extends Controller
         ->setRowId(function ($data) {
             return $data = 'id'.$data->user_id;
         })
-        ->rawColumns(['strStudName','student_status','checkbox','action']);
+        ->rawColumns(['strStudName','checkbox','action']);
         if ($strUserFirstName = $request->get('strUserFirstName')) {
             $datatables->where('users.first_name', 'like', '%'.$strUserFirstName.'%');
         }

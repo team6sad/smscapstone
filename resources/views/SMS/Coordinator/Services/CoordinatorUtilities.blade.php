@@ -16,11 +16,11 @@
 	<section class="content">
 		<div class="nav-tabs-custom">
 			<ul class="nav nav-tabs">
-				<li class="active"><a href="#tab_1" data-toggle="tab">Available Claiming</a></li>
+				<li id="available" class="active"><a href="#tab_1" data-toggle="tab">Available Claiming</a></li>
 				<li><a href="#tab_2" data-toggle="tab">Undo Checklist</a></li>
 				<li><a href="#tab_3" data-toggle="tab">Essay Question</a></li>
 				<li><a href="#tab_4" data-toggle="tab">Backup</a></li>
-				<li><a href="#tab_5" data-toggle="tab">Others</a></li>
+				<li id="others"><a href="#tab_5" data-toggle="tab">Others</a></li>
 			</ul>
 			<div class="tab-content">
 				<div class="tab-pane active row" id="tab_1">

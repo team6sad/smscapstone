@@ -93,6 +93,11 @@ class CoordinatorUtilitiesController extends Controller
     }
     public function create($id)
     {
+        $grade = Grade::where('student_detail_user_id',$id)->count();
+        $type = 0;
+        if ($grade > 1) {
+            $type = 1;
+        }
         $step = Requirement::whereIn('id', function($query) use($id) {
             $query->from('user_requirement')
             ->select('requirement_id')
@@ -100,12 +105,7 @@ class CoordinatorUtilitiesController extends Controller
             ->get();
         })
         ->where('is_active',1)
-        ->where('type', function($query) use($id) {
-            $query->from('student_details')
-            ->select('is_renewal')
-            ->where('user_id',$id)
-            ->first();
-        })
+        ->where('type', $type)
         ->where('user_id',Auth::id())
         ->select('requirements.*')
         ->get();

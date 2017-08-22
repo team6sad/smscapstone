@@ -32,7 +32,7 @@ $(document).ready(function() {
         }, 1000);
         var link_id = $(this).val();
         id = link_id;
-        $.get(url + '/create/'+link_id, function(data) {
+        $.get(url + '/create/' + link_id, function(data) {
             $.each(data, function(index, value) {
                 var show = "<li>" +
                 "<input type='checkbox' id=check" + value.id + " name='steps[]' value=" + value.id + ">" +
@@ -61,11 +61,11 @@ $(document).ready(function() {
         }, 1000);
         var link_id = $(this).val();
         id = link_id;
-        $.get(url + '/allocation/'+link_id, function(data) {
+        $.get(url + '/allocation/' + link_id, function(data) {
             $.each(data, function(index, value) {
                 var show = "<li>" +
                 "<input type='checkbox' id=" + value.id + " name='claim[]' value=" + value.id + ">" +
-                "<span class='text' style='padding-left: 15px;'>" + value.description + "</span>" +
+                "<span class='text' style='padding-left: 15px;' ch=" + value.id + ">" + value.description + "</span>" +
                 "</li>";
                 $('.stipend').append(show);
             });
@@ -99,8 +99,7 @@ $(document).ready(function() {
             success: function(data) {
                 Pace.restart();
             },
-            error: function(data) {
-            }
+            error: function(data) {}
         });
     });
     $("#btn-save").click(function() {
@@ -110,7 +109,7 @@ $(document).ready(function() {
         }, 1000);
         var formData = $('#frmClaim').serialize();
         $.ajax({
-            url: url  + '/allocation/'+ id,
+            url: url + '/allocation/' + id,
             type: "PUT",
             data: formData,
             dataType: 'json',
@@ -172,36 +171,43 @@ $(document).ready(function() {
             }
         });
     });
+
     function getBudget() {
-      $.get('/coordinator/budget/getlatest', function(data){
-        $('.slot').text(data.slot_count);
-        $('.budget').text(data.amount);
-    });
-  }
-  $('.todo-list').todoList();
-  $('#apply').change(function() {
-    var is_active = 1;
-    if ($(this).prop('checked')) {
-        var is_active = 0;
+        $.get('/coordinator/budget/getlatest', function(data) {
+            $('.slot').text(data.slot_count);
+            $('.budget').text(data.amount);
+        });
     }
-    var formData = {
-        is_active: is_active
-    }
-    $.ajax({
-        url: url + "/application",
-        type: "POST",
-        data: formData,
-        success: function(data) {
-            Pace.restart();
-            if (data.apply_status == 0) {
-                $('.callout').removeClass().addClass('callout callout-danger');
-                $('h5').text('Renewal Phase Closed');
-            } else {
-                $('.callout').removeClass().addClass('callout callout-success');
-                $('h5').text('Renewal Phase Ongoing');
-            }
-        },
-        error: function(data) {}
+    $('.todo-list').todoList();
+    $('#apply').change(function() {
+        var is_active = 1;
+        if ($(this).prop('checked')) {
+            var is_active = 0;
+        }
+        var formData = {
+            is_active: is_active
+        }
+        $.ajax({
+            url: url + "/application",
+            type: "POST",
+            data: formData,
+            success: function(data) {
+                Pace.restart();
+                if (data.apply_status == 0) {
+                    $('.callout').removeClass().addClass('callout callout-danger');
+                    $('h5').text('Renewal Phase Closed');
+                } else {
+                    $('.callout').removeClass().addClass('callout callout-success');
+                    $('h5').text('Renewal Phase Ongoing');
+                }
+            },
+            error: function(data) {}
+        });
     });
-});
+    $('#others').click(function() {
+        $('.btn-lg.android').attr('style', 'width: 112.453px;');
+    });
+    $('#available').click(function() {
+        $('.btn-xs.android').attr('style', 'width: 72px;');
+    });
 });

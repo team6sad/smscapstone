@@ -38,21 +38,40 @@ class StudentRenewalController extends Controller
         ->select('grades.*')
         ->latest('id')
         ->first();
-        $setting = Setting::first();
-        if ($grade->semester=='I') {
-            $grade->semester = 1;
-            $grade->year = 1;
-        }
-        $grade->semester += 1;
-        if ($grade->semester > $setting->semester_count) {
-            $grade->semester = 1;
-            $grade->year += 1;
-        }
         $application = Application::join('schools','student_details.school_id','schools.id')
         ->join('courses','student_details.course_id','courses.id')
         ->select('student_details.*','schools.description as school_description','courses.description as course_description')
         ->where('student_details.user_id',Auth::id())
         ->first();
+        if ($application->is_renewal == 0) {
+            $setting = Setting::first();
+            if ($grade->semester=='I') {
+                $grade->semester = 1;
+                $grade->year = 1;
+            }
+            $grade->semester += 1;
+            if ($grade->semester > $setting->semester_count) {
+                $grade->semester = 1;
+                $grade->year += 1;
+            }
+        }
+        $gradedetail = GradeDetail::where('grade_id', function($query) {
+            $query->from('grades')
+            ->where('student_detail_user_id', Auth::id())
+            ->select('id')
+            ->latest('id')
+            ->first();
+        })
+        ->get();
+        $shift = Shift::join('schools','shifts.school_id','schools.id')
+        ->join('courses','shifts.course_id','courses.id')
+        ->where('user_id', Auth::id())
+        ->select('courses.description as course_description','schools.description as school_description')
+        ->latest('shifts.id')
+        ->first();
+        if ($shift == null) {
+            $shift = (object)['school_description' => 'N/A', 'course_description' => 'N/A'];
+        }
         $school = School::where('is_active',1)->get();
         $course = Course::where('is_active',1)->get();
         $utility = Utility::where('user_id', function($query) {
@@ -69,7 +88,7 @@ class StudentRenewalController extends Controller
             ->first();
         })
         ->first();
-        return view('SMS.Student.StudentRenewal')->withApplication($application)->withGrading($grading)->withGrade($grade)->withSchool($school)->withCourse($course)->withUtility($utility);
+        return view('SMS.Student.StudentRenewal')->withApplication($application)->withGrading($grading)->withGrade($grade)->withSchool($school)->withCourse($course)->withUtility($utility)->withGradedetail($gradedetail)->withShift($shift);
     }
     public function store(Request $request)
     {
@@ -93,6 +112,9 @@ class StudentRenewalController extends Controller
         }
         DB::beginTransaction();
         try {
+            $application = Application::find(Auth::id());
+            $application->is_renewal = 1;
+            $application->save();
             $grades = new Grade;
             $grades->student_detail_user_id = Auth::id();
             $grades->grading_id = $school->grading_id;

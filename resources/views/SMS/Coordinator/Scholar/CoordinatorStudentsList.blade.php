@@ -103,8 +103,7 @@
 							<thead>
 								<th>ID</th>
 								<th>Student</th>
-								<th>Application Date</th>	
-								<th>Condition</th>			
+								<th>Application Date</th>
 								<th>Status</th>
 								<th >Action</th>
 							</thead>

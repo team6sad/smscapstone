@@ -36,6 +36,7 @@ class CoordinatorApplicantsController extends Controller
             ->latest('id')
             ->first();
         })
+        ->where('users.is_active',0)
         ->where('users.type','Student');
         return Datatables::of($users)
         ->editColumn('strUserName', function ($data) {

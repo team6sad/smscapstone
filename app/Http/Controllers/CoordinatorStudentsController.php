@@ -57,15 +57,26 @@ class CoordinatorStudentsController extends Controller
 		->where('student_status','Continuing');
 		$datatables = Datatables::of($application)
 		->addColumn('counter', function ($data) {
+			$grade = Grade::where('student_detail_user_id',$data->id)->count();
+			$type = 0;
+			if ($grade > 1) {
+				$type = 1;
+			}
 			$count = Requirement::where('is_active',1)
-			->where('type',$data->is_renewal)
+			->where('type',$type)
 			->where('user_id',Auth::id())
 			->count();
 			$steps = Studentsteps::join('requirements','user_requirement.requirement_id','requirements.id')
 			->where('user_requirement.user_id',$data->id)
-			->where('requirements.type',$data->is_renewal)
+			->where('requirements.type',$type)
 			->where('requirements.user_id',Auth::id())
-			->count();
+			->where('user_requirement.grade_id', function($query) use($data){
+				$query->from('grades')
+				->where('student_detail_user_id',$data->id)
+				->select('id')
+				->latest('id')
+				->first(); 
+			})->count();
 			if($count!=0)
 				$percentage = (($steps/$count)*100);
 			else
@@ -76,7 +87,14 @@ class CoordinatorStudentsController extends Controller
 		->addColumn('stipend', function ($data) {
 			$count = Budgtype::count();
 			$allocate = Allocation::leftjoin('user_allocation','allocations.id','user_allocation.allocation_id')
-			->where('user_allocation.user_id',$data->id)->count();
+			->where('user_allocation.user_id',$data->id)
+			->where('user_allocation.grade_id', function($query) use($data){
+				$query->from('grades')
+				->where('student_detail_user_id',$data->id)
+				->select('id')
+				->latest('id')
+				->first();
+			})->count();
 			if($count!=0)
 				$percentage = (($allocate/$count)*100);
 			else
@@ -85,13 +103,18 @@ class CoordinatorStudentsController extends Controller
 			<div class='progress-bar progress-bar-success progress-bar-striped' role='progressbar' aria-valuenow='0' aria-valuemin='0' aria-valuemax='100' style='width: $percentage%'></div>";
 		})
 		->addColumn('action', function ($data) {
+			$grade = Grade::where('student_detail_user_id',$data->id)->count();
+			$type = 0;
+			if ($grade > 1) {
+				$type = 1;
+			}
 			$count = Requirement::where('is_active',1)
-			->where('type',$data->is_renewal)
+			->where('type',$type)
 			->where('user_id',Auth::id())
 			->count();
 			$steps = Studentsteps::join('requirements','user_requirement.requirement_id','requirements.id')
 			->where('user_requirement.user_id',$data->id)
-			->where('requirements.type',$data->is_renewal)
+			->where('requirements.type',$type)
 			->where('requirements.user_id',Auth::id())
 			->count();
 			$claim = 'disabled';
@@ -145,6 +168,11 @@ class CoordinatorStudentsController extends Controller
 	}
 	public function create($id)
 	{
+		$grade = Grade::where('student_detail_user_id',$id)->count();
+		$type = 0;
+		if ($grade > 1) {
+			$type = 1;
+		}
 		$step = Requirement::whereNotIn('id', function($query) use($id) {
 			$query->from('user_requirement')
 			->select('requirement_id')
@@ -152,12 +180,7 @@ class CoordinatorStudentsController extends Controller
 			->get();
 		})
 		->where('is_active',1)
-		->where('type', function($query) use($id) {
-			$query->from('student_details')
-			->select('is_renewal')
-			->where('user_id',$id)
-			->first();
-		})
+		->where('type', $type)
 		->where('user_id',Auth::id())
 		->select('requirements.*')
 		->get();

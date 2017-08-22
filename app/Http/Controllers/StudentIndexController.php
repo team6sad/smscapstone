@@ -21,6 +21,13 @@ class StudentIndexController extends Controller
 			->latest('id')
 			->first();
 		})
+		->where('user_allocation.grade_id', function($query){
+			$query->from('grades')
+			->where('student_detail_user_id', Auth::id())
+			->select('id')
+			->latest('id')
+			->first(); 
+		})
 		->where('user_allocation.user_id',Auth::id())
 		->get();
 		return view('SMS.Student.StudentIndex')->withAllocation($allocation);
