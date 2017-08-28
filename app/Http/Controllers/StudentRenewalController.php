@@ -145,7 +145,7 @@ class StudentRenewalController extends Controller
             }
             $pdf->move(base_path().'/public/docs/', $pdfname);
             DB::commit();
-            return redirect(route('student.index'));
+            return redirect(route('studentrenewal.index'));
         } catch(\Exception $e) {
             DB::rollBack();
             return dd($e->getMessage());

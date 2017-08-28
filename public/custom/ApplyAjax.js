@@ -449,10 +449,10 @@ function inputGrade() {
       });
       var show = "<div class='form-group col-md-6'>" +
       "<label class='control-label'>Description</label>" +
-      "<input id='subject_description' class='form-control subject_description' maxlength='45' autocomplete='off' data-parsley-pattern='^[a-zA-Z0-9 ]+$' name='subject_description[]' type='text'></div>" +
+      "<input id='subject_description' class='form-control subject_description' maxlength='45' required='required' autocomplete='off' data-parsley-pattern='^[a-zA-Z0-9 ]+$' name='subject_description[]' type='text'></div>" +
       "<div class='form-group col-md-2'>" +
       "<label class='control-label'>Units</label>" +
-      "<input id='units' class='form-control units' maxlength='1' autocomplete='off' data-parsley-pattern='^[0-9 ]+$' name='units[]' type='text'></div>" +
+      "<input id='units' class='form-control units' maxlength='1' autocomplete='off' required='required' data-parsley-pattern='^[0-9 ]+$' name='units[]' type='text'></div>" +
       "<div class='form-group col-md-4'>" +
       "<label class='control-label'>Grade</label>" +
       "<select id='subject_grade' class='form-control subject_grade' name='subject_grade[]'>" + selectGrade +"</select></div>";

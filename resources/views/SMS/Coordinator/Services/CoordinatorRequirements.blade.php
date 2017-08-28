@@ -42,13 +42,13 @@
   										}}
   									</div>
   									<div class="form-group">
-  										{{ Form::label('name', 'Step Description') }}
+  										{{ Form::label('name', 'Description') }}
   										{{ Form::text('strStepDesc', null, [
   											'id' => 'strStepDesc',
   											'class' => 'form-control',
   											'maxlength' => '100',
   											'required' => 'required',
-  											'data-parsley-pattern' => '^[a-zA-Z0-9. ]+$',
+  											'data-parsley-pattern' => '^[a-zA-Z0-9.ñ ]+$',
   											'autocomplete' => 'off'
   											]) 
   										}}

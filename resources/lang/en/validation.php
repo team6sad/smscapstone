@@ -191,7 +191,7 @@ return [
     'intPersCurrentSchool' => 'current school',
     'intPersCurrentCourse' => 'current course',
     'strPersGwa' => 'gwa',
-    'strApplGrades' => 'grade upload',
+    'strApplGrades' => 'grade',
     'title' => 'subject',
     // 'description' => 'message',
     'receiver' => 'send to',

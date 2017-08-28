@@ -75,7 +75,7 @@
 				<label class="col-sm-12">Input Grade</label>
 				<div class='form-group col-md-6'>
 					<label class='control-label'>Description</label>
-					<input id='subject_description' class='form-control subject_description' maxlength='45' autocomplete='off' data-parsley-pattern='^[a-zA-Z0-9 ]+$' name='subject_description[]' type='text' required="required">
+					<input id='subject_description' class='form-control subject_description' maxlength='45' autocomplete='off' data-parsley-pattern='^[a-zA-Z0-9ñ ]+$' name='subject_description[]' type='text' required="required">
 				</div>
 				<div class='form-group col-md-2'>
 					<label class='control-label'>Units</label>
@@ -169,7 +169,7 @@
 						</div>
 					</div>
 					<div class="col-md-2">
-						<a href="{{ asset('docs/tms.pdf') }}" target="_blank"><button type="button" class="btn btn-default"><i class="fa fa-eye"></i> Review Grades</button></a>
+						<a href="{{ asset('docs/'.$grade->pdf) }}" target="_blank"><button type="button" class="btn btn-default"><i class="fa fa-eye"></i> Review Grades</button></a>
 					</div>
 				</div>
 				<label class="col-sm-12">Inputted Grades</label>

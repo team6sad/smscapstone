@@ -58,7 +58,7 @@
 											'class' => 'form-control',
 											'maxlength' => '50',
 											'required' => 'required',
-											'data-parsley-pattern' => '^[a-zA-Z. ]+$',
+											'data-parsley-pattern' => '^[a-zA-Z.ñ ]+$',
 											'autocomplete' => 'off'
 											]) 
 										}}

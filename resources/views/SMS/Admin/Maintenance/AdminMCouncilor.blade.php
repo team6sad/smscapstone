@@ -54,7 +54,7 @@
 												'class' => 'form-control',
 												'maxlength' => '25',
 												'required' => 'required',
-												'data-parsley-pattern' => '^[a-zA-Z. ]+$',
+												'data-parsley-pattern' => '^[a-zA-Z.ñ ]+$',
 												'autocomplete' => 'off'
 												]) 
 											}}
@@ -65,7 +65,7 @@
 												'id' => 'strCounMiddleName',
 												'class' => 'form-control',
 												'maxlength' => '25',
-												'data-parsley-pattern' => '^[a-zA-Z. ]+$',
+												'data-parsley-pattern' => '^[a-zA-Z.ñ ]+$',
 												'autocomplete' => 'off'
 												]) 
 											}}
@@ -77,7 +77,7 @@
 												'class' => 'form-control',
 												'maxlength' => '25',
 												'required' => 'required',
-												'data-parsley-pattern' => '^[a-zA-Z. ]+$',
+												'data-parsley-pattern' => '^[a-zA-Z.ñ ]+$',
 												'autocomplete' => 'off'
 												]) 
 											}}

@@ -14,7 +14,7 @@ class Application extends Model
 	'strUserLastName' => 'required|max:25',
 	'strUserEmail' => 'required|email|max:30|unique:users,email',
 	'strUserCell' => 'required|max:15',
-	'strApplPicture' => 'required|image|mimes:jpeg,png|max:200',
+	'strApplPicture' => 'required|image|mimes:jpeg,png|max:2000',
 	'datPersDOB' => 'required|date',
 	'intCounID' => 'exists:councilors,id',
 	'strApplHouseNo' => 'required|max:4',

@@ -106,7 +106,7 @@
                     'class' => 'form-control',
                     'maxlength' => '25',
                     'required' => 'required',
-                    'data-parsley-pattern' => '^[a-zA-Z. ]+$',
+                    'data-parsley-pattern' => '^[a-zA-Z.ñ ]+$',
                     'autocomplete' => 'off'
                     ]) 
                 }}
@@ -120,7 +120,7 @@
                     'id' => 'mname',
                     'class' => 'form-control',
                     'maxlength' => '25',
-                    'data-parsley-pattern' => '^[a-zA-Z. ]+$',
+                    'data-parsley-pattern' => '^[a-zA-Z.ñ ]+$',
                     'autocomplete' => 'off'
                     ]) 
                 }}
@@ -135,7 +135,7 @@
                     'class' => 'form-control',
                     'maxlength' => '25',
                     'required' => 'required',
-                    'data-parsley-pattern' => '^[a-zA-Z. ]+$',
+                    'data-parsley-pattern' => '^[a-zA-Z.ñ ]+$',
                     'autocomplete' => 'off'
                     ]) 
                 }}
@@ -179,7 +179,7 @@
                 'class' => 'form-control',
                 'maxlength' => '25',
                 'required' => 'required',
-                'data-parsley-pattern' => '^[a-zA-Z. ]+$',
+                'data-parsley-pattern' => '^[a-zA-Z.ñ ]+$',
                 'autocomplete' => 'off'
                 ]) 
             }}
@@ -194,7 +194,7 @@
                 'class' => 'form-control',
                 'maxlength' => '50',
                 'required' => 'required',
-                'data-parsley-pattern' => '^[a-zA-Z. ]+$',
+                'data-parsley-pattern' => '^[a-zA-Z.ñ ]+$',
                 'autocomplete' => 'off'
                 ]) 
             }}
@@ -246,7 +246,7 @@
                 'maxlength' => '25',
                 'required' => 'required',
                 'autocomplete' => 'off',
-                'data-parsley-pattern' => '^[a-zA-Z0-9. ]+$'
+                'data-parsley-pattern' => '^[a-zA-Z0-9.ñ ]+$'
                 ]) 
             }}
         </div>
@@ -329,7 +329,7 @@
                         'maxlength' => '25',
                         'required' => 'required',
                         'autocomplete' => 'off',
-                        'data-parsley-pattern' => '^[a-zA-Z. ]+$'
+                        'data-parsley-pattern' => '^[a-zA-Z.ñ ]+$'
                         ]) 
                     }}
                 </div>
@@ -341,7 +341,7 @@
                         'maxlength' => '25',
                         'required' => 'required',
                         'autocomplete' => 'off',
-                        'data-parsley-pattern' => '^[a-zA-Z. ]+$'
+                        'data-parsley-pattern' => '^[a-zA-Z.ñ ]+$'
                         ]) 
                     }}
                 </div>
@@ -358,7 +358,7 @@
                     'maxlength' => '25',
                     'required' => 'required',
                     'autocomplete' => 'off',
-                    'data-parsley-pattern' => '^[a-zA-Z. ]+$'
+                    'data-parsley-pattern' => '^[a-zA-Z.ñ ]+$'
                     ]) 
                 }}
             </div>
@@ -374,7 +374,7 @@
                     'maxlength' => '25',
                     'required' => 'required',
                     'autocomplete' => 'off',
-                    'data-parsley-pattern' => '^[a-zA-Z. ]+$'
+                    'data-parsley-pattern' => '^[a-zA-Z.ñ ]+$'
                     ]) 
                 }}
             </div>
@@ -390,7 +390,7 @@
                     'maxlength' => '25',
                     'required' => 'required',
                     'autocomplete' => 'off',
-                    'data-parsley-pattern' => '^[a-zA-Z. ]+$'
+                    'data-parsley-pattern' => '^[a-zA-Z.ñ ]+$'
                     ]) 
                 }}
             </div>
@@ -428,7 +428,7 @@
                         'maxlength' => '25',
                         'required' => 'required',
                         'autocomplete' => 'off',
-                        'data-parsley-pattern' => '^[a-zA-Z. ]+$'
+                        'data-parsley-pattern' => '^[a-zA-Z.ñ ]+$'
                         ]) 
                     }}
                 </div>
@@ -440,7 +440,7 @@
                         'maxlength' => '25',
                         'required' => 'required',
                         'autocomplete' => 'off',
-                        'data-parsley-pattern' => '^[a-zA-Z. ]+$'
+                        'data-parsley-pattern' => '^[a-zA-Z.ñ ]+$'
                         ]) 
                     }}
                 </div>
@@ -457,7 +457,7 @@
                     'maxlength' => '25',
                     'required' => 'required',
                     'autocomplete' => 'off',
-                    'data-parsley-pattern' => '^[a-zA-Z. ]+$'
+                    'data-parsley-pattern' => '^[a-zA-Z.ñ ]+$'
                     ]) 
                 }}
             </div>
@@ -473,7 +473,7 @@
                     'maxlength' => '25',
                     'required' => 'required',
                     'autocomplete' => 'off',
-                    'data-parsley-pattern' => '^[a-zA-Z. ]+$'
+                    'data-parsley-pattern' => '^[a-zA-Z.ñ ]+$'
                     ]) 
                 }}
             </div>
@@ -489,7 +489,7 @@
                     'maxlength' => '25',
                     'required' => 'required',
                     'autocomplete' => 'off',
-                    'data-parsley-pattern' => '^[a-zA-Z. ]+$'
+                    'data-parsley-pattern' => '^[a-zA-Z.ñ ]+$'
                     ]) 
                 }}
             </div>
@@ -557,8 +557,8 @@
         <label class="radio-inline">{{ Form::radio('rad', 'no', true, ['id' => 'no']) }} No</label>
     </div>
     <div id="questionappear">
-     <div class="row">
-         <div class="container col-md-6 col-sm-12">
+       <div class="row">
+           <div class="container col-md-6 col-sm-12">
             <div class="row">
                 <div class="form-group col-md-6 col-sm-12">
                     {{ Form::label('name', "First Name", [
@@ -572,7 +572,7 @@
                         'maxlength' => '25',
                         'autocomplete' => 'off',
                         'placeholder' => 'First Name',
-                        'data-parsley-pattern' => '^[a-zA-Z. ]+$'
+                        'data-parsley-pattern' => '^[a-zA-Z.ñ ]+$'
                         ]) 
                     }}
                 </div>
@@ -588,7 +588,7 @@
                         'maxlength' => '25',
                         'autocomplete' => 'off',
                         'placeholder' => 'Last Name',
-                        'data-parsley-pattern' => '^[a-zA-Z. ]+$'
+                        'data-parsley-pattern' => '^[a-zA-Z.ñ ]+$'
                         ]) 
                     }}
                 </div>
@@ -648,7 +648,7 @@
                 'maxlength' => '50',
                 'autocomplete' => 'off',
                 'required' => 'required',
-                'data-parsley-pattern' => '^[a-zA-Z0-9. ]+$'
+                'data-parsley-pattern' => '^[a-zA-Z0-9.ñ ]+$'
                 ]) 
             }}
         </div>
@@ -693,7 +693,8 @@
                 'id' => 'elemhonors',
                 'class' => 'form-control',
                 'maxlength' => '50',
-                'autocomplete' => 'off'
+                'autocomplete' => 'off',
+                'data-parsley-pattern' => '^[a-zA-Z0-9.ñ ]+$'
                 ]) 
             }}
         </div>
@@ -712,7 +713,7 @@
                 'maxlength' => '50',
                 'autocomplete' => 'off',
                 'required' => 'required',
-                'data-parsley-pattern' => '^[a-zA-Z0-9. ]+$'
+                'data-parsley-pattern' => '^[a-zA-Z0-9.ñ ]+$'
                 ]) 
             }}
         </div>
@@ -758,7 +759,7 @@
                 'class' => 'form-control',
                 'maxlength' => '50',
                 'autocomplete' => 'off',
-                'data-parsley-pattern' => '^[a-zA-Z0-9. ]+$'
+                'data-parsley-pattern' => '^[a-zA-Z0-9.ñ ]+$'
                 ]) 
             }}
         </div>
@@ -923,7 +924,7 @@
                 'id' => 'organization[]',
                 'class' => 'form-control organization',
                 'maxlength' => '50',
-                'data-parsley-pattern' => '^[a-zA-Z0-9. ]+$'
+                'data-parsley-pattern' => '^[a-zA-Z0-9.ñ ]+$'
                 ]) 
             }}
         </div>
@@ -936,7 +937,7 @@
                 'id' => 'position[]',
                 'class' => 'form-control position',
                 'maxlength' => '25',
-                'data-parsley-pattern' => '^[a-zA-Z0-9. ]+$'
+                'data-parsley-pattern' => '^[a-zA-Z0-9.ñ ]+$'
                 ]) 
             }}
         </div>

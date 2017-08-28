@@ -16,6 +16,8 @@ class CreateUtilitiesTable extends Migration {
 		{
 			$table->string('user_id', 30)->index('fessaysuserid_idx');
 			$table->text('essay', 65535);
+			$table->boolean('renewal_status')->default(0);
+			$table->boolean('apply_status')->default(0);
 		});
 	}
 

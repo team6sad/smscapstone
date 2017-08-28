@@ -1,12 +1,18 @@
 $(document).ready(function() {
 	$('.grade').click(function(){
-		var show = "<div class='form-group col-md-6'>" +
+		var show = "<div class='add'><div class='form-group col-md-6'>" +
+		"<label>Description</label>"+
 		$('.subject_description')[0].outerHTML + "</div>" +
 		"<div class='form-group col-md-2'>" +
+		"<label>Units</label>"+
 		$('.units')[0].outerHTML + "</div>" +
 		"<div class='form-group col-md-4'>" +
-		$('.subject_grade')[0].outerHTML + "</div>";
+		"<label>Grade</label><button type='button' class='btn btn-xs btn-danger pull-right'><i class='fa fa-remove'></i></button>" +
+		$('.subject_grade')[0].outerHTML + "</div></div>";
 		$('#grade').append(show);
+	});
+	$('#grade').on('click','.btn-danger',function(){
+		$(this).parent().parent().remove();
 	});
 	$('input').iCheck({
 		radioClass: 'iradio_flat-red'
