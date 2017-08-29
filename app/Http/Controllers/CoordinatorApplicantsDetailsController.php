@@ -60,6 +60,7 @@ class CoordinatorApplicantsDetailsController extends Controller
             ->select('desired_courses.*','schools.description as schools_description','courses.description as courses_description')
             ->where('desired_courses.student_detail_user_id',$id)
             ->get();
+            $getpdf = Grade::where('grades.student_detail_user_id',$id)->select('pdf')->latest('id')->first();
             $grades = Grade::join('grade_details','grades.id','grade_details.grade_id')
             ->select('grade_details.*','grades.*', 'grades.id as grade_id')
             ->where('grades.student_detail_user_id',$id)
@@ -73,7 +74,7 @@ class CoordinatorApplicantsDetailsController extends Controller
                 ->get();
                 $grading = GradingDetail::where('grading_id',$grade[0]->grading_id)->get();
             }
-            return view('SMS.Coordinator.Scholar.CoordinatorApplicantsDetails')->withApplication($application)->withMother($mother)->withFather($father)->withDesiredcourses($desiredcourses)->withElem($elem)->withHs($hs)->withSiblings($siblings)->withExist($exist)->withCount($count)->withAffiliation($affiliation)->withGrade($grade)->withGrading($grading)->withGrades($grades);
+            return view('SMS.Coordinator.Scholar.CoordinatorApplicantsDetails')->withApplication($application)->withMother($mother)->withFather($father)->withDesiredcourses($desiredcourses)->withElem($elem)->withHs($hs)->withSiblings($siblings)->withExist($exist)->withCount($count)->withAffiliation($affiliation)->withGrade($grade)->withGrading($grading)->withGrades($grades)->withGetpdf($getpdf);
         } catch(\Exception $e) {
             dd($e->getMessage());
             return redirect(route('applications.index'));

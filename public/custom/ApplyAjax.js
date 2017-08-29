@@ -231,22 +231,25 @@ $(document).ready(function() {
       "<div class='col-md-6'>" +
       "<label>Current Course:</label> " + $("select[name='intPersCurrentCourse'] option:selected").text() + " <br>" +
       "</div>" +
-      "</div>" +
-      "<br>" +
-      "<label>Grade</label> <br>"+
-      "<div class='row'>";
-      for (var i = 0; i <= subject; i++) {
-        div += "<div class='col-md-4'>" +
-        "<label>Description:</label> " + $('.subject_description')[i].value + " <br>" +
-        "</div>" +
-        "<div class='col-md-4'>" +
-        "<label>Units:</label> " + $('.units')[i].value + "<br>" +
-        "</div>" +
-        "<div class='col-md-4'>" +
-        "<label>Grade:</label> " + $(".subject_grade")[i].value + "<br>" +
-        "</div>";
+      "</div>";
+      console.log(grade);
+      if (grade == 0) {
+        div += "<br><label>Grade</label> <br>"+
+        "<div class='row'>";
+        for (var i = 0; i <= subject; i++) {
+          div += "<div class='col-md-4'>" +
+          "<label>Description:</label> " + $('.subject_description')[i].value + " <br>" +
+          "</div>" +
+          "<div class='col-md-4'>" +
+          "<label>Units:</label> " + $('.units')[i].value + "<br>" +
+          "</div>" +
+          "<div class='col-md-4'>" +
+          "<label>Grade:</label> " + $(".subject_grade")[i].value + "<br>" +
+          "</div>";
+        }
+        div += "</div>";
       }
-      div += "</div><br>" +
+      div += "<br>" +
       "<label>Name three(3) courses you wish to enroll in and the respective school (in order of your preference):</label> <br>" +
       "<div class='row'>" +
       "<div class='col-md-4'>" +
@@ -453,6 +456,7 @@ function inputGrade() {
     $('#grade').empty();
   } else {
     $('#academic').toggle(false).toggle();
+    $('#grade').empty();
     $.get(url + '/grade/' + $('#intPersCurrentSchool').val(), function(data) {
       var selectGrade = '';
       $.each(data, function(index, value) {
@@ -467,8 +471,11 @@ function inputGrade() {
       "<div class='form-group col-md-4'>" +
       "<label class='control-label'>Grade</label>" +
       "<select id='subject_grade' class='form-control subject_grade' name='subject_grade[]'>" + selectGrade +"</select></div>";
-      $('#grade').empty().append(show);
+      $('#grade').append(show);
     });
+    $('.subject_description').parsley();
+    $('.units').parsley();
+    $('.subject_grade').parsley();
   }
 }
 $('#intPersCurrentSchool').change(function() {

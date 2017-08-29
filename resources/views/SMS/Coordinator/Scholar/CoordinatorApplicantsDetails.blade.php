@@ -209,7 +209,7 @@
             </table>
           </div>
           <div class="col-md-12">
-            <a href="{{ asset('docs/tms.pdf') }}" target="_blank"><button type="button" class="btn btn-default"><i class="fa fa-eye"></i> Review Grades</button></a>
+            <a href="{{ asset('docs/'.$getpdf->pdf) }}" target="_blank"><button type="button" class="btn btn-default"><i class="fa fa-eye"></i> Review Grades</button></a>
           </div>
           @if ($grades!=0)
           <div class="col-md-12 table-responsive">
