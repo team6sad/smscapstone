@@ -66,10 +66,19 @@ class CoordinatorStudentsListController extends Controller
         ->editColumn('application_date', function ($data) {
             return $data->application_date ? with(new Carbon($data->application_date))->format('M d, Y') : '';
         })
+        ->editColumn('student_status', function ($data) {
+            if ($data->student_status == 'Continuing') 
+                $color = 'orange';
+            elseif ($data->student_status == 'Graduated') 
+                $color = 'green';
+            else 
+                $color = 'red';
+            return "<small class='label bg-".$color."'>".$data->student_status."</small>";
+        })
         ->setRowId(function ($data) {
             return $data = 'id'.$data->user_id;
         })
-        ->rawColumns(['strStudName','checkbox','action']);
+        ->rawColumns(['strStudName','checkbox','action','student_status']);
         if ($strUserFirstName = $request->get('strUserFirstName')) {
             $datatables->where('users.first_name', 'like', '%'.$strUserFirstName.'%');
         }

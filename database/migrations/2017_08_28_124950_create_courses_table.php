@@ -16,7 +16,7 @@ class CreateCoursesTable extends Migration {
 		{
 			$table->increments('id');
 			$table->string('abbreviation', 10);
-			$table->string('description', 50)->unique('description_UNIQUE');
+			$table->string('description', 100)->unique('description_UNIQUE');
 			$table->boolean('is_active')->default(1);
 		});
 	}

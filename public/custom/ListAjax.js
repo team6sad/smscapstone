@@ -10,8 +10,8 @@ $(document).ready(function() {
         serverSide: true,
         "order": [1, 'desc'],
         "columnDefs": [
-        { "width": "70px", "targets": 4 },
-        { "width": "70px", "targets": 3 }
+        { "width": "70px", "targets": 5 },
+        { "width": "70px", "targets": 4 }
         ],
         ajax: {
             type: 'POST',
@@ -32,6 +32,7 @@ $(document).ready(function() {
         { data: 'id', name: 'users.id' },
         { data: 'strStudName', name: 'strStudName' },
         { data: 'application_date', name: 'student_details.application_date', searchable: false },
+        { data: 'student_status', name: 'student_details.student_status', searchable: false },
         { data: 'checkbox', name: 'users.is_active', searchable: false },
         { data: 'action', name: 'action', orderable: false, searchable: false }
         ]
@@ -72,6 +73,7 @@ $(document).ready(function() {
             dataType: 'json',
             success: function(data) {
                 Pace.restart();
+                table.draw();
                 if (data.student_status == 'Continuing')
                     thisbox.attr('class', 'btn btn-md btn-flat btn-warning');
                 else if (data.student_status == 'Graduated')

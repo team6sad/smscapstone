@@ -38,12 +38,11 @@ $(document).ready(function() {
   $('#budget-list').on('click', '.btn-view', function() {
     var link_id = $(this).val();
     $.get(url + '/' + link_id, function(data) {
-      var date = new Date(data[0].budget_date);
       var modalbody = "<div class='col-xs-12 row'><div class='col-xs-6'><div class='form-group'><label>Budget Amount:</label><br>" + data[0].amount +
       "</div><div class='form-group'><label>Scholar Budget:</label><br>" + data[0].budget_per_student +"</div></div>"+
       "<div class='col-xs-6'>"+
       "<div class='form-group'><label>Date Inputted:</label><br>"
-      + date.toLocaleString('en-us', { year: 'numeric', month: 'short', day: '2-digit', hour: '2-digit', minute: '2-digit' }) +
+      + data[0].date +
       "</div><div class='form-group'><label>Slot:</label><br>" + data[0].slot_count +
       "</div></div>";
       $.each(data, function(index, value) {

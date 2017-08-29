@@ -218,6 +218,7 @@ class SMSAccountApplyController extends Controller
     ->where('users.type','Coordinator')
     ->where('utilities.apply_status',1)
     ->select('councilors.*',DB::raw("CONCAT(councilors.last_name,', ',councilors.first_name,' ',IFNULL(councilors.middle_name,'')) as strCounName"),'districts.id as district_id')
+    ->distinct()
     ->get();
     return Response::json($district);
   }

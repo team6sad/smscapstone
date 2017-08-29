@@ -56,9 +56,9 @@
 										{{ Form::text('strSchoDesc', null, [
 											'id' => 'strSchoDesc',
 											'class' => 'form-control',
-											'maxlength' => '50',
+											'maxlength' => '100',
 											'required' => 'required',
-											'data-parsley-pattern' => '^[a-zA-Z.ñ ]+$',
+											'data-parsley-pattern' => '^[a-zA-Z.ñ -]+$',
 											'autocomplete' => 'off'
 											]) 
 										}}

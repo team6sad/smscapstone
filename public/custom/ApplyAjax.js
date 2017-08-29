@@ -235,19 +235,18 @@ $(document).ready(function() {
       "<br>" +
       "<label>Grade</label> <br>"+
       "<div class='row'>";
-      for (var i = 0; i < subject; i++) {
-        console.log($('.subject_description')[i].value);
+      for (var i = 0; i <= subject; i++) {
         div += "<div class='col-md-4'>" +
-        "<label>Description:</label> " + $('.subject_description')[i].text() + " <br>" +
+        "<label>Description:</label> " + $('.subject_description')[i].value + " <br>" +
         "</div>" +
         "<div class='col-md-4'>" +
-        "<label>Units:</label> " + $('.units')[i].text() + "<br>" +
+        "<label>Units:</label> " + $('.units')[i].value + "<br>" +
         "</div>" +
         "<div class='col-md-4'>" +
-        "<label>Grade:</label> " + $("select[class='subject_grade'] option:selected")[i].text() + "<br>" +
+        "<label>Grade:</label> " + $(".subject_grade")[i].value + "<br>" +
         "</div>";
       }
-      div += "</div>" +
+      div += "</div><br>" +
       "<label>Name three(3) courses you wish to enroll in and the respective school (in order of your preference):</label> <br>" +
       "<div class='row'>" +
       "<div class='col-md-4'>" +
@@ -267,15 +266,27 @@ $(document).ready(function() {
       "<label>Community Involvement/Affiliation</label> <br>" +
       "<div class='row'>";
       for (var i = 0; i < ctr_organization; i++) {
-        div += "<div class='col-md-6'>" +
-        "<label>Organization:</label> " + $('.organization')[i].value + " <br>" +
-        "</div>" +
-        "<div class='col-md-3'>" +
-        "<label>Position:</label> " + $('.position')[i].value + " <br>" +
-        "</div>" +
-        "<div class='col-md-3'>" +
-        "<label>Year of Participation:</label> " + $('.year')[i].value + " <br>" +
-        "</div>";
+        if ($('.organization')[i].value != '' && $('.position')[i].value != '') {
+          div += "<div class='col-md-6'>" +
+          "<label>Organization:</label> " + $('.organization')[i].value + " <br>" +
+          "</div>" +
+          "<div class='col-md-3'>" +
+          "<label>Position:</label> " + $('.position')[i].value + " <br>" +
+          "</div>" +
+          "<div class='col-md-3'>" +
+          "<label>Year of Participation:</label> " + $('.year')[i].value + " <br>" +
+          "</div>";
+        } else {
+          div += "<div class='col-md-6'>" +
+          "<label>Organization:</label> N/A <br>" +
+          "</div>" +
+          "<div class='col-md-3'>" +
+          "<label>Position:</label> N/A <br>" +
+          "</div>" +
+          "<div class='col-md-3'>" +
+          "<label>Year of Participation:</label> N/A <br>" +
+          "</div>";
+        }
       }
       div += "</div>" +
       "<hr>" +

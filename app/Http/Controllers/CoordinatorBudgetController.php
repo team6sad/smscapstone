@@ -74,7 +74,7 @@ class CoordinatorBudgetController extends Controller
     {
         $allocation = Allocation::join('budgets','allocations.budget_id','budgets.id')
         ->join('allocation_types','allocations.allocation_type_id','allocation_types.id')
-        ->select('budgets.*','allocations.amount as allocation_amount','allocation_types.*')
+        ->select(DB::raw("DATE_FORMAT(budget_date, '%M %d, %Y') as date"),'budgets.*','allocations.amount as allocation_amount','allocation_types.*')
         ->where('allocations.budget_id',$id)
         ->get();
         return Response::json($allocation);
