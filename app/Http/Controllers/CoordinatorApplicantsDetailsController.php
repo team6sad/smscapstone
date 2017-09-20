@@ -5,7 +5,6 @@ use DB;
 use App\Application;
 use App\Familydata;
 use App\Educback;
-use App\Desiredcourses;
 use App\Affiliation;
 use App\Siblings;
 use Carbon\Carbon;
@@ -15,6 +14,7 @@ use App\GradingDetail;
 use App\Budget;
 use Auth;
 use App\Grade;
+use PDF;
 class CoordinatorApplicantsDetailsController extends Controller
 {
     public function __construct()
@@ -55,11 +55,6 @@ class CoordinatorApplicantsDetailsController extends Controller
             ->where('level',0)->first();
             $hs = Educback::where('student_detail_user_id',$id)
             ->where('level',1)->first();
-            $desiredcourses = Desiredcourses::join('courses','desired_courses.course_id','courses.id')
-            ->join('schools','desired_courses.school_id','schools.id')
-            ->select('desired_courses.*','schools.description as schools_description','courses.description as courses_description')
-            ->where('desired_courses.student_detail_user_id',$id)
-            ->get();
             $getpdf = Grade::where('grades.student_detail_user_id',$id)->select('pdf')->latest('id')->first();
             $grades = Grade::join('grade_details','grades.id','grade_details.grade_id')
             ->select('grade_details.*','grades.*', 'grades.id as grade_id')
@@ -74,7 +69,7 @@ class CoordinatorApplicantsDetailsController extends Controller
                 ->get();
                 $grading = GradingDetail::where('grading_id',$grade[0]->grading_id)->get();
             }
-            return view('SMS.Coordinator.Scholar.CoordinatorApplicantsDetails')->withApplication($application)->withMother($mother)->withFather($father)->withDesiredcourses($desiredcourses)->withElem($elem)->withHs($hs)->withSiblings($siblings)->withExist($exist)->withCount($count)->withAffiliation($affiliation)->withGrade($grade)->withGrading($grading)->withGrades($grades)->withGetpdf($getpdf);
+            return view('SMS.Coordinator.Scholar.CoordinatorApplicantsDetails')->withApplication($application)->withMother($mother)->withFather($father)->withElem($elem)->withHs($hs)->withSiblings($siblings)->withExist($exist)->withCount($count)->withAffiliation($affiliation)->withGrade($grade)->withGrading($grading)->withGrades($grades)->withGetpdf($getpdf);
         } catch(\Exception $e) {
             dd($e->getMessage());
             return redirect(route('applications.index'));
@@ -143,5 +138,17 @@ class CoordinatorApplicantsDetailsController extends Controller
             Session::flash('success','Student Declined');
             return redirect(route('applications.index'));
         }
+    }
+    public function form($id)
+    {
+        $application = Application::join('users','student_details.user_id','users.id')
+        ->join('schools','student_details.school_id','schools.id')
+        ->select('users.*','schools.description')
+        ->where('student_details.application_status','Accepted')->get();
+        // return view('SMS.Coordinator.Reports.CoordinatorStudentReport')->withApplication($application);
+        view()->share('application',$application);
+        // $pdf = PDF::loadHTML('<h1>Test</h1>');
+        $pdf = PDF::loadView('SMS.Coordinator.Reports.CoordinatorStudentReport', $application);
+        return $pdf->stream();
     }
 }

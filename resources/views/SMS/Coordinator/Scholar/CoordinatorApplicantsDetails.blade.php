@@ -45,7 +45,7 @@
         <li><a href="#tab_3" data-toggle="tab">Education</a></li>
         <li><a href="#tab_4" data-toggle="tab">Community Affiliaton</a></li>
         <li><a href="#tab_5" data-toggle="tab">Maikling Talambuhay</a></li>
-        <li class="pull-right header"><span class="mailbox-read-time"><i class="fa fa-clock-o"></i> {{$application->application_date->format('M d, Y - h:i A')}}</span></li>
+        <li class="pull-right header"><span class="mailbox-read-time"><i class="fa fa-clock-o"></i> {{$application->application_date->format('M d, Y - h:i A')}}&emsp;<a href="{{ route('details.form',$application->user_id) }}" target="_blank" class="btn btn-default btn-sm text-muted"><i class="fa fa-print"></i></a></span></li>
       </ul>
       <div class="tab-content">
         <div class="tab-pane active row" id="tab_1">
@@ -189,24 +189,6 @@
           </div>
           <div class="col-md-6">
             <strong>Current Course:</strong> {{ $application->courses_description }}
-          </div> 
-          <div class="col-md-12 table-responsive">
-            <table class="table table-striped">
-              <thead>
-                <tr>
-                  <th>Course</th>
-                  <th>School</th>
-                </tr>
-              </thead>
-              <tbody>
-                @foreach ($desiredcourses as $desiredcourses)
-                <tr>
-                  <td>{{$desiredcourses->courses_description}}</td>
-                  <td>{{$desiredcourses->schools_description}}</td>
-                </tr>
-                @endforeach
-              </tbody>
-            </table>
           </div>
           <div class="col-md-12">
             <a href="{{ asset('docs/'.$getpdf->pdf) }}" target="_blank"><button type="button" class="btn btn-default"><i class="fa fa-eye"></i> Review Grades</button></a>

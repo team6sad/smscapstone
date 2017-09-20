@@ -35,7 +35,8 @@ class CoordinatorRenewalController extends Controller
         ->where('student_details.is_renewal',1);
         return Datatables::of($application)
         ->addColumn('action', function ($data) {
-            return "<button class='btn btn-info btn-xs' value='$data->id'><i class='fa fa-eye'></i> View</button> <button class='btn btn-success btn-xs' value='$data->id'><i class='fa fa-check'></i> Accept</button> <button class='btn btn-danger btn-xs' value='$data->id'><i class='fa fa-remove'></i> Decline</button>";
+            $pdf = Grade::where('student_detail_user_id',$data->user_id)->latest('id')->select('pdf')->first();
+            return "<a href=".asset('docs/'.$pdf->pdf)." target='_blank'><button class='btn btn-info btn-xs' value='$data->id'><i class='fa fa-eye'></i> View</button></a> <button class='btn btn-success btn-xs' value='$data->id'><i class='fa fa-check'></i> Accept</button> <button class='btn btn-danger btn-xs' value='$data->id'><i class='fa fa-remove'></i> Decline</button>";
         })
         ->addColumn('failed', function ($data) {
             $ctr = 0;

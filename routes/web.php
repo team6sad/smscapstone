@@ -158,6 +158,7 @@ Route::group(['prefix' => 'coordinator/'], function () {
 	Route::get('list/{id}', ['uses' => 'CoordinatorStudentsListController@show', 'as' => 'list.show']);
 	Route::put('list/{id}', ['uses' => 'CoordinatorStudentsListController@update', 'as' => 'list.update']);
 	//Coordinator Applicants Details
+	Route::get('details/{id}/form', ['uses' => 'CoordinatorApplicantsDetailsController@form', 'as' => 'details.form']);
 	Route::get('details/{id}', ['uses' => 'CoordinatorApplicantsDetailsController@show', 'as' => 'details.show']);
 	Route::get('details/{id}/edit', ['uses' => 'CoordinatorApplicantsDetailsController@edit', 'as' => 'details.edit']);
 	Route::put('details/{id}', ['uses' => 'CoordinatorApplicantsDetailsController@update', 'as' => 'details.update']);

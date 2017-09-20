@@ -17,8 +17,7 @@ class CoordinatorReportsController extends Controller
     public function create()
     {
         $application = Application::join('users','student_details.user_id','users.id')
-        ->join('current_colleges','student_details.user_id','current_colleges.student_detail_user_id')
-        ->join('schools','current_colleges.school_id','schools.id')
+        ->join('schools','student_details.school_id','schools.id')
         ->select('users.*','schools.description')
         ->where('student_details.application_status','Accepted')->get();
         // return view('SMS.Coordinator.Reports.CoordinatorStudentReport')->withApplication($application);

@@ -122,27 +122,6 @@ $(document).ready(function() {
           }
         }
       }
-      if (ctr == 3) {
-        var concat1 = $('#school1').val() + "" + $('#course1').val();
-        var concat2 = $('#school2').val() + "" + $('#course2').val();
-        var concat3 = $('#school3').val() + "" + $('#course3').val();
-        if ($('#elemenrolled').val() >= $('#elemgrad').val()) {
-          pass = false;
-          alert('Elem Enrolled Must Not be equal or less than Graduate')
-        } else if ($('#hsenrolled').val() >= $('#hsgrad').val()) {
-          pass = false;
-          alert('HS Enrolled Must Not be equal or less than Date Graduate')
-        } else if (concat1 == concat2) {
-          pass = false;
-          alert('The value of First and Second School and Course Must Not be the Same ');
-        } else if (concat2 == concat3) {
-          pass = false;
-          alert('The value of Second and Third School and Course Must Not be the Same ');
-        } else if (concat3 == concat1) {
-          pass = false;
-          alert('The value of First and Third School and Course Must Not be the Same ');
-        }
-      }
       if (pass) {
         navigateTo(curIndex() + 1);
         var current_active_step = $(this).parents('.f1').find('.f1-step.active');
@@ -249,23 +228,7 @@ $(document).ready(function() {
         }
         div += "</div>";
       }
-      div += "<br>" +
-      "<label>Name three(3) courses you wish to enroll in and the respective school (in order of your preference):</label> <br>" +
-      "<div class='row'>" +
-      "<div class='col-md-4'>" +
-      "<label>School 1:</label> " + $("select[id='school1'] option:selected").text() + " <br>" +
-      "<label>Course 1:</label> " + $("select[id='course1'] option:selected").text() + " <br>" +
-      "</div>" +
-      "<div class='col-md-4'>" +
-      "<label>School 2:</label> " + $("select[id='school2'] option:selected").text() + " <br>" +
-      "<label>Course 2:</label> " + $("select[id='course2'] option:selected").text() + " <br>" +
-      "</div>" +
-      "<div class='col-md-4'>" +
-      "<label>School 3:</label> " + $("select[id='school3'] option:selected").text() + " <br>" +
-      "<label>Course 3:</label> " + $("select[id='course3'] option:selected").text() + " <br>" +
-      "</div>" +
-      "</div>" +
-      "<hr>" +
+      div += "<hr>" +
       "<label>Community Involvement/Affiliation</label> <br>" +
       "<div class='row'>";
       for (var i = 0; i < ctr_organization; i++) {

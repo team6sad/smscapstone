@@ -39,21 +39,15 @@
 			<table width="100%">
 				<thead>
 					<tr>
-						<th>#</th>
+						<th>ID</th>
 						<th>Student</th>
 						<th>School</th>
 					</tr>
 				</thead>
-				<?php
-				$ctr = 0;
-				?>
 				@foreach ($application as $applications)
-				<?php
-				$ctr++;
-				?>
 				<tbody>
 					<tr>
-						<td>{{$ctr}}</td>
+						<td>{{$applications->id}}</td>
 						<td>{{$applications->last_name}}, {{$applications->first_name}} {{$applications->middle_name}}</td>
 						<td>{{$applications->description}}</td>
 					</tr>

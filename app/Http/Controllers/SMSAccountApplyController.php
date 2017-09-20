@@ -14,9 +14,7 @@ use App\Application;
 use App\Familydata;
 use App\Educback;
 use App\Siblings;
-use App\Desiredcourses;
 use Carbon\Carbon;
-use App\Current;
 use Image;
 use App\Connection;
 use App\Grade;
@@ -38,6 +36,7 @@ class SMSAccountApplyController extends Controller
   }
   public function index()
   {
+    $open = Utility::where('apply_status',1)->count();
     $now = Carbon::now(Config::get('app.timezone'));
     $low = Carbon::now(Config::get('app.timezone'))->subYears(20);
     $district = District::where('is_active',1)->get();
@@ -46,7 +45,7 @@ class SMSAccountApplyController extends Controller
     $school = School::where('is_active',1)->select(DB::raw("CONCAT(abbreviation,' - ',description) AS description"),'id')->get();
     $course = Course::where('is_active',1)->select(DB::raw("CONCAT(abbreviation,' - ',description) AS description"),'id')->get();
     $setting = Setting::first();
-    return view('SMS.Account.SMSAccountApply')->withDistrict($district)->withCouncilor($councilor)->withBarangay($barangay)->withSchool($school)->withCourse($course)->withNow($now)->withLow($low)->withSetting($setting);
+    return view('SMS.Account.SMSAccountApply')->withDistrict($district)->withCouncilor($councilor)->withBarangay($barangay)->withSchool($school)->withCourse($course)->withNow($now)->withLow($low)->withSetting($setting)->withOpen($open);
   }
   public function store(Request $request)
   {
@@ -161,14 +160,6 @@ class SMSAccountApplyController extends Controller
         $siblings->date_from=$request->strSiblDateFrom;
         $siblings->date_to=$request->strSiblDateTo;
         $siblings->save();
-      }
-      //Insert in desired_courses
-      for ($i=0; $i < count($request->school); $i++) { 
-        $desiredcourses = new Desiredcourses;
-        $desiredcourses->student_detail_user_id=$users->id;
-        $desiredcourses->school_id=$request->school[$i];
-        $desiredcourses->course_id=$request->course[$i];
-        $desiredcourses->save();
       }
       //Insert in grades
       $getAcademic = School::join('gradings','schools.grading_id','gradings.id')
