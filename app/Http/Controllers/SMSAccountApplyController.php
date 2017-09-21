@@ -27,6 +27,7 @@ use App\GradingDetail;
 use App\Setting;
 use App\Affiliation;
 use App\Budget;
+use App\Credit;
 use App\Utility;
 class SMSAccountApplyController extends Controller
 {
@@ -36,7 +37,7 @@ class SMSAccountApplyController extends Controller
   }
   public function index()
   {
-    $open = Utility::where('apply_status',1)->count();
+    $open = Utility::where('phase_status',1)->count();
     $now = Carbon::now(Config::get('app.timezone'));
     $low = Carbon::now(Config::get('app.timezone'))->subYears(20);
     $district = District::where('is_active',1)->get();
@@ -44,8 +45,7 @@ class SMSAccountApplyController extends Controller
     $barangay = Barangay::where('is_active',1)->get();
     $school = School::where('is_active',1)->select(DB::raw("CONCAT(abbreviation,' - ',description) AS description"),'id')->get();
     $course = Course::where('is_active',1)->select(DB::raw("CONCAT(abbreviation,' - ',description) AS description"),'id')->get();
-    $setting = Setting::first();
-    return view('SMS.Account.SMSAccountApply')->withDistrict($district)->withCouncilor($councilor)->withBarangay($barangay)->withSchool($school)->withCourse($course)->withNow($now)->withLow($low)->withSetting($setting)->withOpen($open);
+    return view('SMS.Account.SMSAccountApply')->withDistrict($district)->withCouncilor($councilor)->withBarangay($barangay)->withSchool($school)->withCourse($course)->withNow($now)->withLow($low)->withOpen($open);
   }
   public function store(Request $request)
   {
@@ -207,7 +207,7 @@ class SMSAccountApplyController extends Controller
     ->where('councilors.is_active',1)
     ->where('barangay.id',$id)
     ->where('users.type','Coordinator')
-    ->where('utilities.apply_status',1)
+    ->where('utilities.phase_status',1)
     ->select('councilors.*',DB::raw("CONCAT(councilors.last_name,', ',councilors.first_name,' ',IFNULL(councilors.middle_name,'')) as strCounName"),'districts.id as district_id')
     ->distinct()
     ->get();
@@ -295,5 +295,10 @@ class SMSAccountApplyController extends Controller
     ->select('utilities.essay')
     ->first();
     return Response::json($utility);
+  }
+  public function getCredit($school, $course)
+  {
+    $credit = Credit::where('school_id',$school)->where('course_id',$course)->first();
+    return Response::json($credit);
   }
 }

@@ -7,13 +7,14 @@ use App\GradingDetail;
 use App\Grade;
 use App\School;
 use App\Course;
-use App\Setting;
 use DB;
 use App\GradeDetail;
 use App\Shift;
 use Config;
 use Carbon\Carbon;
 use App\Utility;
+use App\UserBudget;
+use App\Credit;
 class StudentRenewalController extends Controller
 {
     public function __construct()
@@ -23,6 +24,9 @@ class StudentRenewalController extends Controller
     }
     public function index()
     {
+        $deactivate = Application::find(Auth::id());
+        if($deactivate->student_status == 'Graduated' || $deactivate->status == 'Forfeit')
+            return view('SMS.Student.StudentDeactivate');
         $grading = GradingDetail::where('grading_id', function($query){
             $query->from('schools')
             ->join('student_details','schools.id','student_details.school_id')
@@ -44,13 +48,13 @@ class StudentRenewalController extends Controller
         ->where('student_details.user_id',Auth::id())
         ->first();
         if ($application->is_renewal == 0) {
-            $setting = Setting::first();
+            $credit = Credit::where('school_id',$application->school_id)->where('course_id',$application->course_id)->first();
             if ($grade->semester=='I') {
                 $grade->semester = 1;
                 $grade->year = 1;
             }
             $grade->semester += 1;
-            if ($grade->semester > $setting->semester_count) {
+            if ($grade->semester > $credit->semester) {
                 $grade->semester = 1;
                 $grade->year += 1;
             }
@@ -88,7 +92,20 @@ class StudentRenewalController extends Controller
             ->first();
         })
         ->first();
-        return view('SMS.Student.StudentRenewal')->withApplication($application)->withGrading($grading)->withGrade($grade)->withSchool($school)->withCourse($course)->withUtility($utility)->withGradedetail($gradedetail)->withShift($shift);
+        $userbudget = UserBudget::where('user_id',Auth::id())
+        ->where('budget_id', function($query) {
+            $query->from('budgets')
+            ->where('councilor_id', function($subquery) {
+                $subquery->from('user_councilor')
+                ->where('user_id',Auth::id())
+                ->select('councilor_id')
+                ->first();
+            })
+            ->latest('id')
+            ->select('id')
+            ->first();
+        })->count();
+        return view('SMS.Student.StudentRenewal')->withApplication($application)->withGrading($grading)->withGrade($grade)->withSchool($school)->withCourse($course)->withUtility($utility)->withGradedetail($gradedetail)->withShift($shift)->withUserbudget($userbudget);
     }
     public function store(Request $request)
     {
@@ -104,9 +121,10 @@ class StudentRenewalController extends Controller
         ->select('grades.*')
         ->latest('id')
         ->first();
-        $setting = Setting::first();
+        $application = Application::find(Auth::id());
+        $credit = Credit::where('school_id',$application->school_id)->where('course_id',$application->course_id)->first();
         $grade->semester += 1;
-        if ($grade->semester > $setting->semester_count) {
+        if ($grade->semester > $credit->semester) {
             $grade->semester = 1;
             $grade->year += 1;
         }

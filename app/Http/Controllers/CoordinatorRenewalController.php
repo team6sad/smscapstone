@@ -7,7 +7,8 @@ use Auth;
 use Datatables;
 use App\Grade;
 use App\GradingDetail;
-use App\Utility;
+use App\UserBudget;
+use App\Budget;
 use Response;
 class CoordinatorRenewalController extends Controller
 {
@@ -36,7 +37,7 @@ class CoordinatorRenewalController extends Controller
         return Datatables::of($application)
         ->addColumn('action', function ($data) {
             $pdf = Grade::where('student_detail_user_id',$data->user_id)->latest('id')->select('pdf')->first();
-            return "<a href=".asset('docs/'.$pdf->pdf)." target='_blank'><button class='btn btn-info btn-xs' value='$data->id'><i class='fa fa-eye'></i> View</button></a> <button class='btn btn-success btn-xs' value='$data->id'><i class='fa fa-check'></i> Accept</button> <button class='btn btn-danger btn-xs' value='$data->id'><i class='fa fa-remove'></i> Decline</button>";
+            return "<a href=".asset('docs/'.$pdf->pdf)." target='_blank'><button class='btn btn-info btn-xs' value='$data->id'><i class='fa fa-eye'></i> View</button></a> <button class='btn btn-success btn-accept btn-xs' value='$data->id'><i class='fa fa-check'></i> Accept</button> <button class='btn btn-danger btn-decline btn-xs' value='$data->id'><i class='fa fa-remove'></i> Decline</button>";
         })
         ->addColumn('failed', function ($data) {
             $ctr = 0;
@@ -74,20 +75,43 @@ class CoordinatorRenewalController extends Controller
         ->rawColumns(['strStudName','action'])
         ->make(true);
     }
-    public function checkbox(Request $request)
-    {
-        try {
-            $utility = Utility::findorfail(Auth::id());
-            $utility->renewal_status = $request->is_active;
-            $utility->save();
-            return Response::json($utility);
-        } catch(\Exception $e) {
-            return "Deleted";
-        }
-    }
     public function index()
     {
-        $utility = Utility::find(Auth::id());
-        return view('SMS.Coordinator.Services.CoordinatorRenewal')->withUtility($utility);
+        return view('SMS.Coordinator.Services.CoordinatorRenewal');
+    }
+    public function accept($id)
+    {
+        DB::beginTransaction();
+        try {
+            $budget = Budget::where('user_id',Auth::id())
+            ->latest('id')->first();
+            $application = Application::find($id);
+            $application->is_renewal = 0;
+            $application->save();
+            $userbudget = new UserBudget;
+            $userbudget->budget_id = $budget->id;
+            $userbudget->user_id = $id;
+            $userbudget->save();
+            DB::commit();
+            return Response::json($userbudget);
+        } catch(\Exception $e) {
+            DB::rollBack();
+            return dd($e->getMessage(),500);
+        }  
+    }
+    public function decline($id)
+    {
+        DB::beginTransaction();
+        try {
+            $application = Application::find($id);
+            $application->is_renewal = 0;
+            $application->student_status = 'Forfeit';
+            $application->save();
+            DB::commit();
+            return Response::json($application);
+        } catch(\Exception $e) {
+            DB::rollBack();
+            return dd($e->getMessage(),500);
+        }  
     }
 }

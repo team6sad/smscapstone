@@ -7,6 +7,7 @@ use Response;
 use Carbon\Carbon;
 use Config;
 use DB;
+use App\Application;
 class StudentEventsController extends Controller
 {
     public function __construct()
@@ -16,6 +17,9 @@ class StudentEventsController extends Controller
     }
     public function index()
     {
+        $deactivate = Application::find(Auth::id());
+        if($deactivate->student_status == 'Graduated' || $deactivate->status == 'Forfeit')
+            return view('SMS.Student.StudentDeactivate');
         $events = Event::where('user_id', function($subquery){
             $subquery->from('user_councilor')
             ->join('users','user_councilor.user_id','users.id')

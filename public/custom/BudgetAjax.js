@@ -11,7 +11,7 @@ $(document).ready(function() {
     ajax: dataurl,
     "order": [3, 'desc'],
     "columnDefs": [
-    { "width": "180px", "targets": 4 }
+    { "width": "130px", "targets": 4 }
     ],
     "fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
       $('td:eq(0),td:eq(1)', nRow).addClass( "text-right" );
@@ -30,10 +30,57 @@ $(document).ready(function() {
     $('#frmBudget').trigger("reset");
     $('.form-control').val();
   });
-  $('#btn-add').click(function() {
-    $('#add_budget').modal('show');
-    $('h4').text('Add Budget');
-    $('#btn-save').val("add");
+  $('.btn-status').click(function() {
+    if ($(this).val() == 0) {
+      $('.btn-status').val(1);
+      $('#add_budget').modal('show');
+      $('#h4').text('Add Budget');
+      $('#btn-save').val("add");
+    } else {
+      swal({
+        title: "Are you sure?",
+        type: "warning",
+        showCancelButton: true,
+        confirmButtonClass: "btn-danger",
+        confirmButtonText: "End",
+        cancelButtonText: "Cancel",
+        closeOnConfirm: false,
+        allowOutsideClick: true,
+        showLoaderOnConfirm: true,
+        closeOnCancel: true
+      },
+      function(isConfirm) {
+        setTimeout(function() {
+          if (isConfirm) {
+            $.get(url + '/end', function(data) {
+              $('.callout').removeClass().addClass('callout callout-danger');
+              $('h5').text('Closed');
+              $('.btn-status').removeClass().addClass('btn btn-success btn-status').html("<i class='fa fa-refresh'></i> Start");
+              $('.btn-status').val(0);
+              table.draw();
+              getBudget();
+              swal({
+                title: "Ended!",
+                text: "<center>Semester Closed</center>",
+                type: "success",
+                timer: 1000,
+                showConfirmButton: false,
+                html: true
+              });
+            }).fail(function(data) {
+              swal({
+                title: "Failed!",
+                text: "<center>Cannot Close</center>",
+                type: "error",
+                confirmButtonClass: "btn-success",
+                showConfirmButton: true,
+                html: true
+              });
+            });
+          }
+        }, 500);
+      });
+    }
   });
   $('#budget-list').on('click', '.btn-view', function() {
     var link_id = $(this).val();
@@ -73,48 +120,18 @@ $(document).ready(function() {
         $('#id'+value.allocation_id).val(value.allocation_amount);
         $('.allocate').append("<input type='hidden' name='allocation_id[]' value='"+value.allocate_id+"'>");
       });
-      $('h4').text('Edit Budget');
+      $('#h4').text('Edit Budget');
       $('#btn-save').val("update");
       $('#add_budget').modal('show');
-    });
-  });
-  $('#budget-list').on('click', '.btn-delete', function() {
-    var link_id = $(this).val();
-    swal({
-      title: "Are you sure?",
-      type: "warning",
-      showCancelButton: true,
-      confirmButtonClass: "btn-danger",
-      confirmButtonText: "Delete",
-      cancelButtonText: "Cancel",
-      closeOnConfirm: false,
-      allowOutsideClick: true,
-      showLoaderOnConfirm: true,
-      closeOnCancel: true
-    },
-    function(isConfirm) {
-      setTimeout(function() {
-        if (isConfirm) {
-          $.ajax({
-            url: url + '/' + link_id,
-            type: "DELETE",
-            success: function(data) {
-              table.draw();
-              getBudget();
-              swal({
-                title: "Deleted!",
-                text: "<center>Data Deleted</center>",
-                type: "success",
-                timer: 1000,
-                showConfirmButton: false,
-                html: true
-              });
-            },
-            error: function(data) {
-            }
-          });
-        }
-      }, 500);
+    }).fail(function(data) {
+      $.notify({
+        icon: 'fa fa-warning',
+        message: data.responseText.replace(/['"]+/g, '')
+      }, {
+        type: 'warning',
+        z_index: 2000,
+        delay: 5000,
+      });
     });
   });
   $('#budget_amount').blur(function(){
@@ -164,6 +181,9 @@ $(document).ready(function() {
           dataType: 'json',
           success: function(data) {
             $('#add_budget').modal('hide');
+            $('.callout').removeClass().addClass('callout callout-success');
+            $('h5').text('Renewal Phase Ongoing');
+            $('.btn-status').removeClass().addClass('btn btn-danger btn-status').html("<i class='fa fa-remove'></i> End");
             table.draw();
             getBudget();
             swal({

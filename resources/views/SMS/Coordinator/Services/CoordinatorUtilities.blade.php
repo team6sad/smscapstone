@@ -44,153 +44,139 @@
 										'class' => 'close',
 										'type' => '',
 										'data-dismiss' => 'modal'
-										]) 
-									}}
-									<h4>Checklist</h4>
-								</div>
-								<div class="modal-body">
-									{{ Form::open([
-										'id' => 'frmStep'
-										])
-									}}
-									<div class="form-group">
-										<ul class="todo-list steps">
-										</ul>
-									</div>
-									<div class="form-group">
-										{{ Form::button('Submit', [
-											'id' => 'btn-submit',
-											'class' => 'btn btn-success btn-block',
-											'value' => 'add',
-											'type' => ''
-											]) 
-										}}
-									</div>
-									{{ Form::close() }}
-								</div>
+									]) 
+								}}
+								<h4>Checklist</h4>
 							</div>
-						</div>
-					</div>
-					<div class="modal fade" id="view_claim">
-						<div class="modal-dialog">
-							<div class="modal-content">
-								<div class="modal-header">
-									{{ Form::button('&times;', [
-										'class' => 'close',
-										'type' => '',
-										'data-dismiss' => 'modal'
-										]) 
-									}}
-									<h4>Claim Stipend</h4>
-								</div>
-								<div class="modal-body">
-									{{ Form::open([
-										'id' => 'frmClaim'
-										])
-									}}
-									<div class="form-group">
-										<ul class="todo-list stipend">
-										</ul>
-									</div>
-									<div class="form-group">
-										{{ Form::button('Submit', [
-											'id' => 'btn-save',
-											'class' => 'btn btn-success btn-block',
-											'value' => 'add',
-											'type' => ''
-											]) 
-										}}
-									</div>
-									{{ Form::close() }}
-								</div>
+							<div class="modal-body">
+								{{ Form::open([
+									'id' => 'frmStep'
+								])
+							}}
+							<div class="form-group">
+								<ul class="todo-list steps">
+								</ul>
 							</div>
-						</div>
-					</div>
-					<div class="box-body table-responsive">
-						<table class="table table-bordered table-striped table-hover" cellspacing="0" width="100%">
-							<thead>
-								<th>Student</th>
-								<th>Action</th>
-							</thead>
-							<tbody>
-								@foreach ($application as $applications)
-								<tr>
-									<td>
-										<table><tr><td><div class='col-md-2'><img src='{{ asset('images/'.$applications->picture) }}' class='img-circle' alt='data Image' height='40'></div></td><td>{{ $applications->last_name }}, {{ $applications->first_name }} {{ $applications->middle_name }}</td></tr></table>
-									</td>
-									<td>
-										<button class='btn btn-primary btn-xs btn-progress' value='{{ $applications->id }}'><i class='fa fa-files-o'></i> List</button> <button class='btn btn-success btn-xs open-modal' value='{{ $applications->id }}'><i class='fa fa-money'></i> Claim</button>
-									</td>
-								</tr>
-								@endforeach
-							</tbody>
-						</table>
-					</div>
-				</div>
-				<div class="tab-pane row" id="tab_3">
-					<div class="box-body pad">
-						{{ Form::open([
-							'id' => 'frm',
-							'route' => 'coordinatorutilities.question'
-							])
-						}}
-						<div class="form-group">
-							<textarea class="textarea" name="essay" placeholder="Place some text here"
-							style="width: 100%; height: 400px; font-size: 14px; line-height: 18px; border: 1px solid #dddddd; padding: 10px;" required="required">{{ $utility->essay }}</textarea>
-						</div>
-						<div class="form-group">
-							{{ Form::button("<i class='fa fa-paper-plane'></i> Submit", [
-								'id' => 'btn-save',
-								'class' => 'btn btn-success pull-right',
-								'value' => 'add',
-								'type' => ''
+							<div class="form-group">
+								{{ Form::button('Submit', [
+									'id' => 'btn-submit',
+									'class' => 'btn btn-success btn-block',
+									'value' => 'add',
+									'type' => ''
 								]) 
 							}}
 						</div>
 						{{ Form::close() }}
 					</div>
 				</div>
-				<div class="tab-pane row" id="tab_4">
-				</div>
-				<div class="tab-pane row" id="tab_5">
-					<div class="col-xs-12">
-						Design para dito
-						@if ($utility->apply_status)
-						<div class="callout callout-success">
-							<h4><i class="icon fa fa-info"></i> Application Status</h4>
-							<h5>Renewal Phase Ongoing</h5>
-							<input type='checkbox' id='apply' name='apply' data-toggle='toggle' data-style='android' data-onstyle='success' data-offstyle='danger' data-on="<i class='fa fa-refresh'></i> Start" data-off="<i class='fa fa-remove'></i> End" data-size='large'>
-						</div>
-						@else
-						<div class="callout callout-danger">
-							<h4><i class="icon fa fa-info"></i> Application Status</h4>
-							<h5>Renewal Phase Closed</h5>
-							<input type='checkbox' id='apply' name='apply' data-toggle='toggle' data-style='android' data-onstyle='success' data-offstyle='danger' data-on="<i class='fa fa-refresh'></i> Start" data-off="<i class='fa fa-remove'></i> End" data-size='large' checked='checked'>
-						</div>
-						@endif
-						<label>Filter Application</label>
-						{{ Form::open([
-							'route' => 'coordinatorutilities.question'
-							])
-						}}
-						<div class="checkbox">
-							<label><input type="checkbox" name="criteria[]">Yeah</label>
-						</div>
-						<div class="checkbox">
-							<label><input type="checkbox" name="criteria[]">Yeah</label>
-						</div>
-						<div class="checkbox">
-							<label><input type="checkbox" name="criteria[]">Yeah</label>
-						</div>
-						<div class="checkbox">
-							<label><input type="checkbox" name="criteria[]">Yeah</label>
-						</div>
-						{{ Form::close() }}
-					</div>
-				</div>
 			</div>
 		</div>
-	</section>
+		<div class="modal fade" id="view_claim">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						{{ Form::button('&times;', [
+							'class' => 'close',
+							'type' => '',
+							'data-dismiss' => 'modal'
+						]) 
+					}}
+					<h4>Claim Stipend</h4>
+				</div>
+				<div class="modal-body">
+					{{ Form::open([
+						'id' => 'frmClaim'
+					])
+				}}
+				<div class="form-group">
+					<ul class="todo-list stipend">
+					</ul>
+				</div>
+				<div class="form-group">
+					{{ Form::button('Submit', [
+						'id' => 'btn-save',
+						'class' => 'btn btn-success btn-block',
+						'value' => 'add',
+						'type' => ''
+					]) 
+				}}
+			</div>
+			{{ Form::close() }}
+		</div>
+	</div>
+</div>
+</div>
+<div class="box-body table-responsive">
+	<table class="table table-bordered table-striped table-hover" cellspacing="0" width="100%">
+		<thead>
+			<th>Student</th>
+			<th>Action</th>
+		</thead>
+		<tbody>
+			@foreach ($application as $applications)
+			<tr>
+				<td>
+					<table><tr><td><div class='col-md-2'><img src='{{ asset('images/'.$applications->picture) }}' class='img-circle' alt='data Image' height='40'></div></td><td>{{ $applications->last_name }}, {{ $applications->first_name }} {{ $applications->middle_name }}</td></tr></table>
+				</td>
+				<td>
+					<button class='btn btn-primary btn-xs btn-progress' value='{{ $applications->id }}'><i class='fa fa-files-o'></i> List</button> <button class='btn btn-success btn-xs open-modal' value='{{ $applications->id }}'><i class='fa fa-money'></i> Claim</button>
+				</td>
+			</tr>
+			@endforeach
+		</tbody>
+	</table>
+</div>
+</div>
+<div class="tab-pane row" id="tab_3">
+	<div class="box-body pad">
+		{{ Form::open([
+			'id' => 'frm',
+			'route' => 'coordinatorutilities.question'
+		])
+	}}
+	<div class="form-group">
+		<textarea class="textarea" name="essay" placeholder="Place some text here"
+		style="width: 100%; height: 400px; font-size: 14px; line-height: 18px; border: 1px solid #dddddd; padding: 10px;" required="required">{{ $utility->essay }}</textarea>
+	</div>
+	<div class="form-group">
+		{{ Form::button("<i class='fa fa-paper-plane'></i> Submit", [
+			'id' => 'btn-save',
+			'class' => 'btn btn-success pull-right',
+			'value' => 'add',
+			'type' => ''
+		]) 
+	}}
+</div>
+{{ Form::close() }}
+</div>
+</div>
+<div class="tab-pane row" id="tab_4">
+</div>
+<div class="tab-pane row" id="tab_5">
+	<div class="col-xs-12">
+		<label>Filter Application</label>
+		{{ Form::open([
+			'route' => 'coordinatorutilities.question'
+		])
+	}}
+	<div class="checkbox">
+		<label><input type="checkbox" name="criteria[]">Yeah</label>
+	</div>
+	<div class="checkbox">
+		<label><input type="checkbox" name="criteria[]">Yeah</label>
+	</div>
+	<div class="checkbox">
+		<label><input type="checkbox" name="criteria[]">Yeah</label>
+	</div>
+	<div class="checkbox">
+		<label><input type="checkbox" name="criteria[]">Yeah</label>
+	</div>
+	{{ Form::close() }}
+</div>
+</div>
+</div>
+</div>
+</section>
 </div>
 @endsection
 @section('script')

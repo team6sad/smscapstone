@@ -436,6 +436,7 @@ function inputGrade() {
       "<select id='subject_grade' class='form-control subject_grade' name='subject_grade[]'>" + selectGrade +"</select></div>";
       $('#grade').append(show);
     });
+    getCredit();
     $('.subject_description').parsley();
     $('.units').parsley();
     $('.subject_grade').parsley();
@@ -443,10 +444,31 @@ function inputGrade() {
 }
 $('#intPersCurrentSchool').change(function() {
   inputGrade();
+  getCredit();
+});
+$('#intPersCurrentCourse').change(function() {
+  getCredit();
 });
 $('#councilor').on('mouseenter', '.councilor', function() {
   $.get(url + '/count/' + $(this).attr('value'), function(data) {
     $('#slot' + data.id).text('Slot:' + data.slot + '/' + data.max + ' - Queue:' + data.queued);
   });
 });
+function getCredit()
+{
+  $.get(url + '/credit/' + $('#intPersCurrentSchool').val() + '/' + $('#intPersCurrentCourse').val(), function(data) {
+    var selectYear = '';
+    var selectSemester = '';
+    for (var i = 1; i <= data.year; i++) {
+      selectYear += "<option value=" + i + ">" + i + "</option>";
+    }
+    for (var i = 1; i <= data.semester; i++) {
+      selectSemester += "<option value=" + i + ">" + i + "</option>";
+    }
+    var show1 = "<select class='form-control' id='year' name='year'>"+ selectYear +"</select>";
+    $('.yearCredit').empty().append(show1);
+    var show2 = "<select class='form-control' id='semester' name='semester'>"+ selectSemester +"</select>";
+    $('.semCredit').empty().append(show2);
+  });
+}
 });

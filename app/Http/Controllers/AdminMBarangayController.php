@@ -91,10 +91,6 @@ class AdminMBarangayController extends Controller
                 $barangay->district_id = $request->intDistID;
                 $barangay->description = $request->strBaraDesc;
                 $barangay->save();
-                $barangay = Barangay::join('districts', 'barangay.district_id','districts.id')
-                ->select('barangay.*', 'districts.description as districts_description')
-                ->where('barangay.id',$id)
-                ->first();
                 return Response::json($barangay);
             }
             catch(\Exception $e) {

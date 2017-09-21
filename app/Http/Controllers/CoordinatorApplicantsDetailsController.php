@@ -14,6 +14,7 @@ use App\GradingDetail;
 use App\Budget;
 use Auth;
 use App\Grade;
+use App\UserBudget;
 use PDF;
 class CoordinatorApplicantsDetailsController extends Controller
 {
@@ -84,38 +85,49 @@ class CoordinatorApplicantsDetailsController extends Controller
             Session::flash('fail','Student Already Accepted');
             return redirect(route('applications.index'));
         } catch(\Exception $e) {
-            $budget = Budget::where('user_id',Auth::id())
-            ->latest('id')->first();
-            if ($budget != null) {
-                $application = Application::join('users','student_details.user_id','users.id')
-                ->join('user_councilor','users.id','user_councilor.user_id')
-                ->where('users.type','Student')
-                ->where('user_councilor.councilor_id', function($query){
-                    $query->from('user_councilor')
-                    ->join('users','user_councilor.user_id','users.id')
-                    ->join('councilors','user_councilor.councilor_id','councilors.id')
-                    ->select('councilors.id')
-                    ->where('user_councilor.user_id',Auth::id())
-                    ->first();
-                })
-                ->where('student_details.application_status','Accepted')
-                ->where('student_status','Continuing')
-                ->count();
-                if (($budget->slot_count - $application) == 0) {
+            DB::beginTransaction();
+            try {
+                $budget = Budget::where('user_id',Auth::id())
+                ->latest('id')->first();
+                if ($budget != null) {
+                    $application = Application::join('users','student_details.user_id','users.id')
+                    ->join('user_councilor','users.id','user_councilor.user_id')
+                    ->where('users.type','Student')
+                    ->where('user_councilor.councilor_id', function($query){
+                        $query->from('user_councilor')
+                        ->join('users','user_councilor.user_id','users.id')
+                        ->join('councilors','user_councilor.councilor_id','councilors.id')
+                        ->select('councilors.id')
+                        ->where('user_councilor.user_id',Auth::id())
+                        ->first();
+                    })
+                    ->where('student_details.application_status','Accepted')
+                    ->where('student_status','Continuing')
+                    ->count();
+                    if (($budget->slot_count - $application) == 0) {
+                        Session::flash('fail','No available slot');
+                        return redirect(route('applications.index'));
+                    }
+                    $application = Application::find($id);
+                    $application->application_status = 'Accepted';
+                    $application->save();
+                    $user = User::find($id);
+                    $user->is_active = 1;
+                    $user->save();
+                    $userbudget = new UserBudget;
+                    $userbudget->user_id = $id;
+                    $userbudget->budget_id = $budget->id;
+                    $userbudget->save();
+                    DB::commit();
+                    Session::flash('success','Student Accepted');
+                    return redirect(route('applications.index'));
+                } else {
                     Session::flash('fail','No available slot');
                     return redirect(route('applications.index'));
                 }
-                $application = Application::find($id);
-                $application->application_status = 'Accepted';
-                $application->save();
-                $user = User::find($id);
-                $user->is_active = 1;
-                $user->save();
-                Session::flash('success','Student Accepted');
-                return redirect(route('applications.index'));
-            } else {
-                Session::flash('fail','No available slot');
-                return redirect(route('applications.index'));
+            } catch(\Exception $e) {
+                DB::rollBack();
+                return dd($e->getMessage());
             }
         }
     }

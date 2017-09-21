@@ -3,7 +3,7 @@ namespace App\Providers;
 use Illuminate\Support\ServiceProvider;
 use App\Budget;
 use App\Councilor;
-use App\Application;
+use App\UserBudget;
 use Auth;
 use App\Allocatebudget;
 class ViewComposerServiceProvider extends ServiceProvider
@@ -41,36 +41,23 @@ class ViewComposerServiceProvider extends ServiceProvider
     		if($budget==null)
     			$budget = (object)['amount' => 0, 'slot_count' => 0];
     		else {
-    			$application = Application::join('users','student_details.user_id','users.id')
-    			->join('user_councilor','users.id','user_councilor.user_id')
-    			->where('users.type','Student')
-    			->where('user_councilor.councilor_id', function($query){
-    				$query->from('user_councilor')
-    				->join('users','user_councilor.user_id','users.id')
-    				->join('councilors','user_councilor.councilor_id','councilors.id')
-    				->select('councilors.id')
-    				->where('user_councilor.user_id',Auth::id())
-    				->first();
-    			})
-    			->where('student_details.application_status','Accepted')
-    			->where('student_status','Continuing')
-    			->count();
-    			$allocation = Allocatebudget::join('allocations','user_allocation.allocation_id','allocations.id')
-    			->whereIn('allocation_id', function($query) use($budget) {
-    				$query->from('allocations')
-    				->where('budget_id', $budget->id)
-    				->select('id')
-    				->get();
-    			})
-    			->select('allocations.amount')
-    			->get();
-    			$budget->slot_count -= $application;
-    			foreach ($allocation as $allocations) {
-    				$budget->amount -= $allocations->amount;
-    			}
-    		}
-    		$view->withBudget($budget)->withCouncilor($councilor);
-    	});
+                $userbudget = UserBudget::where('budget_id',$budget->id)->count();
+                $allocation = Allocatebudget::join('allocations','user_allocation.allocation_id','allocations.id')
+                ->whereIn('allocation_id', function($query) use($budget) {
+                    $query->from('allocations')
+                    ->where('budget_id', $budget->id)
+                    ->select('id')
+                    ->get();
+                })
+                ->select('allocations.amount')
+                ->get();
+                $budget->slot_count -= $userbudget;
+                foreach ($allocation as $allocations) {
+                    $budget->amount -= $allocations->amount;
+                }
+            }
+            $view->withBudget($budget)->withCouncilor($councilor);
+        });
     }
     private function composeStudent()
     {

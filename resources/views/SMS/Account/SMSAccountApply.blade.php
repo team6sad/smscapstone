@@ -560,8 +560,8 @@
     <label class="radio-inline">{{ Form::radio('rad', 'no', true, ['id' => 'no']) }} No</label>
 </div>
 <div id="questionappear">
- <div class="row">
-     <div class="container col-md-6 col-sm-12">
+   <div class="row">
+       <div class="container col-md-6 col-sm-12">
         <div class="row">
             <div class="form-group col-md-6 col-sm-12">
                 {{ Form::label('name', "First Name", [
@@ -807,22 +807,26 @@
                 'class' => 'control-label'
             ]) 
         }}
-        {{ Form::selectRange('year', 1, $setting->year_count, null, [
-            'id' => 'year',
-            'class' => 'form-control',
-        ])
-    }}
+        <div class="yearCredit">
+            {{ Form::selectRange('year', 1, 4, null, [
+                'id' => 'year',
+                'class' => 'form-control',
+            ])
+        }}
+    </div>
 </div>
 <div class="form-group col-md-6">
     {{ Form::label('name', "Semester", [
         'class' => 'control-label'
     ]) 
 }}
-{{ Form::selectRange('semester', 1, $setting->semester_count, null, [
-    'id' => 'semester',
-    'class' => 'form-control',
-])
+<div class="semCredit">
+    {{ Form::selectRange('semester', 1, 2, null, [
+        'id' => 'semester',
+        'class' => 'form-control',
+    ])
 }}
+</div>
 </div>
 </div>
 <div class="form-group col-md-2">

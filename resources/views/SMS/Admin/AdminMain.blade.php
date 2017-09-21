@@ -22,10 +22,10 @@
   {!! Html::script("js/bootstrap.min.js") !!} 
   {!! Html::script("plugins/pace/pace.min.js") !!}
   <style type="text/css">
-    [data-notify="container"] {
-      width: 25%;
-    }
-  </style>
+  [data-notify="container"] {
+    width: 25%;
+  }
+</style>
 </head>
 <body class="hold-transition skin-red sidebar-mini">
   <div class="wrapper">
@@ -101,7 +101,7 @@
           </ul>
         </li>
         <li class="{{Request::path() == 'admin/councilor' ? 'active' : ''}}"><a href="{{ url('admin/councilor') }}"><i class="fa fa-gavel"></i><span>Councilor</span></a></li>
-        <li class="treeview {{Request::path() == 'admin/grade' ? 'active' : ''}} {{Request::path() == 'admin/school' ? 'active' : ''}} {{Request::path() == 'admin/course' ? 'active' : ''}} ">
+        <li class="treeview {{Request::path() == 'admin/grade' ? 'active' : ''}} {{Request::path() == 'admin/school' ? 'active' : ''}} {{Request::path() == 'admin/course' ? 'active' : ''}} {{Request::path() == 'admin/credit' ? 'active' : ''}}">
           <a href="#"><i class="fa fa-pencil-square-o"></i><span>Education</span>
             <span class="pull-right-container">
               <i class="fa fa-angle-left pull-right"></i>
@@ -111,6 +111,7 @@
             <li class="{{Request::path() == 'admin/grade' ? 'active' : ''}}"><a href="{{ url('admin/grade') }}"><i class="fa fa-level-up"></i><span>Academic Grading</span></a></li>
             <li class="{{Request::path() == 'admin/school' ? 'active' : ''}}"><a href="{{ url('admin/school') }}"><i class="fa fa-graduation-cap"></i><span>School</span></a></li>
             <li class="{{Request::path() == 'admin/course' ? 'active' : ''}}"><a href="{{ url('admin/course') }}"><i class="fa fa-book"></i><span>Course</span></a></li>
+            <li class="{{Request::path() == 'admin/credit' ? 'active' : ''}}"><a href="{{ url('admin/credit') }}"><i class="fa fa-hourglass-o"></i><span>Course Credit</span></a></li>
           </ul>
         </li>
         <li class="treeview {{Request::path() == 'admin/batch' ? 'active' : ''}} {{Request::path() == 'admin/requirements' ? 'active' : ''}}">

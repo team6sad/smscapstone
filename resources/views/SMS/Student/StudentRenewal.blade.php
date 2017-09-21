@@ -4,9 +4,9 @@
 {!! Html::script("plugins/jQueryUI/jquery-ui.min.js") !!}
 {!! Html::style("plugins/select2/select2.min.css") !!}
 <style type="text/css">
-	#shift { 
-		display: none; 
-	}
+#shift { 
+	display: none; 
+}
 </style>
 @endsection
 @section('content')
@@ -26,8 +26,8 @@
 			<h4><i class="icon fa fa-info"></i> Info</h4>
 			You are free to edit your personal and family data in the Account Settings.
 		</div>
-		@if ($utility->renewal_status)
-		@if (!$application->is_renewal)
+		@if ($utility->phase_status && !$application->is_new)
+		@if (!$application->is_renewal && !$userbudget)
 		<div class="callout callout-success">
 			<h4><i class="icon fa fa-info"></i> Renewal Status</h4>
 			Renewal Phase Ongoing
@@ -41,182 +41,182 @@
 					'id' => 'frm', 
 					'data-parsley-validate' => '',
 					'enctype' => 'multipart/form-data'
-					])
-				}}
-				<div class="form-group">
-					<div class="col-md-10 row">
-						<div class="col-md-3">
-							<label class="control-label">School: </label> {{ $application->school_description }}
-						</div>
-						<div class="col-md-3">
-							<label class="control-label">Course: </label> {{ $application->course_description }}
-						</div>
-						<div class="col-md-3">
-							<label class="control-label">Year: </label> {{ $grade->year }}
-						</div>
-						<div class="col-md-2">
-							<label class="control-label">Semester: </label> {{ $grade->semester }}
-						</div>
+				])
+			}}
+			<div class="form-group">
+				<div class="col-md-10 row">
+					<div class="col-md-3">
+						<label class="control-label">School: </label> {{ $application->school_description }}
 					</div>
-					<div class="col-md-6">
-						{{ Form::label('strApplPicture', 'Upload Grade*', [
-							'class' => 'control-label'
-							]) 
-						}}
-						<div class="btn btn-default btn-file">
-							<i class="fa fa-paperclip"></i> Grades
-							{{ Form::file('strApplGrades', [
-								'required' => 'required'
-								]) 
-							}}
-						</div>
+					<div class="col-md-3">
+						<label class="control-label">Course: </label> {{ $application->course_description }}
 					</div>
-				</div>
-				<label class="col-sm-12">Input Grade</label>
-				<div class='form-group col-md-6'>
-					<label class='control-label'>Description</label>
-					<input id='subject_description' class='form-control subject_description' maxlength='45' autocomplete='off' data-parsley-pattern='^[a-zA-Z0-9ñ ]+$' name='subject_description[]' type='text' required="required">
-				</div>
-				<div class='form-group col-md-2'>
-					<label class='control-label'>Units</label>
-					<input id='units' class='form-control units' maxlength='1' autocomplete='off' data-parsley-pattern='^[0-9 ]+$' name='units[]' type='text' required="required">
-				</div>
-				<div class='form-group col-md-4'>
-					<label class='control-label'>Grade</label>
-					<select id='subject_grade' class='form-control subject_grade' name='subject_grade[]'>
-						@foreach ($grading as $gradings)
-						<option value="{{ $gradings->grade }}">{{ $gradings->grade }}</option>
-						@endforeach
-					</select>
-				</div>
-				<div id="grade"></div>
-				<div class="form-group col-sm-12">
-					<button type="button" class="btn btn-primary grade"><i class='fa fa-plus'></i> Add</button>
-				</div>
-				<div class="form-group">
-					{{ Form::label('name', "Shiftee?", [
-						'class' => 'control-label col-sm-12'
-						]) 
-					}}
-					<div class="col-sm-12">
-						<div class="form-group">
-							<label class="radio-inline">{{ Form::radio('rad', 'yes', false, ['id' => 'yes']) }} Yes</label>
-							<label class="radio-inline">{{ Form::radio('rad', 'no', true, ['id' => 'no']) }} No</label>
-						</div>
-					</div>
-				</div>
-				<div class="row">
-					<div class="col-sm-12" id="shift">
-						<div class="col-sm-12">
-							<h4><b>For Shiftee/Transferee</b></h4>
-						</div>
-						<div class="form-group col-sm-6">
-							<label class="control-label">School Transferred To</label>
-							<select id="school_transfer" name="school_transfer" style="width: 100%;" class="form-control dropdownbox">
-								@foreach ($school as $schools)
-								<option value="{{ $schools->id }}">{{ $schools->abbreviation }} - {{ $schools->description }}</option>
-								@endforeach
-							</select>
-						</div>
-						<div class="form-group col-sm-6">
-							<label class="control-label">Course Shifted To</label> 
-							<select id="course_transfer" name="course_transfer" style="width: 100%;" class="form-control dropdownbox">
-								@foreach ($course as $courses)
-								<option value="{{ $courses->id }}">{{ $courses->abbreviation }} - {{ $courses->description }}</option>
-								@endforeach
-							</select>
-						</div>
-					</div>
-				</div>
-				<div class="col-sm-12">
-					<button class="btn btn-success pull-right"><i class="fa fa-check"></i>  Submit</button>
-				</div>
-				{{ Form::close() }}
-			</div>
-		</div>
-		@else
-		<div class="callout callout-success">
-			<h4><i class="icon fa fa-info"></i> Renewal Status</h4>
-			Renewal request has been submitted
-		</div>
-		<div class="box box-danger">
-			<div class="box-header with-border">
-				<h4><b>Subjects</b></h4>
-			</div>
-			<div class="box-body">
-				<div class="form-group">
-					<div class="col-md-10 row">
-						@if ($shift->school_description != 'N/A')
-						<div class="col-md-3">
-							<label class="control-label">School: </label> {{ $shift->school_description }}
-						</div>
-						<div class="col-md-3">
-							<label class="control-label">Course: </label> {{ $shift->course_description }}
-						</div>
-						@else
-						<div class="col-md-3">
-							<label class="control-label">School: </label> {{ $application->school_description }}
-						</div>
-						<div class="col-md-3">
-							<label class="control-label">Course: </label> {{ $application->course_description }}
-						</div>
-						@endif
-						<div class="col-md-3">
-							<label class="control-label">Year: </label> {{ $grade->year }}
-						</div>
-						<div class="col-md-3">
-							<label class="control-label">Semester: </label> {{ $grade->semester }}
-						</div>
+					<div class="col-md-3">
+						<label class="control-label">Year: </label> {{ $grade->year }}
 					</div>
 					<div class="col-md-2">
-						<a href="{{ asset('docs/'.$grade->pdf) }}" target="_blank"><button type="button" class="btn btn-default"><i class="fa fa-eye"></i> Review Grades</button></a>
+						<label class="control-label">Semester: </label> {{ $grade->semester }}
 					</div>
 				</div>
-				<label class="col-sm-12">Inputted Grades</label>
-				<div class="box-body table-responsive">
-					<table class="table table-bordered table-striped table-hover" cellspacing="0" width="100%">
-						<thead>
-							<th>Description</th>
-							<th>Units</th>
-							<th>Grade</th>
-						</thead>
-						<tbody>
-							@foreach ($gradedetail as $gradedetails)
-							<tr>
-								<td>{{ $gradedetails->description }}</td>
-								<td>{{ $gradedetails->units }}</td>
-								<td>{{ $gradedetails->grade }}</td>
-							</tr>
-							@endforeach
-						</tbody>
-					</table>
-				</div>
-				<div class="row">
-					<div class="col-sm-12">
-						<div class="col-sm-12">
-							<h4><b>For Shiftee/Transferee</b></h4>
-						</div>
-						<div class="form-group col-sm-6">
-							<label class="control-label">School Transferred To</label> <br> {{ $shift->school_description }}
-						</div>
-						<div class="form-group col-sm-6">
-							<label class="control-label">Course Shifted To</label> <br> {{ $shift->course_description }}
-						</div>
-					</div>
-				</div>
+				<div class="col-md-6">
+					{{ Form::label('strApplPicture', 'Upload Grade*', [
+						'class' => 'control-label'
+					]) 
+				}}
+				<div class="btn btn-default btn-file">
+					<i class="fa fa-paperclip"></i> Grades
+					{{ Form::file('strApplGrades', [
+						'required' => 'required'
+					]) 
+				}}
 			</div>
-			@endif
-			@else
-			<div class="callout callout-danger">
-				<h4><i class="icon fa fa-info"></i> Renewal Status</h4>
-				Renewal Phase Closed
-			</div>
-			@endif
-		</section>
+		</div>
 	</div>
-	@endsection
-	@section('script')
-	{!! Html::script("plugins/iCheck/icheck.min.js") !!}
-	{!! Html::script("plugins/select2/select2.min.js") !!}
-	{!! Html::script("custom/StudentRenewal.min.js") !!}
-	@endsection
+	<label class="col-sm-12">Input Grade</label>
+	<div class='form-group col-md-6'>
+		<label class='control-label'>Description</label>
+		<input id='subject_description' class='form-control subject_description' maxlength='45' autocomplete='off' data-parsley-pattern='^[a-zA-Z0-9ñ ]+$' name='subject_description[]' type='text' required="required">
+	</div>
+	<div class='form-group col-md-2'>
+		<label class='control-label'>Units</label>
+		<input id='units' class='form-control units' maxlength='1' autocomplete='off' data-parsley-pattern='^[0-9 ]+$' name='units[]' type='text' required="required">
+	</div>
+	<div class='form-group col-md-4'>
+		<label class='control-label'>Grade</label>
+		<select id='subject_grade' class='form-control subject_grade' name='subject_grade[]'>
+			@foreach ($grading as $gradings)
+			<option value="{{ $gradings->grade }}">{{ $gradings->grade }}</option>
+			@endforeach
+		</select>
+	</div>
+	<div id="grade"></div>
+	<div class="form-group col-sm-12">
+		<button type="button" class="btn btn-primary grade"><i class='fa fa-plus'></i> Add</button>
+	</div>
+	<div class="form-group">
+		{{ Form::label('name', "Shiftee?", [
+			'class' => 'control-label col-sm-12'
+		]) 
+	}}
+	<div class="col-sm-12">
+		<div class="form-group">
+			<label class="radio-inline">{{ Form::radio('rad', 'yes', false, ['id' => 'yes']) }} Yes</label>
+			<label class="radio-inline">{{ Form::radio('rad', 'no', true, ['id' => 'no']) }} No</label>
+		</div>
+	</div>
+</div>
+<div class="row">
+	<div class="col-sm-12" id="shift">
+		<div class="col-sm-12">
+			<h4><b>For Shiftee/Transferee</b></h4>
+		</div>
+		<div class="form-group col-sm-6">
+			<label class="control-label">School Transferred To</label>
+			<select id="school_transfer" name="school_transfer" style="width: 100%;" class="form-control dropdownbox">
+				@foreach ($school as $schools)
+				<option value="{{ $schools->id }}">{{ $schools->abbreviation }} - {{ $schools->description }}</option>
+				@endforeach
+			</select>
+		</div>
+		<div class="form-group col-sm-6">
+			<label class="control-label">Course Shifted To</label> 
+			<select id="course_transfer" name="course_transfer" style="width: 100%;" class="form-control dropdownbox">
+				@foreach ($course as $courses)
+				<option value="{{ $courses->id }}">{{ $courses->abbreviation }} - {{ $courses->description }}</option>
+				@endforeach
+			</select>
+		</div>
+	</div>
+</div>
+<div class="col-sm-12">
+	<button class="btn btn-success pull-right"><i class="fa fa-check"></i>  Submit</button>
+</div>
+{{ Form::close() }}
+</div>
+</div>
+@else
+<div class="callout callout-success">
+	<h4><i class="icon fa fa-info"></i> Renewal Status</h4>
+	Renewal request has been submitted
+</div>
+<div class="box box-danger">
+	<div class="box-header with-border">
+		<h4><b>Subjects</b></h4>
+	</div>
+	<div class="box-body">
+		<div class="form-group">
+			<div class="col-md-10 row">
+				@if ($shift->school_description != 'N/A')
+				<div class="col-md-3">
+					<label class="control-label">School: </label> {{ $shift->school_description }}
+				</div>
+				<div class="col-md-3">
+					<label class="control-label">Course: </label> {{ $shift->course_description }}
+				</div>
+				@else
+				<div class="col-md-3">
+					<label class="control-label">School: </label> {{ $application->school_description }}
+				</div>
+				<div class="col-md-3">
+					<label class="control-label">Course: </label> {{ $application->course_description }}
+				</div>
+				@endif
+				<div class="col-md-3">
+					<label class="control-label">Year: </label> {{ $grade->year }}
+				</div>
+				<div class="col-md-3">
+					<label class="control-label">Semester: </label> {{ $grade->semester }}
+				</div>
+			</div>
+			<div class="col-md-2">
+				<a href="{{ asset('docs/'.$grade->pdf) }}" target="_blank"><button type="button" class="btn btn-default"><i class="fa fa-eye"></i> Review Grades</button></a>
+			</div>
+		</div>
+		<label class="col-sm-12">Inputted Grades</label>
+		<div class="box-body table-responsive">
+			<table class="table table-bordered table-striped table-hover" cellspacing="0" width="100%">
+				<thead>
+					<th>Description</th>
+					<th>Units</th>
+					<th>Grade</th>
+				</thead>
+				<tbody>
+					@foreach ($gradedetail as $gradedetails)
+					<tr>
+						<td>{{ $gradedetails->description }}</td>
+						<td>{{ $gradedetails->units }}</td>
+						<td>{{ $gradedetails->grade }}</td>
+					</tr>
+					@endforeach
+				</tbody>
+			</table>
+		</div>
+		<div class="row">
+			<div class="col-sm-12">
+				<div class="col-sm-12">
+					<h4><b>For Shiftee/Transferee</b></h4>
+				</div>
+				<div class="form-group col-sm-6">
+					<label class="control-label">School Transferred To</label> <br> {{ $shift->school_description }}
+				</div>
+				<div class="form-group col-sm-6">
+					<label class="control-label">Course Shifted To</label> <br> {{ $shift->course_description }}
+				</div>
+			</div>
+		</div>
+	</div>
+	@endif
+	@else
+	<div class="callout callout-danger">
+		<h4><i class="icon fa fa-info"></i> Renewal Status</h4>
+		Renewal Phase Closed
+	</div>
+	@endif
+</section>
+</div>
+@endsection
+@section('script')
+{!! Html::script("plugins/iCheck/icheck.min.js") !!}
+{!! Html::script("plugins/select2/select2.min.js") !!}
+{!! Html::script("custom/StudentRenewal.min.js") !!}
+@endsection

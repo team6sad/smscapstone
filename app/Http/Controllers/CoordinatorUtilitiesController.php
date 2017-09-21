@@ -60,17 +60,6 @@ class CoordinatorUtilitiesController extends Controller
             return Response::json('Already Add or Remove', 500);
         }
     }
-    public function application(Request $request)
-    {
-        try {
-            $utility = Utility::findorfail(Auth::id());
-            $utility->apply_status = $request->is_active;
-            $utility->save();
-            return Response::json($utility);
-        } catch(\Exception $e) {
-            return "Deleted";
-        } 
-    }
     public function index()
     {
         $application = Application::join('users','student_details.user_id','users.id')

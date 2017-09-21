@@ -13,6 +13,10 @@ use Auth;
 use App\Application;
 use App\Allocatebudget;
 use DB;
+use App\Utility;
+use App\UserBudget;
+use App\Credit;
+use App\Grade;
 class CoordinatorBudgetController extends Controller
 {
     public function __construct()
@@ -25,7 +29,12 @@ class CoordinatorBudgetController extends Controller
         $budget = Budget::where('user_id',Auth::id());
         return Datatables::of($budget)
         ->addColumn('action', function ($data) {
-            return "<button class='btn btn-info btn-xs btn-view' value='$data->id'><i class='fa fa-eye'></i> View</button> <button class='btn btn-warning btn-xs btn-detail open-modal' value='$data->id'><i class='fa fa-edit'></i> Edit</button> <button class='btn btn-danger btn-xs btn-delete' value='$data->id'><i class='fa fa-trash-o'></i> Delete</button>";
+            $userbudget = UserBudget::where('budget_id',$data->id)->count();
+            if ($userbudget == 0) {
+                return "<button class='btn btn-info btn-xs btn-view' value='$data->id'><i class='fa fa-eye'></i> View</button> <button class='btn btn-warning btn-xs btn-detail open-modal' value='$data->id'><i class='fa fa-edit'></i> Edit</button>";
+            } else {
+                return "<button class='btn btn-info btn-xs btn-view' value='$data->id'><i class='fa fa-eye'></i> View</button>";
+            }
         })
         ->editColumn('budget_date', function ($data) {
             return $data->budget_date ? with(new Carbon($data->budget_date))->format('M d, Y - h:i A') : '';
@@ -38,13 +47,41 @@ class CoordinatorBudgetController extends Controller
     }
     public function index()
     {
+        $utility = Utility::where('user_id',Auth::id())->first();
         $budgtype = Budgtype::where('is_active',1)->get();
-        return view('SMS.Coordinator.Services.CoordinatorBudget')->withBudgtype($budgtype);
+        return view('SMS.Coordinator.Services.CoordinatorBudget')->withBudgtype($budgtype)->withUtility($utility);
     }
     public function store(Request $request)
     {
         DB::beginTransaction();
         try {
+            $budget = Budget::where('user_id',Auth::id())
+            ->latest('id')->first();
+            if($budget!=null) {
+                $application = Application::join('users','student_details.user_id','users.id')
+                ->join('user_councilor','users.id','user_councilor.user_id')
+                ->select('student_details.*')
+                ->where('users.type','Student')
+                ->where('user_councilor.councilor_id', function($query){
+                    $query->from('user_councilor')
+                    ->join('users','user_councilor.user_id','users.id')
+                    ->join('councilors','user_councilor.councilor_id','councilors.id')
+                    ->select('councilors.id')
+                    ->where('user_councilor.user_id',Auth::id())
+                    ->first();
+                })
+                ->where('student_details.application_status','Accepted')
+                ->where('student_status','Continuing')
+                ->get();
+                foreach ($application as $applications) {
+                    $credit = Credit::where('school_id',$applications->school_id)->where('course_id',$applications->course_id)->first();
+                    $grade = Grade::where('student_detail_user_id',$applications->user_id)->latest('id')->first();
+                    if ($grade->year == $credit->year && $grade->semester == $credit->semester) {
+                        $applications->student_status = 'Graduated';
+                        $applications->save();
+                    }
+                }
+            }
             $connection = Connection::where('user_id',Auth::id())->first();
             $ctr = 0;
             $budget = new Budget;
@@ -63,8 +100,11 @@ class CoordinatorBudgetController extends Controller
                 $allocation->save();
                 $ctr++;
             }
+            $utility = Utility::find(Auth::id());
+            $utility->phase_status = 1;
+            $utility->save();
             DB::commit();
-            return Response::json($budget);
+            return Response::json($utility);
         } catch(\Exception $e) {
             DB::rollBack();
             return Response::json($e->getMessage(),500);
@@ -81,12 +121,46 @@ class CoordinatorBudgetController extends Controller
     }
     public function edit($id)
     {
-        $allocation = Allocation::join('budgets','allocations.budget_id','budgets.id')
-        ->join('allocation_types','allocations.allocation_type_id','allocation_types.id')
-        ->select('budgets.*','allocations.amount as allocation_amount','allocation_types.id as allocation_id','allocations.id as allocate_id')
-        ->where('allocations.budget_id',$id)
-        ->get();
-        return Response::json($allocation);
+        try {
+            $budget = Budget::where('is_final',0)->where('id',$id)->firstorfail();
+            $allocation = Allocation::join('budgets','allocations.budget_id','budgets.id')
+            ->join('allocation_types','allocations.allocation_type_id','allocation_types.id')
+            ->select('budgets.*','allocations.amount as allocation_amount','allocation_types.id as allocation_id','allocations.id as allocate_id')
+            ->where('allocations.budget_id',$id)
+            ->get();
+            return Response::json($allocation);
+        } catch(\Exception $e) {
+            return Response::json('Budget already changed',500);
+        } 
+    }
+    public function end()
+    {
+        try {
+            $budget = UserBudget::where('budget_id', function($query) {
+                $query->from('budgets')
+                ->latest('id')
+                ->select('id')
+                ->first();
+            })->firstorfail();
+            DB::beginTransaction();
+            try {
+                $application = Application::where('is_new',1)->get();
+                foreach ($application as $applications) {
+                    $applications->is_new = 0;
+                    $applications->save();
+                }
+                $utility = Utility::find(Auth::id());
+                $utility->phase_status = 0;
+                $utility->save();
+                DB::commit();
+                return Response::json($utility);
+            } catch(\Exception $e) {
+                DB::rollBack();
+                return Response::json($e->getMessage(),500);
+            } 
+        } catch(\Exception $e) {
+            return Response::json($e->getMessage(),500);
+        } 
     }
     public function update(Request $request, $id)
     {
@@ -116,32 +190,11 @@ class CoordinatorBudgetController extends Controller
             return Response::json($e->getMessage(),500);
         } 
     }
-    public function destroy($id)
-    {
-        $allocation = Allocation::where('budget_id',$id)->delete();
-        $budget = Budget::find($id);
-        $budget->delete();
-        $allo = Budget::latest('id')->first();
-        return Response::json($allo);
-    }
     public function getBudget()
     {
-        $application = Application::join('users','student_details.user_id','users.id')
-        ->join('user_councilor','users.id','user_councilor.user_id')
-        ->where('users.type','Student')
-        ->where('user_councilor.councilor_id', function($query){
-            $query->from('user_councilor')
-            ->join('users','user_councilor.user_id','users.id')
-            ->join('councilors','user_councilor.councilor_id','councilors.id')
-            ->select('councilors.id')
-            ->where('user_councilor.user_id',Auth::id())
-            ->first();
-        })
-        ->where('student_details.application_status','Accepted')
-        ->where('student_status','Continuing')
-        ->count();
         $budget = Budget::where('user_id',Auth::id())
         ->latest('id')->first();
+        $userbudget = UserBudget::where('budget_id',$budget->id)->count();
         $allocation = Allocatebudget::join('allocations','user_allocation.allocation_id','allocations.id')
         ->whereIn('allocation_id', function($query) use($budget) {
             $query->from('allocations')
@@ -154,7 +207,7 @@ class CoordinatorBudgetController extends Controller
         if($budget==null)
             $budget = (object)['amount' => 0, 'slot_count' => 0];
         else {
-            $budget->slot_count -= $application;
+            $budget->slot_count -= $userbudget;
             foreach ($allocation as $allocations) {
                 $budget->amount -= $allocations->amount;
             }
