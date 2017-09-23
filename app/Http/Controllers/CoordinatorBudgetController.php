@@ -122,15 +122,15 @@ class CoordinatorBudgetController extends Controller
     public function edit($id)
     {
         try {
-            $budget = Budget::where('is_final',0)->where('id',$id)->firstorfail();
+            $userbudget = UserBudget::where('budget_id',$id)->firstorfail();
+            return Response::json('Budget already changed',500);
+        } catch(\Exception $e) {
             $allocation = Allocation::join('budgets','allocations.budget_id','budgets.id')
             ->join('allocation_types','allocations.allocation_type_id','allocation_types.id')
             ->select('budgets.*','allocations.amount as allocation_amount','allocation_types.id as allocation_id','allocations.id as allocate_id')
             ->where('allocations.budget_id',$id)
             ->get();
             return Response::json($allocation);
-        } catch(\Exception $e) {
-            return Response::json('Budget already changed',500);
         } 
     }
     public function end()

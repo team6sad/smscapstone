@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Auth;
 
 use App\User;
+use App\Setting;
+use DB;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\SmartCounter;
 use Illuminate\Support\Facades\Validator;
@@ -54,7 +56,7 @@ class RegisterController extends Controller
             'cell_no' => 'required|string|max:15',
             'email' => 'required|string|email|max:30|unique:users',
             'password' => 'required|string|min:6|confirmed',
-            ]);
+        ]);
     }
 
     /**
@@ -65,17 +67,30 @@ class RegisterController extends Controller
      */
     protected function create(array $data)
     {
-        $sc = new SmartCounter;
-        $user = new User;
-        $user->id = $sc->increment('Admin');
-        $user->first_name = $data['first_name'];
-        $user->middle_name = $data['middle_name'];
-        $user->last_name = $data['last_name'];
-        $user->cell_no = $data['cell_no'];
-        $user->email = $data['email'];
-        $user->password = bcrypt($data['password']);
-        $user->is_active = 1;
-        $user->save();
-        return $user;
+        DB::beginTransaction();
+        try {
+            $sc = new SmartCounter;
+            $user = new User;
+            $user->id = $sc->increment('Admin');
+            $user->first_name = $data['first_name'];
+            $user->middle_name = $data['middle_name'];
+            $user->last_name = $data['last_name'];
+            $user->cell_no = $data['cell_no'];
+            $user->email = $data['email'];
+            $user->password = bcrypt($data['password']);
+            $user->is_active = 1;
+            $user->save();
+            $setting = new Setting;
+            $setting->title = "System Name";
+            $setting->logo = "logo.png";
+            $setting->year_count = "5";
+            $setting->semester_count = "2";
+            $setting->save();
+            DB::commit();
+            return $user;
+        } catch(\Exception $e) {
+            DB::rollBack();
+            return dd($e->getMessage());
+        }  
     }
 }

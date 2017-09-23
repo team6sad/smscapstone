@@ -3,12 +3,12 @@
 <div class="content-wrapper">
 	<section class="content-header">
 		<h1>
-			Course Credit
+			Credit
 		</h1>
 		<ol class="breadcrumb">
 			<li><a href="{{ url('admin/dashboard') }}"><i class="fa fa-dashboard"></i> Dashboard</a></li>
 			<li><i class="fa fa-pencil-square-o"></i> Education</li>
-			<li class="active"><i class="fa fa-fw fa-hourglass-o"></i> Course Credit</li>
+			<li class="active"><i class="fa fa-fw fa-hourglass-o"></i> Credit</li>
 		</ol>
 	</section>
 	<section class="content">

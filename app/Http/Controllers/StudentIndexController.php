@@ -52,8 +52,7 @@ class StudentIndexController extends Controller
 		->where('user_id',Auth::id())
 		->select('user_requirement.requirement_id')
 		->get();
-		$requirement = Requirement::leftJoin('user_requirement','requirements.id','user_requirement.requirement_id')
-		->where('requirements.user_id', function($query) {
+		$requirement = Requirement::where('user_id', function($query) {
 			$query->from('user_councilor')
 			->join('users','user_councilor.user_id','users.id')
 			->where('user_councilor.councilor_id', function($subquery) {
@@ -65,16 +64,24 @@ class StudentIndexController extends Controller
 			->where('users.type','Coordinator')
 			->select('users.id');
 		})
-		->where('requirements.type',$type)
+		->where('type',$type)
 		->select('requirements.*')
 		->get();
-		// foreach ($step as $steps) {
-		// 	foreach ($requirement as $requirements) {
-		// 		if (condition) {
-		// 			# code...
-		// 		}
-		// 	}
-		// }
-		return view('SMS.Student.StudentIndex')->withAllocation($allocation)->withRequirement($requirement);
+		$userbudget = Studentsteps::join('user_budget','user_budget.user_id','user_requirement.user_id')
+		->where('user_budget.budget_id', function($query) {
+			$query->from('budgets')
+			->where('budgets.councilor_id', function($subquery) {
+				$subquery->from('user_councilor')
+				->select('councilor_id')
+				->where('user_id',Auth::id())
+				->first();
+			})
+			->latest('id')
+			->select('id')
+			->first();
+		})
+		->select('user_requirement.*')
+		->get();
+		return view('SMS.Student.StudentIndex')->withAllocation($allocation)->withRequirement($requirement)->withUserbudget($userbudget);
 	}
 }

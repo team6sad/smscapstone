@@ -28,10 +28,16 @@
 								</thead>
 								<tbody>
 									@foreach ($requirement as $requirements)
+									@foreach ($userbudget as $userbudgets)
 									<tr>
 										<td>{{ $requirements->description }}</td>
-										<td>{{ $requirements->date_passed }}</td>
+										@if ($requirements->id == $userbudgets->requirement_id)
+										<td>Passed</td>
+										@else
+										<td>Not Passed</td>
+										@endif
 									</tr>
+									@endforeach
 									@endforeach
 								</tbody>
 							</table>

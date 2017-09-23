@@ -16,6 +16,25 @@ $(document).ready(function() {
         { data: 'is_active', name: 'is_active', searchable: false, orderable: false }
         ]
     });
+    $('#list').on('change', '#isActive', function() {
+        var link_id = $(this).val();
+        var is_active = 0;
+        if ($(this).prop('checked')) {
+            is_active = 1;
+        }
+        var formData = {
+            is_active: is_active
+        }
+        $.ajax({
+            url: url + '/checkbox/' + link_id,
+            type: "PUT",
+            data: formData,
+            success: function(data) {
+                Pace.restart();
+            },
+            error: function(data) {}
+        });
+    });
     $('#view_step').on('hide.bs.modal', function() {
         $('#frmStep').trigger("reset");
         $('.steps').empty();
@@ -160,31 +179,6 @@ $(document).ready(function() {
         });
     }
     $('.todo-list').todoList();
-    $('#apply').change(function() {
-        var is_active = 1;
-        if ($(this).prop('checked')) {
-            var is_active = 0;
-        }
-        var formData = {
-            is_active: is_active
-        }
-        $.ajax({
-            url: url + "/application",
-            type: "POST",
-            data: formData,
-            success: function(data) {
-                Pace.restart();
-                if (data.apply_status == 0) {
-                    $('.callout').removeClass().addClass('callout callout-danger');
-                    $('h5').text('Renewal Phase Closed');
-                } else {
-                    $('.callout').removeClass().addClass('callout callout-success');
-                    $('h5').text('Renewal Phase Ongoing');
-                }
-            },
-            error: function(data) {}
-        });
-    });
     $('#others').click(function() {
         $('.btn-lg.android').attr('style', 'width: 112.453px;');
     });

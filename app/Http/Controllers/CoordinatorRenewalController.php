@@ -77,7 +77,7 @@ class CoordinatorRenewalController extends Controller
     }
     public function index()
     {
-        return view('SMS.Coordinator.Services.CoordinatorRenewal');
+        return view('SMS.Coordinator.Scholar.CoordinatorRenewal');
     }
     public function accept($id)
     {

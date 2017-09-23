@@ -1,34 +1,16 @@
 <?php
 namespace App\Http\Controllers;
 use Illuminate\Http\Request;
+use App\Setting;
 class AdminUtilitiesController extends Controller
 {
     public function index()
     {
-        return view('SMS.Admin.Services.AdminUtilities');
-    }
-    public function create()
-    {
-        //
+        $setting = Setting::first();
+        return view('SMS.Admin.Services.AdminUtilities')->withSetting($setting);
     }
     public function store(Request $request)
     {
-        //
-    }
-    public function show($id)
-    {
-        //
-    }
-    public function edit($id)
-    {
-        //
-    }
-    public function update(Request $request, $id)
-    {
-        //
-    }
-    public function destroy($id)
-    {
-        //
+        return redirect()->route('adminutilities.index');
     }
 }

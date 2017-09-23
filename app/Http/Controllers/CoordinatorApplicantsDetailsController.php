@@ -42,7 +42,6 @@ class CoordinatorApplicantsDetailsController extends Controller
                 ->where('users.id',Auth::id())
                 ->first();
             })
-            ->where('student_details.application_status','Pending')
             ->firstorfail();
             $count = Affiliation::where('student_detail_user_id',$id)->count();
             $affiliation = Affiliation::where('student_detail_user_id',$id)->get();
@@ -67,13 +66,14 @@ class CoordinatorApplicantsDetailsController extends Controller
                 $grade = Grade::join('grade_details','grades.id','grade_details.grade_id')
                 ->select('grade_details.*','grades.*', 'grades.id as grade_id')
                 ->where('grades.student_detail_user_id',$id)
+                ->oldest('grades.id')
                 ->get();
                 $grading = GradingDetail::where('grading_id',$grade[0]->grading_id)->get();
             }
             return view('SMS.Coordinator.Scholar.CoordinatorApplicantsDetails')->withApplication($application)->withMother($mother)->withFather($father)->withElem($elem)->withHs($hs)->withSiblings($siblings)->withExist($exist)->withCount($count)->withAffiliation($affiliation)->withGrade($grade)->withGrading($grading)->withGrades($grades)->withGetpdf($getpdf);
         } catch(\Exception $e) {
             dd($e->getMessage());
-            return redirect(route('applications.index'));
+            return redirect(route('applicants.index'));
         }
     }
     public function edit($id)
@@ -83,7 +83,7 @@ class CoordinatorApplicantsDetailsController extends Controller
             ->whereNotIn('application_status',['Pending','Declined'])
             ->firstorfail();
             Session::flash('fail','Student Already Accepted');
-            return redirect(route('applications.index'));
+            return redirect(route('applicants.index'));
         } catch(\Exception $e) {
             DB::beginTransaction();
             try {
@@ -106,7 +106,7 @@ class CoordinatorApplicantsDetailsController extends Controller
                     ->count();
                     if (($budget->slot_count - $application) == 0) {
                         Session::flash('fail','No available slot');
-                        return redirect(route('applications.index'));
+                        return redirect(route('applicants.index'));
                     }
                     $application = Application::find($id);
                     $application->application_status = 'Accepted';
@@ -120,10 +120,10 @@ class CoordinatorApplicantsDetailsController extends Controller
                     $userbudget->save();
                     DB::commit();
                     Session::flash('success','Student Accepted');
-                    return redirect(route('applications.index'));
+                    return redirect(route('applicants.index'));
                 } else {
                     Session::flash('fail','No available slot');
-                    return redirect(route('applications.index'));
+                    return redirect(route('applicants.index'));
                 }
             } catch(\Exception $e) {
                 DB::rollBack();
@@ -138,7 +138,7 @@ class CoordinatorApplicantsDetailsController extends Controller
             ->whereNotIn('application_status',['Pending','Accepted'])
             ->firstorfail();
             Session::flash('fail','Student Already Declined');
-            return redirect(route('applications.index'));
+            return redirect(route('applicants.index'));
         } catch(\Exception $e) {
             $application = Application::find($id);
             $application->remarks=$request->strApplRemarks;
@@ -148,7 +148,7 @@ class CoordinatorApplicantsDetailsController extends Controller
             $user->is_active = 0;
             $user->save();
             Session::flash('success','Student Declined');
-            return redirect(route('applications.index'));
+            return redirect(route('applicants.index'));
         }
     }
     public function form($id)

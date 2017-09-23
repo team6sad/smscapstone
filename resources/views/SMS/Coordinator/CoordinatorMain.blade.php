@@ -21,16 +21,16 @@
   {!! Html::script("js/bootstrap.min.js") !!}
   {!! Html::script("plugins/pace/pace.min.js") !!}
   <style type="text/css">
-    [data-notify="container"] {
-      width: 25%;
-    }
-    .counter {
-      overflow: hidden;
-      text-overflow: ellipsis;
-      padding: 10px
-    }
-  </style>
-  <link rel="icon" href="{{ asset('img/logo.ico') }}">
+  [data-notify="container"] {
+    width: 25%;
+  }
+  .counter {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding: 10px
+  }
+</style>
+<link rel="icon" href="{{ asset('img/logo.ico') }}">
 </head>
 <body class="hold-transition skin-red sidebar-mini">
   <div class="wrapper">
@@ -103,19 +103,18 @@
       <ul class="sidebar-menu" data-widget="tree">
         <li class="header">NAVIGATION</li>
         <li class="{{Request::path() == 'coordinator/dashboard' ? 'active' : ''}}"><a href="{{ url('coordinator/dashboard') }}"><i class="fa fa-dashboard"></i><span>Dashboard</span></a></li>
-        <li class="{{Request::path() == 'coordinator/applications' ? 'active' : ''}}"><a href="{{ url('coordinator/applications') }}"><i class="fa fa-users"></i><span>Applications</span></a></li>
-        <li class="treeview {{Request::path() == 'coordinator/list' ? 'active' : ''}} {{Request::path() == 'coordinator/checklist' ? 'active' : ''}} {{Request::path() == 'coordinator/renewal' ? 'active' : ''}}">
-          <a href="#"><i class="fa fa-graduation-cap"></i><span>Scholars</span>
+        <li class="treeview {{Request::path() == 'coordinator/renewal' ? 'active' : ''}} {{Request::path() == 'coordinator/applicants' ? 'active' : ''}}">
+          <a href="#"><i class="fa fa-wpforms"></i><span>Applications</span>
             <span class="pull-right-container">
               <i class="fa fa-angle-left pull-right"></i>
             </span>
           </a>
           <ul class="treeview-menu">
-            <li class="{{Request::path() == 'coordinator/list' ? 'active' : ''}}"><a href="{{ url('coordinator/list') }}"><i class="fa fa-list-ul"></i><span>List</span></a></li>
-            <li class="{{Request::path() == 'coordinator/checklist' ? 'active' : ''}}"><a href="{{ url('coordinator/checklist') }}"><i class="fa fa-tasks"></i><span>Checklist</span></a></li>
+            <li class="{{Request::path() == 'coordinator/applicants' ? 'active' : ''}}"><a href="{{ url('coordinator/applicants') }}"><i class="fa fa-users"></i><span>Applicants</span></a></li>
             <li class="{{Request::path() == 'coordinator/renewal' ? 'active' : ''}}"><a href="{{ url('coordinator/renewal') }}"><i class="fa fa-refresh"></i><span>Renewal</span></a></li>
           </ul>
         </li>
+        <li class="{{Request::path() == 'coordinator/scholars' ? 'active' : ''}}"><a href="{{ url('coordinator/scholars') }}"><i class="fa fa-graduation-cap"></i><span>Scholars</span></a></li>
         <li class="treeview {{Request::path() == 'coordinator/messages' ? 'active' : ''}} {{Request::path() == 'coordinator/messages/create' ? 'active' : ''}} {{Request::path() == 'coordinator/messages/sent' ? 'active' : ''}} {{Request::path() == 'coordinator/announcements' ? 'active' : ''}} {{Request::path() == 'coordinator/events' ? 'active' : ''}}">
           <a href="#"><i class="fa fa-phone"></i><span>Communication&emsp;&emsp;&emsp;<small class="label bg-green panelnotif"></small></span>
             <span class="pull-right-container">

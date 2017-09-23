@@ -111,7 +111,7 @@
             <li class="{{Request::path() == 'admin/grade' ? 'active' : ''}}"><a href="{{ url('admin/grade') }}"><i class="fa fa-level-up"></i><span>Academic Grading</span></a></li>
             <li class="{{Request::path() == 'admin/school' ? 'active' : ''}}"><a href="{{ url('admin/school') }}"><i class="fa fa-graduation-cap"></i><span>School</span></a></li>
             <li class="{{Request::path() == 'admin/course' ? 'active' : ''}}"><a href="{{ url('admin/course') }}"><i class="fa fa-book"></i><span>Course</span></a></li>
-            <li class="{{Request::path() == 'admin/credit' ? 'active' : ''}}"><a href="{{ url('admin/credit') }}"><i class="fa fa-hourglass-o"></i><span>Course Credit</span></a></li>
+            <li class="{{Request::path() == 'admin/credit' ? 'active' : ''}}"><a href="{{ url('admin/credit') }}"><i class="fa fa-hourglass-o"></i><span>Credit</span></a></li>
           </ul>
         </li>
         <li class="treeview {{Request::path() == 'admin/batch' ? 'active' : ''}} {{Request::path() == 'admin/requirements' ? 'active' : ''}}">

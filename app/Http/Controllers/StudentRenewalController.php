@@ -105,6 +105,9 @@ class StudentRenewalController extends Controller
             ->select('id')
             ->first();
         })->count();
+        $number = new NumberToWord;
+        $grade->year = $number->number($grade->year);
+        $grade->semester = $number->number($grade->semester);
         return view('SMS.Student.StudentRenewal')->withApplication($application)->withGrading($grading)->withGrade($grade)->withSchool($school)->withCourse($course)->withUtility($utility)->withGradedetail($gradedetail)->withShift($shift)->withUserbudget($userbudget);
     }
     public function store(Request $request)

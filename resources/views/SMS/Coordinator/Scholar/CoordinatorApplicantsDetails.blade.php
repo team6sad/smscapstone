@@ -265,10 +265,12 @@
             <div class="col-md-12 form-group">
               <div class="essay">{{$application->essay}}</div>
             </div>
+            @if ($application->application_status=='Pending')
             <div class="pull-right">
               <a class="btn btn-success btn-accept"><i class="fa fa-check"></i> Accept</a>
               <a class="btn btn-danger"><i class="fa fa-remove"></i> Decline</a>
             </div>
+            @endif
           </div>
         </div>
       </div>

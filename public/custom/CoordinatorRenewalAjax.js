@@ -13,7 +13,7 @@ $(document).ready(function() {
 		ajax: dataurl,
 		"columnDefs": [
 		{ "width": "200px", "targets": 2 },
-		{ "width": "70px", "targets": 1 }
+		{ "width": "130px", "targets": 1 }
 		],
 		columns: [
 		{ data: 'strStudName', name: 'strStudName' },
