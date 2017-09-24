@@ -41,12 +41,21 @@
 							<li class="list-group-item">
 								<b>Status</b> <a class="pull-right">{{ $application->student_status }}</a>
 							</li>
+							@if ($application->student_status != 'Continuing')
+							<li class="list-group-item">
+								<b>Year</b> <a class="pull-right">....</a>
+							</li>
+							<li class="list-group-item">
+								<b>Semester</b> <a class="pull-right">....</a>
+							</li>
+							@else
 							<li class="list-group-item">
 								<b>Year</b> <a class="pull-right">{{ $grade->year }}</a>
 							</li>
 							<li class="list-group-item">
 								<b>Semester</b> <a class="pull-right">{{ $grade->semester }}</a>
 							</li>
+							@endif
 						</ul>
 					</div>
 				</div>
@@ -126,6 +135,7 @@
 								<div class="box-body">
 									<div class="col-xs-12">
 										<?php $ctr = 0 ?>
+										@if ($application->is_renewal == 0 && $getsem != 0)
 										@foreach ($requirement as $requirements)
 										<?php $ctr++; ?>
 										<div class="col-sm-6">
@@ -134,6 +144,12 @@
 											</div>
 										</div>
 										@endforeach
+										@if ($ctr==0)
+										<center>Requirements Completed</center>
+										@endif
+										@else
+										<center>Not Current Accepted in Renewal</center>
+										@endif
 									</div>
 								</div>
 							</div>
@@ -194,6 +210,7 @@
 					<div id="collapseThree" class="panel-collapse collapse in">
 						<div class="box-body">
 							<div class="col-xs-12">
+								@if ($count == $studentstep)
 								<?php $ctr2 = 0 ?>
 								@foreach ($allocation as $allocations)
 								<?php $ctr2++; ?>
@@ -203,10 +220,17 @@
 									</div>
 								</div>
 								@endforeach
+								@if ($ctr2==0)
+								<center>Claiming Completed</center>
+								@endif
+								@else
+								<center>Complete Requirements First</center>
+								@endif
 							</div>
 						</div>
 					</div>
 				</div>
+				@if ($count == $studentstep)
 				@if ($ctr2!=0)
 				<div class="row">
 					<div class="col-xs-12">
@@ -219,6 +243,7 @@
 					</div>
 				</div>
 			</div>
+			@endif
 			@endif
 			{{ Form::close() }}
 			@endif

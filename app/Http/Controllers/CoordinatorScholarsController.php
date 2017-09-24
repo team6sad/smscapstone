@@ -21,6 +21,8 @@ use App\Allocation;
 use Carbon\Carbon;
 use Config;
 use App\Allocatebudget;
+use App\Credit;
+use App\UserBudget;
 class CoordinatorScholarsController extends Controller
 {
     public function __construct()
@@ -64,13 +66,14 @@ class CoordinatorScholarsController extends Controller
                 ->where('user_requirement.user_id',$data->id)
                 ->where('requirements.type',$type)
                 ->where('requirements.user_id',Auth::id())
-                ->where('user_requirement.grade_id', function($query) use($data){
-                    $query->from('grades')
-                    ->where('student_detail_user_id',$data->id)
-                    ->select('id')
+                ->where('user_requirement.budget_id', function($query) {
+                    $query->from('budgets')
+                    ->where('user_id', Auth::id())
                     ->latest('id')
-                    ->first(); 
-                })->count();
+                    ->select('id')
+                    ->first();
+                })
+                ->count();
                 if($count!=0)
                     $percentage = (($steps/$count)*100);
                 else
@@ -87,11 +90,11 @@ class CoordinatorScholarsController extends Controller
                 $count = Budgtype::count();
                 $allocate = Allocation::leftjoin('user_allocation','allocations.id','user_allocation.allocation_id')
                 ->where('user_allocation.user_id',$data->id)
-                ->where('user_allocation.grade_id', function($query) use($data){
-                    $query->from('grades')
-                    ->where('student_detail_user_id',$data->id)
-                    ->select('id')
+                ->where('user_allocation.budget_id', function($query) {
+                    $query->from('budgets')
+                    ->where('user_id', Auth::id())
                     ->latest('id')
+                    ->select('id')
                     ->first();
                 })->count();
                 if($count!=0)
@@ -139,108 +142,166 @@ class CoordinatorScholarsController extends Controller
     }
     public function show($id)
     {
-        $grade = Grade::where('student_detail_user_id',$id)->count();
-        $type = 0;
-        if ($grade > 1) {
-            $type = 1;
-        }
-        $requirement = Requirement::whereNotIn('id', function($query) use($id) {
-            $query->from('user_requirement')
-            ->join('user_budget','user_budget.user_id','user_requirement.user_id')
-            ->where('user_budget.budget_id', function($query) {
+        try {
+            $application = Application::join('users','student_details.user_id','users.id')
+            ->join('schools','student_details.school_id','schools.id')
+            ->join('districts','student_details.district_id','districts.id')
+            ->join('barangay','student_details.barangay_id','barangay.id')
+            ->join('courses','student_details.course_id','courses.id')
+            ->select(DB::raw("CONCAT(users.last_name,', ',users.first_name,' ',IFNULL(users.middle_name,'')) as strStudName"),'student_details.*','users.*','schools.description as school','districts.description as district','barangay.description as barangay','courses.description as course',DB::raw("DATE_FORMAT(student_details.birthday, '%M %d, %Y') as date"))
+            ->where('users.id',$id)
+            ->firstorfail();
+            $grade = Grade::where('student_detail_user_id',$id)->count();
+            $type = 0;
+            if ($grade > 1) {
+                $type = 1;
+            }
+            $getsem = UserBudget::where('user_id',$id)->where('budget_id', function($query) {
+                $query->from('budgets')
+                ->where('user_id', Auth::id())
+                ->latest('id')
+                ->select('id')
+                ->first();
+            })->count();
+            $requirement = Requirement::whereNotIn('id', function($query) use($id) {
+                $query->from('user_requirement')
+                ->where('budget_id', function($subquery) {
+                    $subquery->from('budgets')
+                    ->where('user_id', Auth::id())
+                    ->latest('id')
+                    ->select('id')
+                    ->first();
+                })
+                ->select('requirement_id')
+                ->where('user_id',$id)
+                ->get();
+            })
+            ->where('is_active',1)
+            ->where('type', $type)
+            ->where('user_id',Auth::id())
+            ->select('requirements.*')
+            ->get();
+            $credit = Credit::where('school_id',$application->school_id)->where('course_id',$application->course_id)->first();
+            $grade = Grade::where('student_detail_user_id',$id)
+            ->latest('id')
+            ->first();
+            $grade->semester += 1;
+            if ($grade->semester > $credit->semester) {
+                $grade->semester = 1;
+                $grade->year += 1;
+            }
+            $number = new NumberToWord;
+            $grade->year = $number->number($grade->year);
+            $grade->semester = $number->number($grade->semester);
+            $oldgrade = Grade::join('user_requirement','user_requirement.grade_id','grades.id')
+            ->join('requirements','user_requirement.requirement_id','requirements.id')
+            ->where('user_requirement.budget_id', '!=', function($query) {
                 $query->from('budgets')
                 ->where('user_id', Auth::id())
                 ->latest('id')
                 ->select('id')
                 ->first();
             })
-            ->select('user_requirement.requirement_id')
-            ->where('user_requirement.user_id',$id)
+            ->where('grades.student_detail_user_id',$id)
+            ->select('requirements.description',DB::raw("DATE_FORMAT(user_requirement.date_passed, '%M %d, %Y') as date_passed"),'grades.year','grades.semester','user_requirement.grade_id')
             ->get();
-        })
-        ->where('is_active',1)
-        ->where('type', $type)
-        ->where('user_id',Auth::id())
-        ->select('requirements.*')
-        ->get();
-        $application = Application::join('users','student_details.user_id','users.id')
-        ->join('schools','student_details.school_id','schools.id')
-        ->join('districts','student_details.district_id','districts.id')
-        ->join('barangay','student_details.barangay_id','barangay.id')
-        ->join('courses','student_details.course_id','courses.id')
-        ->select(DB::raw("CONCAT(users.last_name,', ',users.first_name,' ',IFNULL(users.middle_name,'')) as strStudName"),'student_details.*','users.*','schools.description as school','districts.description as district','barangay.description as barangay','courses.description as course',DB::raw("DATE_FORMAT(student_details.birthday, '%M %d, %Y') as date"))
-        ->where('users.id',$id)
-        ->first();
-        $grade = Grade::where('student_detail_user_id',$id)
-        ->latest('id')
-        ->first();
-        $number = new NumberToWord;
-        $grade->year = $number->number($grade->year);
-        $grade->semester = $number->number($grade->semester);
-        $oldgrade = Grade::join('user_requirement','user_requirement.grade_id','grades.id')
-        ->join('requirements','user_requirement.requirement_id','requirements.id')
-        // ->where('user_requirement.grade_id','!=',$grade->id)
-        ->where('grades.student_detail_user_id',$id)
-        ->select('requirements.description',DB::raw("DATE_FORMAT(user_requirement.date_passed, '%M %d, %Y') as date_passed"),'grades.year','grades.semester','user_requirement.grade_id')
-        ->get();
-        foreach ($oldgrade as $oldgrades) {
-            $oldgrades->year = $number->number($oldgrades->year);
-            $oldgrades->semester = $number->number($oldgrades->semester);
-        }
-        $allgrade = Grade::where('student_detail_user_id',$id)
-        // ->where('id','!=',$grade->id)
-        ->get();
-        foreach ($allgrade as $allgrades) {
-            $allgrades->year = $number->number($allgrades->year);
-            $allgrades->semester = $number->number($allgrades->semester);
-        }
-        $oldallocation = Grade::join('user_allocation','user_allocation.grade_id','grades.id')
-        ->join('allocations','allocations.id','user_allocation.allocation_id')
-        ->join('allocation_types','allocation_types.id','allocations.allocation_type_id')
-        // ->where('user_allocation.grade_id','!=',$grade->id)
-        ->where('grades.student_detail_user_id',$id)
-        ->select(DB::raw("DATE_FORMAT(user_allocation.date_claimed, '%M %d, %Y') as date_claimed"),'user_allocation.grade_id','allocation_types.description')
-        ->get();
-        foreach ($oldallocation as $oldallocations) {
-            $oldallocations->year = $number->number($oldallocations->year);
-            $oldallocations->semester = $number->number($oldallocations->semester);
-        }
-        $allocation = Allocation::leftJoin('allocation_types','allocations.allocation_type_id','allocation_types.id')
-        ->leftJoin('user_allocation_type','allocation_types.id','user_allocation_type.allocation_type_id')
-        ->select('allocation_types.description','allocations.id','user_allocation_type.allocation_type_id')
-        ->where('allocations.budget_id', function($query){
-            $query->from('budgets')
-            ->where('user_id',Auth::id())
-            ->select('id')
-            ->latest('id')
-            ->first();
-        })
-        ->whereNotIn('allocations.id', function($query) use($id) {
-            $query->from('user_allocation')
-            ->select('allocation_id')
-            ->where('user_id',$id)
-            ->where('grade_id', function($subquery) use($id) {
-                $subquery->from('grades')
+            foreach ($oldgrade as $oldgrades) {
+                $oldgrades->year = $number->number($oldgrades->year);
+                $oldgrades->semester = $number->number($oldgrades->semester);
+            }
+            $allgrade = Grade::where('student_detail_user_id',$id)
+            ->where('id', '!=', $grade->id)
+            ->get();
+            foreach ($allgrade as $allgrades) {
+                $allgrades->semester += 1;
+                if ($allgrades->semester > $credit->semester) {
+                    $allgrades->semester = 1;
+                    $allgrades->year += 1;
+                }
+                $allgrades->year = $number->number($allgrades->year);
+                $allgrades->semester = $number->number($allgrades->semester);
+            }
+            $oldallocation = Grade::join('user_allocation','user_allocation.grade_id','grades.id')
+            ->join('allocations','allocations.id','user_allocation.allocation_id')
+            ->join('allocation_types','allocation_types.id','allocations.allocation_type_id')
+            ->where('user_allocation.budget_id', '!=', function($query) {
+                $query->from('budgets')
+                ->where('user_id', Auth::id())
+                ->latest('id')
                 ->select('id')
-                ->where('student_detail_user_id',$id)
+                ->first();
+            })
+            ->where('grades.student_detail_user_id',$id)
+            ->select(DB::raw("DATE_FORMAT(user_allocation.date_claimed, '%M %d, %Y %h:%i %a') as date_claimed"),'user_allocation.grade_id','allocation_types.description')
+            ->get();
+            foreach ($oldallocation as $oldallocations) {
+                $oldallocations->year = $number->number($oldallocations->year);
+                $oldallocations->semester = $number->number($oldallocations->semester);
+            }
+            $allocation = Allocation::leftJoin('allocation_types','allocations.allocation_type_id','allocation_types.id')
+            ->leftJoin('user_allocation_type','allocation_types.id','user_allocation_type.allocation_type_id')
+            ->select('allocation_types.description','allocations.id','user_allocation_type.allocation_type_id')
+            ->where('allocations.budget_id', function($query){
+                $query->from('budgets')
+                ->where('user_id',Auth::id())
+                ->select('id')
                 ->latest('id')
                 ->first();
             })
+            ->whereNotIn('allocations.id', function($query) use($id) {
+                $query->from('user_allocation')
+                ->select('allocation_id')
+                ->where('user_id',$id)
+                ->where('grade_id', function($subquery) use($id) {
+                    $subquery->from('grades')
+                    ->select('id')
+                    ->where('student_detail_user_id',$id)
+                    ->latest('id')
+                    ->first();
+                })
+                ->get();
+            })
+            ->where('user_allocation_type.user_id',Auth::id())
             ->get();
-        })
-        ->where('user_allocation_type.user_id',Auth::id())
-        ->get();
-        return view('SMS.Coordinator.Scholar.List.CoordinatorStudentsListDetails')->withApplication($application)->withRequirement($requirement)->withGrade($grade)->withOldgrade($oldgrade)->withAllgrade($allgrade)->withAllocation($allocation)->withOldallocation($oldallocation);
+            $count = Requirement::where('is_active',1)
+            ->where('type',$type)
+            ->where('user_id',Auth::id())
+            ->count();
+            $studentstep = Studentsteps::join('requirements','user_requirement.requirement_id','requirements.id')
+            ->where('user_requirement.user_id',$id)
+            ->where('requirements.type',$type)
+            ->where('requirements.user_id',Auth::id())
+            ->where('user_requirement.budget_id', function($query) {
+                $query->from('budgets')
+                ->where('user_id', Auth::id())
+                ->latest('id')
+                ->select('id')
+                ->first();
+            })
+            ->count();
+            return view('SMS.Coordinator.Scholar.List.CoordinatorStudentsListDetails')->withApplication($application)->withRequirement($requirement)->withGrade($grade)->withOldgrade($oldgrade)->withAllgrade($allgrade)->withAllocation($allocation)->withOldallocation($oldallocation)->withCount($count)->withStudentstep($studentstep)->withGetsem($getsem);
+        } catch (\Exception $e) {
+            dd($e->getMessage());
+            return redirect()->route('scholars.index');
+        }
     }
     public function requirements(Request $request, $id)
     {
         DB::beginTransaction();
         try {
+            $userbudget = UserBudget::where('user_id',$id)->where('budget_id', function($query) {
+                $query->from('budgets')
+                ->where('user_id',Auth::id())
+                ->select('id')
+                ->latest('id')
+                ->first();
+            })->first();
             $grade = Grade::where('student_detail_user_id',$id)->latest('id')->first();
             foreach ($request->steps as $step) {
                 $steps = new Studentsteps;
                 $steps->user_id = $id;
                 $steps->requirement_id = $step;
+                $steps->budget_id = $userbudget->budget_id;
                 $steps->grade_id = $grade->id;
                 $steps->date_passed = Carbon::now(Config::get('app.timezone'));
                 $steps->save();
@@ -256,12 +317,20 @@ class CoordinatorScholarsController extends Controller
     {
         DB::beginTransaction();
         try {
+            $userbudget = UserBudget::where('user_id',$id)->where('budget_id', function($query) {
+                $query->from('budgets')
+                ->where('user_id',Auth::id())
+                ->select('id')
+                ->latest('id')
+                ->first();
+            })->first();
             $grade = Grade::where('student_detail_user_id',$id)->latest('id')->first();
             foreach ($request->claim as $claim) {
                 $allocate = new Allocatebudget;
                 $allocate->user_id = $id;
                 $allocate->allocation_id = $claim;
                 $allocate->grade_id = $grade->id;
+                $allocate->budget_id = $userbudget->budget_id;
                 $allocate->date_claimed = Carbon::now(Config::get('app.timezone'));
                 $allocate->save();
             }

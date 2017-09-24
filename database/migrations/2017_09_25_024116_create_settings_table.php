@@ -16,8 +16,8 @@ class CreateSettingsTable extends Migration {
 		{
 			$table->string('title', 100);
 			$table->string('logo', 36);
-			$table->boolean('year_count');
-			$table->boolean('semester_count');
+			$table->char('year_count', 1);
+			$table->char('semester_count', 1);
 		});
 	}
 

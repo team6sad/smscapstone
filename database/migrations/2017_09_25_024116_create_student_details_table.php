@@ -34,6 +34,7 @@ class CreateStudentDetailsTable extends Migration {
 			$table->enum('application_status', array('Accepted','Declined','Pending'))->default('Pending');
 			$table->enum('student_status', array('Graduated','Forfeit','Continuing'))->default('Continuing');
 			$table->boolean('is_renewal')->default(0);
+			$table->boolean('is_new')->default(1);
 		});
 	}
 

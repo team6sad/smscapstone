@@ -14,6 +14,7 @@ class AddForeignKeysToUserRequirementTable extends Migration {
 	{
 		Schema::table('user_requirement', function(Blueprint $table)
 		{
+			$table->foreign('budget_id', 'fstudent_steps_budget_id')->references('id')->on('budgets')->onUpdate('CASCADE')->onDelete('RESTRICT');
 			$table->foreign('grade_id', 'fstudent_steps_grade_id')->references('id')->on('grades')->onUpdate('CASCADE')->onDelete('RESTRICT');
 			$table->foreign('requirement_id', 'fstudent_steps_step_id')->references('id')->on('requirements')->onUpdate('CASCADE')->onDelete('RESTRICT');
 			$table->foreign('user_id', 'fstudent_steps_user_id')->references('id')->on('users')->onUpdate('CASCADE')->onDelete('RESTRICT');
@@ -30,6 +31,7 @@ class AddForeignKeysToUserRequirementTable extends Migration {
 	{
 		Schema::table('user_requirement', function(Blueprint $table)
 		{
+			$table->dropForeign('fstudent_steps_budget_id');
 			$table->dropForeign('fstudent_steps_grade_id');
 			$table->dropForeign('fstudent_steps_step_id');
 			$table->dropForeign('fstudent_steps_user_id');

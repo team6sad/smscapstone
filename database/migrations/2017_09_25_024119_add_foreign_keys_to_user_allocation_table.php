@@ -14,6 +14,7 @@ class AddForeignKeysToUserAllocationTable extends Migration {
 	{
 		Schema::table('user_allocation', function(Blueprint $table)
 		{
+			$table->foreign('budget_id', 'fuser_allocation_budget_id')->references('id')->on('budgets')->onUpdate('CASCADE')->onDelete('RESTRICT');
 			$table->foreign('grade_id', 'fuser_allocation_grade_id')->references('id')->on('grades')->onUpdate('CASCADE')->onDelete('RESTRICT');
 			$table->foreign('allocation_id', 'fuserallocationallocationid')->references('id')->on('allocations')->onUpdate('CASCADE')->onDelete('RESTRICT');
 			$table->foreign('user_id', 'fuserallocationuserid')->references('id')->on('users')->onUpdate('CASCADE')->onDelete('RESTRICT');
@@ -30,6 +31,7 @@ class AddForeignKeysToUserAllocationTable extends Migration {
 	{
 		Schema::table('user_allocation', function(Blueprint $table)
 		{
+			$table->dropForeign('fuser_allocation_budget_id');
 			$table->dropForeign('fuser_allocation_grade_id');
 			$table->dropForeign('fuserallocationallocationid');
 			$table->dropForeign('fuserallocationuserid');

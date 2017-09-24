@@ -49,10 +49,6 @@ class StudentRenewalController extends Controller
         ->first();
         if ($application->is_renewal == 0) {
             $credit = Credit::where('school_id',$application->school_id)->where('course_id',$application->course_id)->first();
-            if ($grade->semester=='I') {
-                $grade->semester = 1;
-                $grade->year = 1;
-            }
             $grade->semester += 1;
             if ($grade->semester > $credit->semester) {
                 $grade->semester = 1;

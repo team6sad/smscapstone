@@ -808,25 +808,26 @@
             ]) 
         }}
         <div class="yearCredit">
-            {{ Form::selectRange('year', 1, 4, null, [
-                'id' => 'year',
-                'class' => 'form-control',
-            ])
-        }}
+            <select name="year" id="year" class="form-control">
+                <option value="1">First</option>
+                <option value="2">Second</option>
+                <option value="3">Third</option>
+                <option value="4">Fourth</option>
+                <option value="5">Fifth</option>
+            </select>
+        </div>
     </div>
-</div>
-<div class="form-group col-md-6">
-    {{ Form::label('name', "Semester", [
-        'class' => 'control-label'
-    ]) 
-}}
-<div class="semCredit">
-    {{ Form::selectRange('semester', 1, 2, null, [
-        'id' => 'semester',
-        'class' => 'form-control',
-    ])
-}}
-</div>
+    <div class="form-group col-md-6">
+        {{ Form::label('name', "Semester", [
+            'class' => 'control-label'
+        ]) 
+    }}
+    <div class="semCredit">
+        <select name="semester" id="semester" class="form-control">
+            <option value="1">First</option>
+            <option value="2">Second</option>
+        </select>
+    </div>
 </div>
 </div>
 <div class="form-group col-md-2">

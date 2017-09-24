@@ -459,16 +459,32 @@ function getCredit()
   $.get(url + '/credit/' + $('#intPersCurrentSchool').val() + '/' + $('#intPersCurrentCourse').val(), function(data) {
     var selectYear = '';
     var selectSemester = '';
+    var word = '';
     for (var i = 1; i <= data.year; i++) {
-      selectYear += "<option value=" + i + ">" + i + "</option>";
+      word = getWord(i);
+      selectYear += "<option value=" + i + ">" + word + "</option>";
     }
     for (var i = 1; i <= data.semester; i++) {
-      selectSemester += "<option value=" + i + ">" + i + "</option>";
+      word = getWord(i);
+      selectSemester += "<option value=" + i + ">" + word + "</option>";
     }
     var show1 = "<select class='form-control' id='year' name='year'>"+ selectYear +"</select>";
     $('.yearCredit').empty().append(show1);
     var show2 = "<select class='form-control' id='semester' name='semester'>"+ selectSemester +"</select>";
     $('.semCredit').empty().append(show2);
   });
+}
+function getWord(i)
+{
+  if (i == 1) 
+    return 'First';
+  else if (i == 2) 
+    return 'Second';
+  else if (i == 3) 
+    return 'Third';
+  else if (i == 4) 
+    return 'Fourth';
+  else if (i == 5) 
+    return 'Fifth';
 }
 });
