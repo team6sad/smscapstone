@@ -127,17 +127,29 @@
             <li class="{{Request::path() == 'coordinator/events' ? 'active' : ''}}"><a href="{{ url('coordinator/events') }}"><i class="fa fa-flag"></i><span>Events</span></a></li>
           </ul>
         </li>
-        <li class="treeview {{Request::path() == 'coordinator/reports' ? 'active' : ''}} {{Request::path() == 'coordinator/reports' ? 'active' : ''}}">
+        <li class="treeview {{Request::path() == 'coordinator/queries/events' ? 'active' : ''}}{{Request::path() == 'coordinator/queries/students' ? 'active' : ''}}">
+          <a href="#"><i class="fa fa-list"></i><span>Queries</span>
+            <span class="pull-right-container">
+              <i class="fa fa-angle-left pull-right"></i>
+            </span>
+          </a>
+          <ul class="treeview-menu">
+            <li class="{{Request::path() == 'coordinator/queries/events' ? 'active' : ''}}"><a href="{{ url('coordinator/queries/events') }}"><i class="fa fa-flag"></i><span>Events</span></a></li>
+            <li class="{{Request::path() == 'coordinator/queries/students' ? 'active' : ''}}"><a href="{{ url('coordinator/queries/students') }}"><i class="fa fa-graduation-cap"></i><span>Students</span></a></li>
+          </ul>
+        </li>
+        <li class="treeview {{Request::path() == 'coordinator/reports' ? 'active' : ''}}">
           <a href="#"><i class="fa fa-trophy"></i><span>Reports</span>
             <span class="pull-right-container">
               <i class="fa fa-angle-left pull-right"></i>
             </span>
           </a>
           <ul class="treeview-menu">
+            <li class="{{Request::path() == 'coordinator/reports' ? 'active' : ''}}"><a href="{{ url('coordinator/reports') }}"><i class="fa fa-star"></i><span>Scholar Grade</span></a></li>
+            <li class="{{Request::path() == 'coordinator/reports' ? 'active' : ''}}"><a href="{{ url('coordinator/reports') }}"><i class="fa fa-star"></i><span>Budgets</span></a></li>
             <li class="{{Request::path() == 'coordinator/reports' ? 'active' : ''}}"><a href="{{ url('coordinator/reports') }}"><i class="fa fa-star"></i><span>Students</span></a></li>
           </ul>
         </li>
-        <li class="{{Request::path() == 'coordinator/queries' ? 'active' : ''}}"><a href="{{ url('coordinator/queries') }}"><i class="fa fa-list"></i><span>Queries</span></a></li>
         <li class="treeview {{Request::path() == 'coordinator/utilities' ? 'active' : ''}} {{Request::path() == 'coordinator/requirements' ? 'active' : ''}} {{Request::path() == 'coordinator/school' ? 'active' : ''}} {{Request::path() == 'coordinator/course' ? 'active' : ''}} {{Request::path() == 'coordinator/budget' ? 'active' : ''}}">
           <a href="#"><i class="fa fa-gears"></i><span>Settings</span>
             <span class="pull-right-container">

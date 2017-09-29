@@ -97,9 +97,12 @@ Route::group(['prefix' => 'coordinator/'], function () {
 	Route::put('utilities/{id}', ['uses' => 'CoordinatorUtilitiesController@update', 'as' => 'coordinatorutilities.update']);
 	Route::put('utilities/allocation/{id}', ['uses' => 'CoordinatorUtilitiesController@stipend', 'as' => 'coordinatorutilities.stipend']);
 	//Coordinator Queries
-	Route::resource('queries', 'CoordinatorQueriesController');
+	Route::get('queries/students', ['uses' => 'CoordinatorQueriesController@students', 'as' => 'queries.students']);
+	Route::get('queries/events', ['uses' => 'CoordinatorQueriesController@events', 'as' => 'queries.events']);
+	Route::post('queries/students', ['uses' => 'CoordinatorQueriesController@postStudents', 'as' => 'queries.postStudents']);
+	Route::post('queries/events', ['uses' => 'CoordinatorQueriesController@postEvents', 'as' => 'queries.postEvents']);
 	//Coordinator Reports
-	Route::resource('reports', 'CoordinatorReportsController');
+	Route::get('reports/events', ['uses' => 'CoordinatorReportsController@events', 'as' => 'queries.events']);
 	//Coordinator Renewal
 	Route::get('renewal/accept/{id}', ['uses' => 'CoordinatorRenewalController@accept', 'as' => 'coordinatorrenewal.accept']);
 	Route::get('renewal/decline/{id}', ['uses' => 'CoordinatorRenewalController@decline', 'as' => 'coordinatorrenewal.decline']);
