@@ -20,7 +20,6 @@
 				<li><a href="#tab_2" data-toggle="tab">Undo Checklist</a></li>
 				<li><a href="#tab_3" data-toggle="tab">Essay Question</a></li>
 				<li><a href="#tab_4" data-toggle="tab">Backup</a></li>
-				<li id="others"><a href="#tab_5" data-toggle="tab">Others</a></li>
 			</ul>
 			<div class="tab-content">
 				<div class="tab-pane active row" id="tab_1">
@@ -151,28 +150,6 @@
 </div>
 </div>
 <div class="tab-pane row" id="tab_4">
-</div>
-<div class="tab-pane row" id="tab_5">
-	<div class="col-xs-12">
-		<label>Filter Application</label>
-		{{ Form::open([
-			'route' => 'coordinatorutilities.question'
-		])
-	}}
-	<div class="checkbox">
-		<label><input type="checkbox" name="criteria[]">Yeah</label>
-	</div>
-	<div class="checkbox">
-		<label><input type="checkbox" name="criteria[]">Yeah</label>
-	</div>
-	<div class="checkbox">
-		<label><input type="checkbox" name="criteria[]">Yeah</label>
-	</div>
-	<div class="checkbox">
-		<label><input type="checkbox" name="criteria[]">Yeah</label>
-	</div>
-	{{ Form::close() }}
-</div>
 </div>
 </div>
 </div>

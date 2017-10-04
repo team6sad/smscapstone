@@ -41,14 +41,10 @@
               </div>
               <div class="col-md-12">
                 <label class="control-label">Status:</label>
-                <div class="checkbox">
-                  <label><input type="checkbox" value="Done" name="status[]">Done</label>
-                </div>
-                <div class="checkbox">
-                  <label><input type="checkbox" value="Ongoing" name="status[]">Ongoing</label>
-                </div>
-                <div class="checkbox">
-                  <label><input type="checkbox" value="Cancelled" name="status[]">Cancelled</label>
+                <div class="container">
+                  <label class="checkbox-inline"><input type="checkbox" value="Done" name="status[]">Done</label>
+                  <label class="checkbox-inline"><input type="checkbox" value="Ongoing" name="status[]">Ongoing</label>
+                  <label class="checkbox-inline"><input type="checkbox" value="Cancelled" name="status[]">Cancelled</label>
                 </div>
               </div>
               <div class="col-md-12 form-group">

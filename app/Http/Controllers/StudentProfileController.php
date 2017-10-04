@@ -20,7 +20,7 @@ class StudentProfileController extends Controller
     public function index()
     {
         $deactivate = Application::find(Auth::id());
-        if($deactivate->student_status == 'Graduated' || $deactivate->status == 'Forfeit')
+        if($deactivate->student_status == 'Graduated' || $deactivate->student_status == 'Forfeit')
             return view('SMS.Student.StudentDeactivate');
         $application = Application::find(Auth::id());
         $mother = Familydata::where('student_detail_user_id',Auth::id())

@@ -179,9 +179,6 @@ $(document).ready(function() {
         });
     }
     $('.todo-list').todoList();
-    $('#others').click(function() {
-        $('.btn-lg.android').attr('style', 'width: 112.453px;');
-    });
     $('#available').click(function() {
         $('.btn-xs.android').attr('style', 'width: 72px;');
     });

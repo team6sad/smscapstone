@@ -5,7 +5,7 @@ use App\Budget;
 use App\Councilor;
 use App\UserBudget;
 use Auth;
-use App\Allocatebudget;
+use App\UserAllocation;
 class ViewComposerServiceProvider extends ServiceProvider
 {
     /**
@@ -42,15 +42,7 @@ class ViewComposerServiceProvider extends ServiceProvider
     			$budget = (object)['amount' => 0, 'slot_count' => 0];
     		else {
                 $userbudget = UserBudget::where('budget_id',$budget->id)->count();
-                $allocation = Allocatebudget::join('allocations','user_allocation.allocation_id','allocations.id')
-                ->whereIn('allocation_id', function($query) use($budget) {
-                    $query->from('allocations')
-                    ->where('budget_id', $budget->id)
-                    ->select('id')
-                    ->get();
-                })
-                ->select('allocations.amount')
-                ->get();
+                $allocation = UserAllocation::where('budget_id', $budget->id)->get();
                 $budget->slot_count -= $userbudget;
                 foreach ($allocation as $allocations) {
                     $budget->amount -= $allocations->amount;

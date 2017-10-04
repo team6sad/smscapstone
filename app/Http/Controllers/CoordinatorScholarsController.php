@@ -20,7 +20,7 @@ use App\Budgtype;
 use App\Allocation;
 use Carbon\Carbon;
 use Config;
-use App\Allocatebudget;
+use App\UserAllocation;
 use App\Credit;
 use App\UserBudget;
 class CoordinatorScholarsController extends Controller
@@ -185,11 +185,6 @@ class CoordinatorScholarsController extends Controller
             $grade = Grade::where('student_detail_user_id',$id)
             ->latest('id')
             ->first();
-            $grade->semester += 1;
-            if ($grade->semester > $credit->semester) {
-                $grade->semester = 1;
-                $grade->year += 1;
-            }
             $number = new NumberToWord;
             $grade->year = $number->number($grade->year);
             $grade->semester = $number->number($grade->semester);
@@ -209,15 +204,12 @@ class CoordinatorScholarsController extends Controller
                 $oldgrades->year = $number->number($oldgrades->year);
                 $oldgrades->semester = $number->number($oldgrades->semester);
             }
-            $allgrade = Grade::where('student_detail_user_id',$id)
-            ->where('id', '!=', $grade->id)
-            ->get();
+            $allgrade = Grade::where('student_detail_user_id',$id);
+            if ($application->student_status == 'Continuing') {
+                $allgrade = $allgrade->where('id', '!=', $grade->id);
+            }
+            $allgrade = $allgrade->get();
             foreach ($allgrade as $allgrades) {
-                $allgrades->semester += 1;
-                if ($allgrades->semester > $credit->semester) {
-                    $allgrades->semester = 1;
-                    $allgrades->year += 1;
-                }
                 $allgrades->year = $number->number($allgrades->year);
                 $allgrades->semester = $number->number($allgrades->semester);
             }
@@ -240,7 +232,7 @@ class CoordinatorScholarsController extends Controller
             }
             $allocation = Allocation::leftJoin('allocation_types','allocations.allocation_type_id','allocation_types.id')
             ->leftJoin('user_allocation_type','allocation_types.id','user_allocation_type.allocation_type_id')
-            ->select('allocation_types.description','allocations.id','user_allocation_type.allocation_type_id')
+            ->select('allocation_types.description','allocations.amount','allocations.id','user_allocation_type.allocation_type_id')
             ->where('allocations.budget_id', function($query){
                 $query->from('budgets')
                 ->where('user_id',Auth::id())
@@ -317,6 +309,7 @@ class CoordinatorScholarsController extends Controller
     {
         DB::beginTransaction();
         try {
+            $pass = true;
             $userbudget = UserBudget::where('user_id',$id)->where('budget_id', function($query) {
                 $query->from('budgets')
                 ->where('user_id',Auth::id())
@@ -325,14 +318,30 @@ class CoordinatorScholarsController extends Controller
                 ->first();
             })->first();
             $grade = Grade::where('student_detail_user_id',$id)->latest('id')->first();
-            foreach ($request->claim as $claim) {
-                $allocate = new Allocatebudget;
-                $allocate->user_id = $id;
-                $allocate->allocation_id = $claim;
-                $allocate->grade_id = $grade->id;
-                $allocate->budget_id = $userbudget->budget_id;
-                $allocate->date_claimed = Carbon::now(Config::get('app.timezone'));
-                $allocate->save();
+            $allocation = Allocation::join('allocation_types','allocation_types.id','allocations.allocation_type_id')
+            ->whereIn('allocations.id',$request->claim)
+            ->select('allocations.id','allocations.amount','allocation_types.description')
+            ->get();
+            foreach ($allocation as $claimcheck) {
+                $var = 'amount'.$claimcheck->id;
+                if ($request->$var > $claimcheck->amount) {
+                    $pass = false;
+                    $errors = "Input amount exceed in ".$claimcheck->description;
+                    return redirect()->back()->withErrors($errors);
+                }
+            }
+            if ($pass) {
+                foreach ($request->claim as $claim) {
+                    $var = 'amount'.$claim;
+                    $allocate = new UserAllocation;
+                    $allocate->user_id = $id;
+                    $allocate->allocation_id = $claim;
+                    $allocate->grade_id = $grade->id;
+                    $allocate->budget_id = $userbudget->budget_id;
+                    $allocate->date_claimed = Carbon::now(Config::get('app.timezone'));
+                    $allocate->amount = $request->$var;
+                    $allocate->save();
+                }
             }
             DB::commit();
             return redirect()->back();

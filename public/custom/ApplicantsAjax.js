@@ -30,5 +30,8 @@ $(document).ready(function() {
   });
   $('#status').change(function(){
     table.draw();
-  })
+  });
+  $('#cri').click(function(){
+    $('#criteria').modal('show');
+  });
 });

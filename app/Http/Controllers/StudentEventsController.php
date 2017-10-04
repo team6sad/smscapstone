@@ -18,7 +18,7 @@ class StudentEventsController extends Controller
     public function index()
     {
         $deactivate = Application::find(Auth::id());
-        if($deactivate->student_status == 'Graduated' || $deactivate->status == 'Forfeit')
+        if($deactivate->student_status == 'Graduated' || $deactivate->student_status == 'Forfeit')
             return view('SMS.Student.StudentDeactivate');
         $events = Event::where('user_id', function($subquery){
             $subquery->from('user_councilor')

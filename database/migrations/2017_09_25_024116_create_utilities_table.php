@@ -17,6 +17,9 @@ class CreateUtilitiesTable extends Migration {
 			$table->string('user_id', 30)->index('fessaysuserid_idx');
 			$table->text('essay', 65535);
 			$table->boolean('phase_status')->default(0);
+			$table->string('income_cap', 20)->default('35,000 and Above');
+			$table->boolean('passing_grades')->default(1);
+			$table->boolean('no_siblings')->default(0);
 		});
 	}
 

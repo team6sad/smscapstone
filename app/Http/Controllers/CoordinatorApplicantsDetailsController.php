@@ -6,7 +6,7 @@ use App\Application;
 use App\Familydata;
 use App\Educback;
 use App\Affiliation;
-use App\Siblings;
+use App\Sibling;
 use Carbon\Carbon;
 use App\User;
 use Session;
@@ -45,8 +45,8 @@ class CoordinatorApplicantsDetailsController extends Controller
             ->firstorfail();
             $count = Affiliation::where('student_detail_user_id',$id)->count();
             $affiliation = Affiliation::where('student_detail_user_id',$id)->get();
-            $exist = Siblings::where('student_detail_user_id',$id)->count();
-            $siblings = Siblings::where('student_detail_user_id',$id)->first();
+            $exist = Sibling::where('student_detail_user_id',$id)->count();
+            $siblings = Sibling::where('student_detail_user_id',$id)->first();
             $mother = Familydata::where('student_detail_user_id',$id)
             ->where('member_type',0)->first();
             $father = Familydata::where('student_detail_user_id',$id)

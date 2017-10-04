@@ -28,11 +28,10 @@ $(document).ready(function() {
   var id = '';
   $('#add_budget').on('hide.bs.modal', function() {
     $('#frmBudget').trigger("reset");
-    $('.form-control').val();
+    $('.peso').val();
   });
   $('.btn-status').click(function() {
     if ($(this).val() == 0) {
-      $('.btn-status').val(1);
       $('#add_budget').modal('show');
       $('#h4').text('Add Budget');
       $('#btn-save').val("add");
@@ -57,8 +56,6 @@ $(document).ready(function() {
               $('h5').text('Closed');
               $('.btn-status').removeClass().addClass('btn btn-success btn-status').html("<i class='fa fa-refresh'></i> Start");
               $('.btn-status').val(0);
-              table.draw();
-              getBudget();
               swal({
                 title: "Ended!",
                 text: "<center>Semester Closed</center>",
@@ -67,6 +64,7 @@ $(document).ready(function() {
                 showConfirmButton: false,
                 html: true
               });
+              location.reload();
             }).fail(function(data) {
               swal({
                 title: "Failed!",
@@ -134,7 +132,7 @@ $(document).ready(function() {
       });
     });
   });
-  $('#budget_amount').blur(function(){
+  $('#add_budget').mouseover(function(){
     sum_values();
   });
   var elements = document.getElementsByName("amount[]");
@@ -152,7 +150,11 @@ $(document).ready(function() {
     if (txt.val().length > 0) {
       var textone;
       var texttwo;
-      textone = parseFloat($('#budget_amount').val());
+      if ($('#add_to_current').prop('checked')) {
+        textone = parseFloat($('#budget_last').val()) + parseFloat($('#budget_amount').val());
+      } else {
+        textone = parseFloat($('#budget_amount').val());
+      }
       texttwo = parseFloat($('#budget_per_student').val());
       var result = textone / texttwo;
       $('#slot_count').val(Math.floor(result));
@@ -194,6 +196,7 @@ $(document).ready(function() {
               showConfirmButton: false,
               html: true
             });
+            $('.btn-status').val(1);
           },
           error: function(data) {
             $.notify({

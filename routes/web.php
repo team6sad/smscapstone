@@ -99,8 +99,10 @@ Route::group(['prefix' => 'coordinator/'], function () {
 	//Coordinator Queries
 	Route::get('queries/students', ['uses' => 'CoordinatorQueriesController@students', 'as' => 'queries.students']);
 	Route::get('queries/events', ['uses' => 'CoordinatorQueriesController@events', 'as' => 'queries.events']);
+	Route::get('queries/grades', ['uses' => 'CoordinatorQueriesController@grades', 'as' => 'queries.grades']);
 	Route::post('queries/students', ['uses' => 'CoordinatorQueriesController@postStudents', 'as' => 'queries.postStudents']);
 	Route::post('queries/events', ['uses' => 'CoordinatorQueriesController@postEvents', 'as' => 'queries.postEvents']);
+	Route::post('queries/grades', ['uses' => 'CoordinatorQueriesController@postGrades', 'as' => 'queries.postGrades']);
 	//Coordinator Reports
 	Route::get('reports/events', ['uses' => 'CoordinatorReportsController@events', 'as' => 'queries.events']);
 	//Coordinator Renewal
@@ -161,6 +163,7 @@ Route::group(['prefix' => 'coordinator/'], function () {
 	Route::put('details/{id}', ['uses' => 'CoordinatorApplicantsDetailsController@update', 'as' => 'details.update']);
 	//Coordinator Applicantions
 	Route::get('applicants', ['uses' => 'CoordinatorApplicantsController@index', 'as' => 'applicants.index']);
+	Route::post('applicants', ['uses' => 'CoordinatorApplicantsController@postCriteria', 'as' => 'applicants.postCriteria']);
 	//Coordinator Dashboard
 	Route::get('dashboard', ['uses' => 'CoordinatorIndexController@index', 'as' => 'coordinator.index']);
 });

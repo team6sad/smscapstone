@@ -7,6 +7,12 @@ use DB;
 use Auth;
 use Datatables;
 use Carbon\Carbon;
+use App\Utility;
+use Session;
+use App\Grade;
+use App\GradingDetail;
+use App\Sibling;
+use App\User;
 class CoordinatorApplicantsController extends Controller
 {
     public function __construct()
@@ -61,6 +67,88 @@ class CoordinatorApplicantsController extends Controller
     }
     public function index()
     {
-        return view('SMS.Coordinator.Scholar.CoordinatorApplicants');
+        $this->criteria();
+        $utility = Utility::where('user_id',Auth::id())->first();
+        return view('SMS.Coordinator.Scholar.CoordinatorApplicants')->withUtility($utility);
+    }
+    public function postCriteria(Request $request)
+    {
+        $utility = Utility::find(Auth::id());
+        $utility->income_cap = $request->income_cap;
+        if (is_null($request->passing_grades))
+            $utility->passing_grades = 0;
+        else 
+            $utility->passing_grades = 1;
+        if (is_null($request->no_siblings))
+            $utility->no_siblings = 0;
+        else
+            $utility->no_siblings = 1;
+        $utility->save();
+        Session::flash('success','Data Stored');
+        return redirect()->back();
+    }
+    private function criteria()
+    {
+        $user = Application::join('users','users.id','student_details.user_id')
+        ->join('user_councilor','users.id','user_councilor.user_id')
+        ->select('users.*')
+        ->where('student_details.application_status','Pending')
+        ->where('user_councilor.councilor_id', function($query){
+            $query->from('user_councilor')
+            ->join('users','user_councilor.user_id','users.id')
+            ->join('councilors','user_councilor.councilor_id','councilors.id')
+            ->select('councilors.id')
+            ->where('user_councilor.user_id',Auth::id())
+            ->first();
+        })
+        ->where('student_details.batch_id', function($query){
+            $query->from('batches')
+            ->select('id')
+            ->latest('id')
+            ->first();
+        })
+        ->where('users.type','Student')
+        ->get();
+        $utility = Utility::find(Auth::id());
+        foreach ($user as $users) {
+            if ($utility->passing_grades) {
+                $grades = Grade::join('grade_details','grades.id','grade_details.grade_id')
+                ->select('grade_details.*','grades.*', 'grades.id as grade_id')
+                ->where('grades.student_detail_user_id',$users->id)
+                ->count();
+                if ($grades!=0) {
+                    $grades = Grade::join('grade_details','grades.id','grade_details.grade_id')
+                    ->select('grade_details.*','grades.*', 'grades.id as grade_id')
+                    ->where('grades.student_detail_user_id',$users->id)
+                    ->get();
+                    foreach ($grades as $details) {
+                        $grading = GradingDetail::where('grading_id',$details->grading_id)
+                        ->where('grade',$details->grade)
+                        ->first();
+                        if ($grading->is_passed == 0) {
+                            $this->declined('Failed Grades', $users);
+                            break;
+                        }
+                    }
+                }
+            }
+            if ($utility->no_siblings) {
+                $sibling = Sibling::where('student_detail_user_id',$users->id)->count();
+                if ($sibling > 0) {
+                    $this->declined('Have a sibling affiliated', $users);
+                }
+                $siblings = User::where('middle_name',$users->middle_name)->where('last_name',$users->last_name)->count();
+                if ($siblings > 1) {
+                    $this->declined('Have a sibling affiliated', $users);
+                }
+            }
+        }
+    }
+    private function declined($remarks, $users)
+    {
+        $application = Application::find($users->id);
+        $application->application_status = 'Declined';
+        $application->remarks = $remarks;
+        $application->save();
     }
 }

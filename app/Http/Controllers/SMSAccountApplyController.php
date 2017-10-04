@@ -13,7 +13,7 @@ use Response;
 use App\Application;
 use App\Familydata;
 use App\Educback;
-use App\Siblings;
+use App\Sibling;
 use Carbon\Carbon;
 use Image;
 use App\Connection;
@@ -94,8 +94,12 @@ class SMSAccountApplyController extends Controller
       $application->birthplace=$request->strPersPOB;
       $application->religion=$request->strPersReligion;
       $application->gender=$request->PersGender;
-      $application->brothers=$request->intPersBrothers;
-      $application->sisters=$request->intPersSisters;
+      if ($request->intPersBrothers!=null) {
+        $application->brothers=$request->intPersBrothers;
+      }
+      if ($request->intPersSisters!=null) {
+        $application->brothers=$request->intPersSisters;
+      }
       $application->batch_id=$batch;
       $application->application_date=$dtm;
       $application->essay=$request->essay;
@@ -153,7 +157,7 @@ class SMSAccountApplyController extends Controller
       $educback->save();
       if((($request->strSiblFirstName)!='')&&(($request->strSiblLastName)!='')&&(($request->strSiblDateFrom)!='')&&(($request->strSiblDateTo)!='')){
         //Insert in siblings
-        $siblings = new Siblings;
+        $siblings = new Sibling;
         $siblings->student_detail_user_id=$users->id; 
         $siblings->first_name=$request->strSiblFirstName;
         $siblings->last_name=$request->strSiblLastName;
@@ -232,6 +236,13 @@ class SMSAccountApplyController extends Controller
     $budget = Budget::where('councilor_id',$id)->latest('id')->first();
     $application = Application::join('users','student_details.user_id','users.id')
     ->join('user_councilor','users.id','user_councilor.user_id')
+    ->join('user_budget','user_budget.user_id','users.id')
+    ->where('user_budget.budget_id', function($query) {
+      $query->from('budgets')
+      ->select('id')
+      ->latest('id')
+      ->first();
+    })
     ->where('users.type','Student')
     ->where('user_councilor.councilor_id', $id)
     ->where('student_details.application_status','Accepted')

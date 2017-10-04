@@ -33,7 +33,7 @@ class StudentAnnouncementController extends Controller
     public function index()
     {
         $deactivate = Application::find(Auth::id());
-        if($deactivate->student_status == 'Graduated' || $deactivate->status == 'Forfeit')
+        if($deactivate->student_status == 'Graduated' || $deactivate->student_status == 'Forfeit')
             return view('SMS.Student.StudentDeactivate');
         $announcement = Announcement::join('user_announcement','announcements.id','user_announcement.announcement_id')
         ->select('announcements.*','user_announcement.id as user_announcement_id','user_announcement.is_read')

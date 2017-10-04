@@ -21,16 +21,28 @@
             <div class="row">
               <br>
               {{ Form::open(['data-parsley-whitespace' => 'squish', 'target' => '_blank', 'route' => 'queries.postStudents']) }}
-              <div class="col-md-12 form-group">
-                <div class="col-md-12 row">
-                  <label class="control-label">Batch:</label>
+              <div class="col-md-4 form-group">
+                <label class="control-label">Batch:</label>
+                <select class="form-control" name="batch">
+                  @foreach ($batch as $batches)
+                  <option value="{{ $batches->id }}">{{ $batches->description }}</option>
+                  @endforeach
+                </select>
+              </div>
+              <div class="col-md-4 form-group">
+                <label class="control-label">Applcation:</label>
+                <div class="container">
+                  <label class="radio-inline"><input type="radio" name="application_status" value="Accepted" checked="checked">Accepted</label>
+                  <label class="radio-inline"><input type="radio" name="application_status" value="Pending">Pending</label>
+                  <label class="radio-inline"><input type="radio" name="application_status" value="Declined">Declined</label>
                 </div>
-                <div class="col-md-4">
-                  <select class="form-control" name="batch">
-                    @foreach ($batch as $batches)
-                    <option value="{{ $batches->id }}">{{ $batches->description }}</option>
-                    @endforeach
-                  </select>
+              </div>
+              <div class="col-md-4 form-group">
+                <label class="control-label">Scholarship:</label>
+                <div class="container">
+                  <label class="radio-inline"><input type="radio" name="student_status" value="Continuing" checked="checked">Continuing</label>
+                  <label class="radio-inline"><input type="radio" name="student_status" value="Graduated">Graduated</label>
+                  <label class="radio-inline"><input type="radio" name="student_status" value="Forfeited">Forfeited</label>
                 </div>
               </div>
               <div class="col-md-12 form-group">
@@ -53,6 +65,18 @@
                 <div class="col-md-4">
                   <div class="checkbox">
                     <label><input type="checkbox" value="{{ $courses->id }}" name="course[]">{{ $courses->description }}</label>
+                  </div>
+                </div>
+                @endforeach
+              </div>
+              <div class="col-md-12 form-group">
+                <div class="col-md-12 row">
+                  <label class="control-label">Barangay:</label>
+                </div>
+                @foreach ($barangay as $barangays)
+                <div class="col-md-4">
+                  <div class="checkbox">
+                    <label><input type="checkbox" value="{{ $barangays->id }}" name="barangay[]">{{ $barangays->description }}</label>
                   </div>
                 </div>
                 @endforeach

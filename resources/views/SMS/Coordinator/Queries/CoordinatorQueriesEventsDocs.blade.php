@@ -21,9 +21,6 @@
 		height: 20px;
 		width: 20px;
 	}
-	.para {
-		padding-left: 5em;
-	}
 </style>
 </head>
 <body>
@@ -38,7 +35,7 @@
 		<hr><br>
 		<b>{{ $today->format('F d, Y') }}<br>
 		</b><br>
-		<p class="para">Transmitted herewith is the list of events. </p>
+		<p>Transmitted herewith is the list of events. </p>
 		<table width="100%">
 			<thead>
 				<tr>

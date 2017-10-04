@@ -11,12 +11,12 @@ use App\Connection;
 use App\Budgtype;
 use Auth;
 use App\Application;
-use App\Allocatebudget;
 use DB;
 use App\Utility;
 use App\UserBudget;
 use App\Credit;
 use App\Grade;
+use App\UserAllocation;
 class CoordinatorBudgetController extends Controller
 {
     public function __construct()
@@ -37,7 +37,7 @@ class CoordinatorBudgetController extends Controller
             }
         })
         ->editColumn('budget_date', function ($data) {
-            return $data->budget_date ? with(new Carbon($data->budget_date))->format('M d, Y - h:i A') : '';
+            return $data->budget_date ? with(new Carbon($data->budget_date))->format('M d, Y') : '';
         })
         ->setRowId(function ($data) {
             return $data = 'id'.$data->id;
@@ -47,9 +47,19 @@ class CoordinatorBudgetController extends Controller
     }
     public function index()
     {
+        $budget = Budget::where('user_id',Auth::id())
+        ->latest('id')->first();
+        if($budget==null)
+            $budget = (object)['amount' => 0];
+        else {
+            $allocation = UserAllocation::where('budget_id', $budget->id)->get();
+            foreach ($allocation as $allocations) {
+                $budget->amount -= $allocations->amount;
+            }
+        }
         $utility = Utility::where('user_id',Auth::id())->first();
         $budgtype = Budgtype::where('is_active',1)->get();
-        return view('SMS.Coordinator.Services.CoordinatorBudget')->withBudgtype($budgtype)->withUtility($utility);
+        return view('SMS.Coordinator.Services.CoordinatorBudget')->withBudgtype($budgtype)->withUtility($utility)->withBudget($budget);
     }
     public function store(Request $request)
     {
@@ -195,15 +205,7 @@ class CoordinatorBudgetController extends Controller
         $budget = Budget::where('user_id',Auth::id())
         ->latest('id')->first();
         $userbudget = UserBudget::where('budget_id',$budget->id)->count();
-        $allocation = Allocatebudget::join('allocations','user_allocation.allocation_id','allocations.id')
-        ->whereIn('allocation_id', function($query) use($budget) {
-            $query->from('allocations')
-            ->where('budget_id', $budget->id)
-            ->select('id')
-            ->get();
-        })
-        ->select('allocations.amount')
-        ->get();
+        $allocation = UserAllocation::where('budget_id', $budget->id)->get();
         if($budget==null)
             $budget = (object)['amount' => 0, 'slot_count' => 0];
         else {

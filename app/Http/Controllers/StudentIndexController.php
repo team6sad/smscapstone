@@ -17,7 +17,7 @@ class StudentIndexController extends Controller
 	public function index()
 	{
 		$deactivate = Application::find(Auth::id());
-		if($deactivate->student_status == 'Graduated' || $deactivate->status == 'Forfeit')
+		if($deactivate->student_status == 'Graduated' || $deactivate->student_status == 'Forfeit')
 			return view('SMS.Student.StudentDeactivate');
 		$allocation = UserAllocation::join('allocations','allocations.id','user_allocation.allocation_id')
 		->join('allocation_types','allocations.allocation_type_id','allocation_types.id')

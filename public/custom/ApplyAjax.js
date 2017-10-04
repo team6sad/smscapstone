@@ -122,6 +122,20 @@ $(document).ready(function() {
           }
         }
       }
+      if (ctr == 3) {
+        if (grade == 0) {
+          if ($('#year').val() == 1 && $('#semester').val() == 1) {
+            pass = false;
+            alert('Cannot Select First Year First Semester');
+          }
+        }
+      }
+      if (ctr == 4) {
+        if ($.trim($('[name="essay"]').val()).split(' ').filter(function(v){return v!==''}).length < 300) {
+          pass = false;
+          alert('Essay must more the 300 words');
+        }
+      }
       if (pass) {
         navigateTo(curIndex() + 1);
         var current_active_step = $(this).parents('.f1').find('.f1-step.active');
@@ -487,4 +501,5 @@ function getWord(i)
   else if (i == 5) 
     return 'Fifth';
 }
+$('.wysihtml5-toolbar').remove();
 });

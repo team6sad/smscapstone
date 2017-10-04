@@ -10,6 +10,7 @@ use App\GradingDetail;
 use App\UserBudget;
 use App\Budget;
 use Response;
+use App\Utility;
 class CoordinatorRenewalController extends Controller
 {
     public function __construct()
@@ -77,6 +78,7 @@ class CoordinatorRenewalController extends Controller
     }
     public function index()
     {
+        $this->autodeclined();
         return view('SMS.Coordinator.Scholar.CoordinatorRenewal');
     }
     public function accept($id)
@@ -113,5 +115,46 @@ class CoordinatorRenewalController extends Controller
             DB::rollBack();
             return dd($e->getMessage(),500);
         }  
+    }
+    private function autodeclined()
+    {
+        $user = Application::join('users','student_details.user_id','users.id')
+        ->join('user_councilor','users.id','user_councilor.user_id')
+        ->select('users.*')
+        ->where('users.type','Student')
+        ->where('user_councilor.councilor_id', function($query){
+            $query->from('user_councilor')
+            ->join('users','user_councilor.user_id','users.id')
+            ->join('councilors','user_councilor.councilor_id','councilors.id')
+            ->select('councilors.id')
+            ->where('user_councilor.user_id',Auth::id())
+            ->first();
+        })
+        ->where('student_details.application_status','Accepted')
+        ->where('student_status','Continuing')
+        ->where('student_details.is_renewal',1)
+        ->get();
+        $utility = Utility::find(Auth::id());
+        foreach ($user as $users) {
+            if ($utility->passing_grades) {
+                $grades = Grade::join('grade_details','grades.id','grade_details.grade_id')
+                ->select('grade_details.*','grades.*', 'grades.id as grade_id')
+                ->where('grades.student_detail_user_id',$users->id)
+                ->get();
+                foreach ($grades as $details) {
+                    $grading = GradingDetail::where('grading_id',$details->grading_id)
+                    ->where('grade',$details->grade)
+                    ->first();
+                    if ($grading->is_passed == 0) {
+                        $application = Application::find($users->id);
+                        $application->is_renewal = 0;
+                        $application->student_status = 'Forfeit';
+                        $application->remarks = 'Failed Grades';
+                        $application->save();
+                        break;
+                    }
+                }
+            }
+        }
     }
 }

@@ -53,7 +53,7 @@
         ])
     }}
     @if (count($errors) > 0)
-    <div class="alert alert-danger alert-dismissible" role="alert">
+    <div class="alert alert-warning alert-dismissible" role="alert">
       <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
       <strong>Errors:</strong>
       <ul>
@@ -517,34 +517,30 @@
 </div>
 </div>
 <div class="form-group col-md-6 col-sm-12">
-    {{ Form::label('name', "Number of Brother/s*", [
+    {{ Form::label('name', "Number of Brother/s", [
         'class' => 'control-label'
     ]) 
 }}
 {{ Form::text('intPersBrothers', null, [
     'id' => 'brono',
-    'placeholder' => "Type 0 if None",
     'class' => 'form-control',
     'minlength' => '1',
     'maxlength' => '2',
-    'required' => 'required',
     'autocomplete' => 'off',
     'data-parsley-type' => 'number'
 ]) 
 }}
 </div>
 <div class="form-group col-md-6 col-sm-12">
-    {{ Form::label('name', "Number of Sister/s*", [
+    {{ Form::label('name', "Number of Sister/s", [
         'class' => 'control-label'
     ]) 
 }}
 {{ Form::text('intPersSisters', null, [
     'id' => 'sisno',
-    'placeholder' => "Type 0 if None",
     'class' => 'form-control',
     'minlength' => '1',
     'maxlength' => '2',
-    'required' => 'required',
     'autocomplete' => 'off',
     'data-parsley-type' => 'number'
 ]) 
@@ -803,7 +799,7 @@
 <div class="row">
     <div class="col-md-10 row" id="college">
         <div class="form-group col-md-6">
-            {{ Form::label('name', "Year Level", [
+            {{ Form::label('name', "Incoming Year Level", [
                 'class' => 'control-label'
             ]) 
         }}
@@ -818,7 +814,7 @@
         </div>
     </div>
     <div class="form-group col-md-6">
-        {{ Form::label('name', "Semester", [
+        {{ Form::label('name', "Incoming Semester", [
             'class' => 'control-label'
         ]) 
     }}
@@ -904,6 +900,7 @@
     <h3>Sumulat ng sanaysay ayon sa mga sumusunod:</h3>
     <div class="form-group">
         <div class="question"></div>
+        <strong>Max 300 words</strong>
         {{ Form::textarea('essay', null, [
           'class' => 'form-control textarea',
           'id' => 'essay',

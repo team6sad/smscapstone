@@ -32,23 +32,24 @@
                   'data-parsley-whitespace' => 'squish'])
                 }}
                 <div class="form-group">
-                  {{ Form::label('name', 'Budget Amount') }}
-                  {{ Form::text('budget_amount', null, [
-                    'id' => 'budget_amount',
-                    'class' => 'form-control peso',
+                  {{ Form::label('name', 'Budget last semester') }}
+                  {{ Form::text('budget_last', $budget->amount, [
+                    'id' => 'budget_last',
+                    'class' => 'form-control',
                     'maxlength' => '15',
-                    'required' => 'required',
-                    'data-parsley-pattern' => '^[0-9.]+$',
+                    'readonly' => 'readonly',
+                    'data-parsley-pattern' => '^[0-9]+$',
                     'autocomplete' => 'off'
                   ]) 
                 }}
+                <div class="checkbox">
+                  <label><input type="checkbox" name="add_to_current" id="add_to_current">Add to current</label>
+                </div>
               </div>
-              @foreach ($budgtype as $type)
               <div class="form-group">
-                {{ Form::label('name', $type->description.' Amount') }}
-                {{ Form::hidden('id[]', $type->id) }}
-                {{ Form::text('amount[]', null, [
-                  'id' => 'id'.$type->id,
+                {{ Form::label('name', 'Budget Amount') }}
+                {{ Form::text('budget_amount', null, [
+                  'id' => 'budget_amount',
                   'class' => 'form-control peso',
                   'maxlength' => '15',
                   'required' => 'required',
@@ -57,8 +58,23 @@
                 ]) 
               }}
             </div>
-            @endforeach
+            @foreach ($budgtype as $type)
             <div class="form-group">
+              {{ Form::label('name', $type->description.' Amount') }}
+              {{ Form::hidden('id[]', $type->id) }}
+              {{ Form::text('amount[]', null, [
+                'id' => 'id'.$type->id,
+                'class' => 'form-control peso',
+                'maxlength' => '15',
+                'required' => 'required',
+                'data-parsley-pattern' => '^[0-9.]+$',
+                'autocomplete' => 'off'
+              ]) 
+            }}
+          </div>
+          @endforeach
+          <div class="form-group allocate row">
+            <div class="col-md-6">
               {{ Form::label('name', 'Scholar Budget') }}
               {{ Form::text('budget_per_student', null, [
                 'id' => 'budget_per_student',
@@ -71,7 +87,7 @@
               ]) 
             }}
           </div>
-          <div class="form-group allocate">
+          <div class="col-md-6">
             {{ Form::label('name', 'Slot') }}
             {{ Form::text('slot_count', null, [
               'id' => 'slot_count',
@@ -83,18 +99,19 @@
             ]) 
           }}
         </div>
-        <div class="form-group">
-          {{ Form::button('Submit', [
-            'id' => 'btn-save',
-            'class' => 'btn btn-success btn-block',
-            'value' => 'add',
-            'type' => ''
-          ]) 
-        }}
       </div>
-      {{ Form::close() }}
+      <div class="form-group">
+        {{ Form::button('Submit', [
+          'id' => 'btn-save',
+          'class' => 'btn btn-success btn-block',
+          'value' => 'add',
+          'type' => ''
+        ]) 
+      }}
     </div>
+    {{ Form::close() }}
   </div>
+</div>
 </div>
 </div>
 <div class="box-body table-responsive">
