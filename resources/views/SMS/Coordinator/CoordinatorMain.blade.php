@@ -136,7 +136,6 @@
           <ul class="treeview-menu">
             <li class="{{Request::path() == 'coordinator/queries/events' ? 'active' : ''}}"><a href="{{ url('coordinator/queries/events') }}"><i class="fa fa-flag"></i><span>Events</span></a></li>
             <li class="{{Request::path() == 'coordinator/queries/students' ? 'active' : ''}}"><a href="{{ url('coordinator/queries/students') }}"><i class="fa fa-graduation-cap"></i><span>Students</span></a></li>
-            <li class="{{Request::path() == 'coordinator/queries/grades' ? 'active' : ''}}"><a href="{{ url('coordinator/queries/grades') }}"><i class="fa fa-level-up"></i><span>Grades</span></a></li>
           </ul>
         </li>
         <li class="treeview {{Request::path() == 'coordinator/reports' ? 'active' : ''}}">
@@ -146,12 +145,12 @@
             </span>
           </a>
           <ul class="treeview-menu">
-            <li class="{{Request::path() == 'coordinator/reports' ? 'active' : ''}}"><a href="{{ url('coordinator/reports') }}"><i class="fa fa-star"></i><span>Scholar Grade</span></a></li>
-            <li class="{{Request::path() == 'coordinator/reports' ? 'active' : ''}}"><a href="{{ url('coordinator/reports') }}"><i class="fa fa-star"></i><span>Budgets</span></a></li>
-            <li class="{{Request::path() == 'coordinator/reports' ? 'active' : ''}}"><a href="{{ url('coordinator/reports') }}"><i class="fa fa-star"></i><span>Students</span></a></li>
+            <li class="{{Request::path() == 'coordinator/reports/grades' ? 'active' : ''}}"><a href="{{ url('coordinator/reports/grades') }}"><i class="fa fa-level-up"></i><span>Grades</span></a></li>
+            <li class="{{Request::path() == 'coordinator/reports' ? 'active' : ''}}"><a href="{{ url('coordinator/reports') }}"><i class="fa fa-money"></i><span>Budgets</span></a></li>
           </ul>
         </li>
-        <li class="treeview {{Request::path() == 'coordinator/utilities' ? 'active' : ''}} {{Request::path() == 'coordinator/requirements' ? 'active' : ''}} {{Request::path() == 'coordinator/school' ? 'active' : ''}} {{Request::path() == 'coordinator/course' ? 'active' : ''}} {{Request::path() == 'coordinator/budget' ? 'active' : ''}}">
+        <li class="{{Request::path() == 'coordinator/utilities' ? 'active' : ''}}"><a href="{{ url('coordinator/utilities') }}"><i class="fa fa-gear"></i><span>Utilities</span></a></li>
+        <li class="treeview {{Request::path() == 'coordinator/requirements' ? 'active' : ''}} {{Request::path() == 'coordinator/checklist' ? 'active' : ''}} {{Request::path() == 'coordinator/budget' ? 'active' : ''}}">
           <a href="#"><i class="fa fa-gears"></i><span>Settings</span>
             <span class="pull-right-container">
               <i class="fa fa-angle-left pull-right"></i>
@@ -160,9 +159,7 @@
           <ul class="treeview-menu">
             <li class="{{Request::path() == 'coordinator/budget' ? 'active' : ''}}"><a href="{{ url('coordinator/budget') }}"><i class="fa fa-money"></i><span>Budget</span></a></li>
             <li class="{{Request::path() == 'coordinator/requirements' ? 'active' : ''}}"><a href="{{ url('coordinator/requirements') }}"><i class="fa fa-files-o"></i><span>Requirements</span></a></li>
-            <li class="{{Request::path() == 'coordinator/school' ? 'active' : ''}}"><a href="{{ url('coordinator/school') }}"><i class="fa fa-graduation-cap"></i><span>School</span></a></li>
-            <li class="{{Request::path() == 'coordinator/course' ? 'active' : ''}}"><a href="{{ url('coordinator/course') }}"><i class="fa fa-book"></i><span>Course</span></a></li>
-            <li class="{{Request::path() == 'coordinator/utilities' ? 'active' : ''}}"><a href="{{ url('coordinator/utilities') }}"><i class="fa fa-gear"></i><span>Utilities</span></a></li>
+            <li class="{{Request::path() == 'coordinator/checklist' ? 'active' : ''}}"><a href="{{ url('coordinator/checklist') }}"><i class="fa fa-tasks"></i><span>Checklist</span></a></li>
           </ul>
         </li>
       </ul>

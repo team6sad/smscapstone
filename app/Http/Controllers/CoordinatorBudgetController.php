@@ -65,6 +65,9 @@ class CoordinatorBudgetController extends Controller
     {
         DB::beginTransaction();
         try {
+            if ($request->add_to_current) {
+                $request->budget_amount += $request->budget_last;
+            }
             $budget = Budget::where('user_id',Auth::id())
             ->latest('id')->first();
             if($budget!=null) {
@@ -101,6 +104,9 @@ class CoordinatorBudgetController extends Controller
             $budget->budget_per_student=$request->budget_per_student;
             $budget->slot_count=$request->slot_count;
             $budget->budget_date=Carbon::now(Config::get('app.timezone'));
+            if ($request->add_to_current) {
+                $budget->add_excess = 1;
+            }
             $budget->save();
             foreach ($request->amount as $amount) {
                 $allocation = new Allocation;
@@ -148,6 +154,7 @@ class CoordinatorBudgetController extends Controller
         try {
             $budget = UserBudget::where('budget_id', function($query) {
                 $query->from('budgets')
+                ->where('user_id',Auth::id())
                 ->latest('id')
                 ->select('id')
                 ->first();

@@ -24,6 +24,12 @@ class StudentIndexController extends Controller
 		->select('allocation_types.description','allocations.amount','user_allocation.id','user_allocation.date_claimed')
 		->where('allocations.budget_id', function($query){
 			$query->from('budgets')
+			->where('councilor_id', function($subquery) {
+				$subquery->from('user_councilor')
+				->select('councilor_id')
+				->where('user_id',Auth::id())
+				->first();
+			})
 			->select('id')
 			->latest('id')
 			->first();

@@ -10,7 +10,7 @@
       </h1>
       <ol class="breadcrumb">
         <li><a href="{{ url('coordinator/dashboard') }}"><i class="fa fa-dashboard"></i> Dashboard</a></li>
-        <li class="active"><i class="fa fa-list"></i> Queries</li>
+        <li class="active"><i class="fa fa-trophy"></i> Reports</li>
         <li class="active"><i class="fa fa-users"></i> Grades</li>
       </ol>
     </section>
@@ -20,7 +20,7 @@
           <div class="box box-danger container">
             <div class="row">
               <br>
-              {{ Form::open(['data-parsley-whitespace' => 'squish', 'target' => '_blank', 'route' => 'queries.postGrades']) }}
+              {{ Form::open(['data-parsley-whitespace' => 'squish', 'target' => '_blank', 'route' => 'reports.postGrades']) }}
               <div class="col-md-12 form-group row">
                 <div class="col-md-6">
                   <label class="control-label">Student:</label>

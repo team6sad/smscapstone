@@ -21,6 +21,7 @@ class CreateBudgetsTable extends Migration {
 			$table->float('budget_per_student', 10, 0)->unsigned();
 			$table->integer('slot_count')->unsigned();
 			$table->dateTime('budget_date');
+			$table->boolean('add_excess')->default(0);
 		});
 	}
 

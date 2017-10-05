@@ -63,9 +63,9 @@ Route::group(['prefix' => 'coordinator/'], function () {
 	//Coordinator Notification
 	Route::get('messages/notification', ['uses' => 'CoordinatorMessagesController@unreadmessage', 'as' => 'coordinatormessage.unreadmessage']);
 	//Coordinator DataTable
-	Route::get('claiming/data', ['uses' => 'CoordinatorUtilitiesController@data', 'as' => 'coordinatorclaiming.data']);
-	Route::get('course/data', ['uses' => 'CoordinatorCourseController@data', 'as' => 'coordinatorcourse.data']);
-	Route::get('school/data', ['uses' => 'CoordinatorSchoolController@data', 'as' => 'coordinatorschool.data']);
+	Route::get('claiming/data', ['uses' => 'CoordinatorChecklistController@dataClaiming', 'as' => 'coordinatorclaiming.data']);
+	Route::get('course/data', ['uses' => 'CoordinatorChecklistController@dataCourse', 'as' => 'coordinatorcourse.data']);
+	Route::get('school/data', ['uses' => 'CoordinatorChecklistController@dataSchool', 'as' => 'coordinatorschool.data']);
 	Route::get('requirements/data', ['uses' => 'CoordinatorRequirementController@data', 'as' => 'coordinatorrequirements.data']);
 	Route::get('renewal/data', ['uses' => 'CoordinatorRenewalController@data', 'as' => 'coordinatorrenewal.data']);
 	Route::get('events/data', ['uses' => 'CoordinatorEventsController@data', 'as' => 'coordinatorevents.data']);
@@ -75,9 +75,9 @@ Route::group(['prefix' => 'coordinator/'], function () {
 	Route::get('messages/inboxdata', ['uses' => 'CoordinatorMessagesController@inboxdata', 'as' => 'coordinatorinbox.data']);
 	Route::get('announcements/data', ['uses' => 'CoordinatorAnnouncementsController@data', 'as' => 'coordinatorannouncements.data']);
 	//Coordinator Checkbox Route List
-	Route::put('utilities/checkbox/{id}', ['uses' => 'CoordinatorUtilitiesController@checkbox', 'as' => 'coordinatorutilities.checkbox']);
-	Route::put('course/checkbox/{id}', ['uses' => 'CoordinatorCourseController@checkbox', 'as' => 'coordinatorcourse.checkbox']);
-	Route::put('school/checkbox/{id}', ['uses' => 'CoordinatorSchoolController@checkbox', 'as' => 'coordinatorschool.checkbox']);
+	Route::put('claiming/checkbox/{id}', ['uses' => 'CoordinatorChecklistController@checkboxClaiming', 'as' => 'coordinatorclaiming.checkbox']);
+	Route::put('course/checkbox/{id}', ['uses' => 'CoordinatorChecklistController@checkboxCourse', 'as' => 'coordinatorcourse.checkbox']);
+	Route::put('school/checkbox/{id}', ['uses' => 'CoordinatorChecklistController@checkboxSchool', 'as' => 'coordinatorschool.checkbox']);
 	Route::put('requirements/checkbox/{id}', ['uses' => 'CoordinatorRequirementController@checkbox', 'as' => 'coordinatorrequirements.checkbox']);
 	Route::put('messages/checkbox/{id}', ['uses' => 'CoordinatorMessagesController@checkbox', 'as' => 'coordinatorinbox.checkbox']);
 	Route::put('events/attendance/checkbox/{id}', ['uses' => 'CoordinatorEventsController@attendance', 'as' => 'coordinatoreventsattendance.checkbox']);
@@ -99,20 +99,17 @@ Route::group(['prefix' => 'coordinator/'], function () {
 	//Coordinator Queries
 	Route::get('queries/students', ['uses' => 'CoordinatorQueriesController@students', 'as' => 'queries.students']);
 	Route::get('queries/events', ['uses' => 'CoordinatorQueriesController@events', 'as' => 'queries.events']);
-	Route::get('queries/grades', ['uses' => 'CoordinatorQueriesController@grades', 'as' => 'queries.grades']);
 	Route::post('queries/students', ['uses' => 'CoordinatorQueriesController@postStudents', 'as' => 'queries.postStudents']);
 	Route::post('queries/events', ['uses' => 'CoordinatorQueriesController@postEvents', 'as' => 'queries.postEvents']);
-	Route::post('queries/grades', ['uses' => 'CoordinatorQueriesController@postGrades', 'as' => 'queries.postGrades']);
 	//Coordinator Reports
-	Route::get('reports/events', ['uses' => 'CoordinatorReportsController@events', 'as' => 'queries.events']);
+	Route::get('reports/grades', ['uses' => 'CoordinatorReportsController@grades', 'as' => 'reports.grades']);
+	Route::post('reports/grades', ['uses' => 'CoordinatorReportsController@postGrades', 'as' => 'reports.postGrades']);
 	//Coordinator Renewal
 	Route::get('renewal/accept/{id}', ['uses' => 'CoordinatorRenewalController@accept', 'as' => 'coordinatorrenewal.accept']);
 	Route::get('renewal/decline/{id}', ['uses' => 'CoordinatorRenewalController@decline', 'as' => 'coordinatorrenewal.decline']);
 	Route::get('renewal', ['uses' => 'CoordinatorRenewalController@index', 'as' => 'coordinatorrenewal.index']);
-	//Coordinator Course
-	Route::get('course', ['uses' => 'CoordinatorCourseController@index', 'as' => 'coordinatorcourse.index']);
-	//Coordinator School
-	Route::get('school', ['uses' => 'CoordinatorSchoolController@index', 'as' => 'coordinatorschool.index']);
+	//Coordinator Checklist
+	Route::get('checklist', ['uses' => 'CoordinatorChecklistController@index', 'as' => 'checklist.index']);
 	//Coordinator Requirement
 	Route::get('requirements', ['uses' => 'CoordinatorRequirementController@index', 'as' => 'coordinatorrequirements.index']);
 	Route::post('requirements', ['uses' => 'CoordinatorRequirementController@store', 'as' => 'coordinatorrequirements.store']);

@@ -6,35 +6,6 @@ $(document).ready(function() {
     });
     var id = '';
     var url = "/coordinator/utilities";
-    var table = $('#table').DataTable({
-        responsive: true,
-        processing: true,
-        serverSide: true,
-        ajax: dataurl,
-        columns: [
-        { data: 'description', name: 'description' },
-        { data: 'is_active', name: 'is_active', searchable: false, orderable: false }
-        ]
-    });
-    $('#list').on('change', '#isActive', function() {
-        var link_id = $(this).val();
-        var is_active = 0;
-        if ($(this).prop('checked')) {
-            is_active = 1;
-        }
-        var formData = {
-            is_active: is_active
-        }
-        $.ajax({
-            url: url + '/checkbox/' + link_id,
-            type: "PUT",
-            data: formData,
-            success: function(data) {
-                Pace.restart();
-            },
-            error: function(data) {}
-        });
-    });
     $('#view_step').on('hide.bs.modal', function() {
         $('#frmStep').trigger("reset");
         $('.steps').empty();
@@ -171,7 +142,6 @@ $(document).ready(function() {
             }
         });
     });
-
     function getBudget() {
         $.get('/coordinator/budget/getlatest', function(data) {
             $('.slot').text(data.slot_count);
@@ -179,7 +149,5 @@ $(document).ready(function() {
         });
     }
     $('.todo-list').todoList();
-    $('#available').click(function() {
-        $('.btn-xs.android').attr('style', 'width: 72px;');
-    });
+    $('.wysihtml5-toolbar').remove();
 });

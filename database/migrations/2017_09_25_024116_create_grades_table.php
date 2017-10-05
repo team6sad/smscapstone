@@ -18,7 +18,7 @@ class CreateGradesTable extends Migration {
 			$table->string('student_detail_user_id', 30);
 			$table->integer('grading_id')->unsigned()->index('f_grade_grading_id_idx');
 			$table->char('year', 1)->default(1);
-			$table->char('semester', 1)->default(0);
+			$table->char('semester', 1)->default(1);
 			$table->string('pdf', 50)->unique('pdf_UNIQUE');
 			$table->unique(['student_detail_user_id','year','semester'], 'fgrade_unique');
 		});

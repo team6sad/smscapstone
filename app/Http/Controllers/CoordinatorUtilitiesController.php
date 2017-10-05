@@ -21,45 +21,6 @@ class CoordinatorUtilitiesController extends Controller
         $this->middleware('auth');
         $this->middleware('coordinator');
     }
-    public function data()
-    {
-        $claiming = Budgtype::where('is_active',1);
-        return Datatables::of($claiming)
-        ->addColumn('is_active', function ($data) {
-            $type = UserAllocationType::where('allocation_type_id',$data->id)
-            ->where('user_id',Auth::id())
-            ->first();
-            $checked = '';
-            if($type != null){
-                $checked = 'checked';
-            }
-            return "<input type='checkbox' id='isActive' name='isActive' value='$data->id' data-toggle='toggle' data-style='android' data-onstyle='success' data-offstyle='danger' data-on=\"<i class='fa fa-check-circle'></i> Active\" data-off=\"<i class='fa fa-times-circle'></i> Inactive\" $checked data-size='mini'><script>
-            $('[data-toggle=\'toggle\']').bootstrapToggle('destroy');   
-            $('[data-toggle=\'toggle\']').bootstrapToggle();</script>";
-        })
-        ->setRowId(function ($data) {
-            return $data = 'id'.$data->id;
-        })
-        ->rawColumns(['is_active','action'])
-        ->make(true);
-    }
-    public function checkbox(Request $request, $id)
-    {
-        try {
-            if ($request->is_active) {
-                $type = new UserAllocationType;
-                $type->allocation_type_id = $id;
-                $type->user_id = Auth::id();
-                $type->save();
-            } else {
-                $type = UserAllocationType::where('user_id',Auth::id())->where('allocation_type_id',$id)->firstorfail();
-                $type->delete();
-            }
-            return Response::json(200);
-        } catch(\Exception $e) {
-            return Response::json('Already Add or Remove', 500);
-        }
-    }
     public function index()
     {
         $application = Application::join('users','student_details.user_id','users.id')

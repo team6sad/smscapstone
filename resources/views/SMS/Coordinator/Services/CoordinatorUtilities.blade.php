@@ -16,25 +16,12 @@
 	<section class="content">
 		<div class="nav-tabs-custom">
 			<ul class="nav nav-tabs">
-				<li id="available" class="active"><a href="#tab_1" data-toggle="tab">Available Claiming</a></li>
-				<li><a href="#tab_2" data-toggle="tab">Undo Checklist</a></li>
-				<li><a href="#tab_3" data-toggle="tab">Essay Question</a></li>
-				<li><a href="#tab_4" data-toggle="tab">Backup</a></li>
+				<li class="active"><a href="#tab_1" data-toggle="tab">Undo Checklist</a></li>
+				<li><a href="#tab_2" data-toggle="tab">Essay Question</a></li>
+				<li><a href="#tab_3" data-toggle="tab">Backup</a></li>
 			</ul>
 			<div class="tab-content">
-				<div class="tab-pane active row" id="tab_1">
-					<div class="box-body table-responsive">
-						<table id="table" class="table table-bordered table-striped table-hover" cellspacing="0" width="100%">
-							<thead>
-								<th>Budget Type</th>
-								<th>Status</th>
-							</thead>
-							<tbody id="list">
-							</tbody>
-						</table>
-					</div>
-				</div>
-				<div class="tab-pane row" id="tab_2">
+				<div class="tab-pane active" id="tab_1">
 					<div class="modal fade" id="view_step">
 						<div class="modal-dialog">
 							<div class="modal-content">
@@ -126,7 +113,7 @@
 	</table>
 </div>
 </div>
-<div class="tab-pane row" id="tab_3">
+<div class="tab-pane" id="tab_2">
 	<div class="box-body pad">
 		{{ Form::open([
 			'id' => 'frm',
@@ -149,7 +136,7 @@
 {{ Form::close() }}
 </div>
 </div>
-<div class="tab-pane row" id="tab_4">
+<div class="tab-pane" id="tab_3">
 </div>
 </div>
 </div>

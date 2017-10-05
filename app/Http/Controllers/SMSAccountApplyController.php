@@ -237,8 +237,9 @@ class SMSAccountApplyController extends Controller
     $application = Application::join('users','student_details.user_id','users.id')
     ->join('user_councilor','users.id','user_councilor.user_id')
     ->join('user_budget','user_budget.user_id','users.id')
-    ->where('user_budget.budget_id', function($query) {
+    ->where('user_budget.budget_id', function($query) use($id){
       $query->from('budgets')
+      ->where('councilor_id', $id)
       ->select('id')
       ->latest('id')
       ->first();
