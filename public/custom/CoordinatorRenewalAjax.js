@@ -49,6 +49,15 @@ $(document).ready(function() {
 							showConfirmButton: false,
 							html: true
 						});
+					}).fail(function(data) {
+						swal({
+							title: "Failed!",
+							text: "<center>No Available Slot</center>",
+							type: "error",
+							confirmButtonClass: "btn-success",
+							showConfirmButton: true,
+							html: true
+						});
 					});
 					$.get('/coordinator/budget/getlatest', function(data){
 						$('.slot').text(data.slot_count);

@@ -87,13 +87,21 @@ class CoordinatorRenewalController extends Controller
         try {
             $budget = Budget::where('user_id',Auth::id())
             ->latest('id')->first();
-            $application = Application::find($id);
-            $application->is_renewal = 0;
-            $application->save();
-            $userbudget = new UserBudget;
-            $userbudget->budget_id = $budget->id;
-            $userbudget->user_id = $id;
-            $userbudget->save();
+            if ($budget != null) {
+                $userbudget = UserBudget::where('budget_id',$budget->id)->count();
+                if (($budget->slot_count - $userbudget) == 0) {
+                    return Response::json('No available slot',500);
+                }
+                $application = Application::find($id);
+                $application->is_renewal = 0;
+                $application->save();
+                $userbudget = new UserBudget;
+                $userbudget->budget_id = $budget->id;
+                $userbudget->user_id = $id;
+                $userbudget->save();
+            } else {
+                return Response::json('No available slot',500);
+            }
             DB::commit();
             return Response::json($userbudget);
         } catch(\Exception $e) {

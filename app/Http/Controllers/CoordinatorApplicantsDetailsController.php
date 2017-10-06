@@ -90,21 +90,8 @@ class CoordinatorApplicantsDetailsController extends Controller
                 $budget = Budget::where('user_id',Auth::id())
                 ->latest('id')->first();
                 if ($budget != null) {
-                    $application = Application::join('users','student_details.user_id','users.id')
-                    ->join('user_councilor','users.id','user_councilor.user_id')
-                    ->where('users.type','Student')
-                    ->where('user_councilor.councilor_id', function($query){
-                        $query->from('user_councilor')
-                        ->join('users','user_councilor.user_id','users.id')
-                        ->join('councilors','user_councilor.councilor_id','councilors.id')
-                        ->select('councilors.id')
-                        ->where('user_councilor.user_id',Auth::id())
-                        ->first();
-                    })
-                    ->where('student_details.application_status','Accepted')
-                    ->where('student_status','Continuing')
-                    ->count();
-                    if (($budget->slot_count - $application) == 0) {
+                    $userbudget = UserBudget::where('budget_id',$budget->id)->count();
+                    if (($budget->slot_count - $userbudget) == 0) {
                         Session::flash('fail','No available slot');
                         return redirect(route('applicants.index'));
                     }

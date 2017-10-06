@@ -84,6 +84,17 @@
 				</div>
 			</div>
 			<div class="col-md-9">
+				@if (count($errors) > 0)
+				<div class="alert alert-warning alert-dismissible" role="alert">
+					<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+					<strong>Errors:</strong>
+					<ul>
+						@foreach ($errors->all() as $error)
+						<li>{{$error}}</li>
+						@endforeach
+					</ul>
+				</div>
+				@endif
 				<div class="nav-tabs-custom">
 					<ul class="nav nav-tabs">
 						<li id="available" class="active"><a href="#tab_1" data-toggle="tab">Details</a></li>
@@ -171,17 +182,6 @@
 					@endif
 				</div>
 				<div class="tab-pane" id="tab_3">
-					@if (count($errors) > 0)
-					<div class="alert alert-warning alert-dismissible" role="alert">
-						<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-						<strong>Errors:</strong>
-						<ul>
-							@foreach ($errors->all() as $error)
-							<li>{{$error}}</li>
-							@endforeach
-						</ul>
-					</div>
-					@endif
 					@foreach ($allgrade as $allgrades)
 					<div class="panel box box-success">
 						<div class="box-header with-border">

@@ -68,6 +68,9 @@ class CoordinatorBudgetController extends Controller
             if ($request->add_to_current) {
                 $request->budget_amount += $request->budget_last;
             }
+            if ($request->slot_count == 0) {
+                return Response::json('Slot must be more than 0',500);
+            }
             $budget = Budget::where('user_id',Auth::id())
             ->latest('id')->first();
             if($budget!=null) {
