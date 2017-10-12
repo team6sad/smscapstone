@@ -101,20 +101,20 @@
           </ul>
         </li>
         <li class="{{Request::path() == 'admin/councilor' ? 'active' : ''}}"><a href="{{ url('admin/councilor') }}"><i class="fa fa-gavel"></i><span>Councilor</span></a></li>
-        <li class="treeview {{Request::path() == 'admin/grade' ? 'active' : ''}} {{Request::path() == 'admin/school' ? 'active' : ''}} {{Request::path() == 'admin/course' ? 'active' : ''}} {{Request::path() == 'admin/credit' ? 'active' : ''}}">
+        <li class="treeview {{Request::segment(2) == 'grade' ? 'active' : ''}}{{Request::path() == 'admin/school' ? 'active' : ''}} {{Request::path() == 'admin/course' ? 'active' : ''}} {{Request::path() == 'admin/credit' ? 'active' : ''}}">
           <a href="#"><i class="fa fa-pencil-square-o"></i><span>Education</span>
             <span class="pull-right-container">
               <i class="fa fa-angle-left pull-right"></i>
             </span>
           </a>
           <ul class="treeview-menu">
-            <li class="{{Request::path() == 'admin/grade' ? 'active' : ''}}"><a href="{{ url('admin/grade') }}"><i class="fa fa-level-up"></i><span>Academic Grading</span></a></li>
+            <li class="{{Request::segment(2) == 'grade' ? 'active' : ''}}"><a href="{{ url('admin/grade') }}"><i class="fa fa-level-up"></i><span>Academic Grading</span></a></li>
             <li class="{{Request::path() == 'admin/school' ? 'active' : ''}}"><a href="{{ url('admin/school') }}"><i class="fa fa-graduation-cap"></i><span>School</span></a></li>
             <li class="{{Request::path() == 'admin/course' ? 'active' : ''}}"><a href="{{ url('admin/course') }}"><i class="fa fa-book"></i><span>Course</span></a></li>
             <li class="{{Request::path() == 'admin/credit' ? 'active' : ''}}"><a href="{{ url('admin/credit') }}"><i class="fa fa-hourglass-o"></i><span>Credit</span></a></li>
           </ul>
         </li>
-        <li class="treeview {{Request::path() == 'admin/batch' ? 'active' : ''}} {{Request::path() == 'admin/requirements' ? 'active' : ''}}">
+        <li class="treeview {{Request::path() == 'admin/batch' ? 'active' : ''}}{{Request::segment(2) == 'requirements' ? 'active' : ''}}">
           <a href="#"><i class="fa fa-sticky-note-o"></i><span>Scholarship</span>
             <span class="pull-right-container">
               <i class="fa fa-angle-left pull-right"></i>
@@ -122,7 +122,7 @@
           </a>
           <ul class="treeview-menu">
             <li class="{{Request::path() == 'admin/batch' ? 'active' : ''}}"><a href="{{ url('admin/batch') }}"><i class="fa fa-stack-overflow"></i><span>Batch</span></a></li>
-            <li class="{{Request::path() == 'admin/requirements' ? 'active' : ''}}"><a href="{{ url('admin/requirements') }}"><i class="fa  fa-files-o"></i><span>Requirements</span></a></li>
+            <li class="{{Request::segment(2) == 'requirements' ? 'active' : ''}}"><a href="{{ url('admin/requirements') }}"><i class="fa  fa-files-o"></i><span>Requirements</span></a></li>
           </ul>
         </li>
         <li class="{{Request::path() == 'admin/budget-type' ? 'active' : ''}}"><a href="{{ url('admin/budget-type') }}"><i class="fa fa-money"></i><span>Budget Type</span></a></li>

@@ -56,9 +56,9 @@ class CoordinatorReportsController extends Controller
             ->where('users.id',Auth::id())
             ->first();
         })
-        ->where('users.id',$request->name)
-        ->first();
-        $allgrade = Grade::where('student_detail_user_id',$request->name)->get();
+        ->whereIn('users.id',$request->name)
+        ->get();
+        $allgrade = Grade::whereIn('student_detail_user_id',$request->name)->get();
         $number = new NumberToWord;
         foreach ($allgrade as $allgrades) {
             $allgrades->semester -= 1;

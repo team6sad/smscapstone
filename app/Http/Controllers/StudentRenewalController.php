@@ -72,8 +72,37 @@ class StudentRenewalController extends Controller
         if ($shift == null) {
             $shift = (object)['school_description' => 'N/A', 'course_description' => 'N/A'];
         }
-        $school = School::where('is_active',1)->get();
-        $course = Course::where('is_active',1)->get();
+        $school = School::join('user_school','schools.id','user_school.school_id')
+        ->where('user_school.user_id', function($query) {
+            $query->from('user_councilor')
+            ->join('users','user_councilor.user_id','users.id')
+            ->where('user_councilor.councilor_id', function($subquery) {
+                $subquery->from('user_councilor')
+                ->select('councilor_id')
+                ->where('user_id',Auth::id())
+                ->first();
+            })
+            ->where('users.type','Coordinator')
+            ->select('users.id');
+        })
+        ->select('schools.*')
+        ->where('schools.id','!=',$application->school_id)
+        ->get();
+        $course = Course::join('user_course','courses.id','user_course.course_id')
+        ->where('user_course.user_id', function($query) {
+            $query->from('user_councilor')
+            ->join('users','user_councilor.user_id','users.id')
+            ->where('user_councilor.councilor_id', function($subquery) {
+                $subquery->from('user_councilor')
+                ->select('councilor_id')
+                ->where('user_id',Auth::id())
+                ->first();
+            })
+            ->where('users.type','Coordinator')
+            ->select('users.id');
+        })
+        ->select('courses.*')
+        ->get();
         $utility = Utility::where('user_id', function($query) {
             $query->from('users')
             ->join('user_councilor','users.id','user_councilor.user_id')
@@ -149,11 +178,16 @@ class StudentRenewalController extends Controller
                 $detail->save();
             }
             if ($request->rad == 'yes') {
+                $getGrade = Grade::where('student_detail_user_id', Auth::id())
+                ->where('grades.id','!=', $grades->id)
+                ->latest('id')
+                ->first();
                 $application = Application::find(Auth::id());
                 $shift = new Shift;
                 $shift->user_id = Auth::id();
                 $shift->school_id = $application->school_id;
                 $shift->course_id = $application->course_id;
+                $shift->grade_id = $getGrade->id;
                 $shift->shift_date = Carbon::now(Config::get('app.timezone'));
                 $shift->save();
                 $application->school_id = $request->school_transfer;

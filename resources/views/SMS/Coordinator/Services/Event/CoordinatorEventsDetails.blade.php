@@ -50,7 +50,7 @@
 						</div>
 					</div>
 				</div>
-				<div class="tab-pane row" id="tab_2">
+				<div class="tab-pane" id="tab_2">
 					<div class="box-body table-responsive">
 						<table id="table" class="table table-bordered table-striped table-hover" cellspacing="0" width="100%">
 							<thead>

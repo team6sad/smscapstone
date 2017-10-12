@@ -20,11 +20,11 @@
   {!! Html::script("js/bootstrap.min.js") !!}
   {!! Html::script("plugins/pace/pace.min.js") !!}
   <style type="text/css">
-    [data-notify="container"] {
-      width: 25%;
-    }
-  </style>
-  <link rel="icon" href="{{ asset('img/logo.ico') }}">
+  [data-notify="container"] {
+    width: 25%;
+  }
+</style>
+<link rel="icon" href="{{ asset('img/logo.ico') }}">
 </head>
 <body class="hold-transition skin-red sidebar-mini">
   <div class="wrapper">
@@ -89,7 +89,7 @@
         <li class="header">NAVIGATION</li>
         <li class="{{Request::path() == 'student/dashboard' ? 'active' : ''}}"><a href="{{ url('student/dashboard') }}"><i class="fa fa-dashboard"></i><span>Dashboard</span></a></li>
         <li class="{{Request::path() == 'student/announcements' ? 'active' : ''}}"><a href="{{ url('student/announcements') }}"><i class="fa fa-bullhorn"></i><span>Announcements</span><small class="label pull-right bg-green panelanno"></small></a></li>
-        <li class="{{Request::path() == 'student/messages' ? 'active' : ''}} {{Request::path() == 'student/messages/create' ? 'active' : ''}} {{Request::path() == 'student/messages/sent' ? 'active' : ''}}"><a href="{{ url('student/messages') }}"><i class="fa fa-envelope"></i><span>Messages</span><small class="label pull-right bg-green panelnotif"></small></a></li>
+        <li class="{{Request::segment(2) == 'messages' ? 'active' : ''}}"><a href="{{ url('student/messages') }}"><i class="fa fa-envelope"></i><span>Messages</span><small class="label pull-right bg-green panelnotif"></small></a></li>
         <li class="{{Request::path() == 'student/events' ? 'active' : ''}}"><a href="{{ url('student/events') }}"><i class="fa fa-flag"></i><span>Events</span><small class="label pull-right bg-yellow panelevent"></small></a></li>
         <li class="{{Request::path() == 'student/renewal' ? 'active' : ''}}"><a href="{{ url('student/renewal') }}"><i class="fa fa-refresh"></i><span>Renewal</span></a></li>
       </ul>

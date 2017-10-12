@@ -216,8 +216,12 @@
                   <td>{{$grades->grade}}</td>
                   @foreach ($grading as $gradings)
                   @if ($grades->grade == $gradings->grade)
-                  @if ($gradings->is_passed)
+                  @if ($gradings->status == 'P')
                   <td>Passed</td>
+                  @elseif ($gradings->status == 'D')
+                  <td>Drop</td>
+                  @elseif ($gradings->status == 'W')
+                  <td>Withdraw</td>
                   @else
                   <td>Failed</td>
                   @endif

@@ -37,7 +37,7 @@
 					</div>
 					<div class="form-group col-xs-6">
 						<label for="year_count" class="control-label">No. year level:</label>
-						{{ Form::selectRange('year', 1, $setting->year_count, $setting->year_count, [
+						{{ Form::selectRange('year', 1, 5, $setting->year_count, [
 							'id' => 'year',
 							'class' => 'form-control',
 						])
@@ -45,7 +45,7 @@
 				</div>
 				<div class="form-group col-xs-6">
 					<label for="semester_count" class="control-label">No. semesters:</label>
-					{{ Form::selectRange('semester', 1, $setting->semester_count, $setting->semester_count, [
+					{{ Form::selectRange('semester', 1, 4, $setting->semester_count, [
 						'id' => 'semester',
 						'class' => 'form-control',
 					])

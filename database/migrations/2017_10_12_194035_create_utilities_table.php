@@ -20,6 +20,7 @@ class CreateUtilitiesTable extends Migration {
 			$table->string('income_cap', 20)->default('35,000 and Above');
 			$table->boolean('passing_grades')->default(1);
 			$table->boolean('no_siblings')->default(0);
+			$table->boolean('renewal_auto_accept')->default(1);
 		});
 	}
 

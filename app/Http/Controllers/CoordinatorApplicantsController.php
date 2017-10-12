@@ -69,7 +69,7 @@ class CoordinatorApplicantsController extends Controller
     {
         $this->criteria();
         $utility = Utility::where('user_id',Auth::id())->first();
-        return view('SMS.Coordinator.Scholar.CoordinatorApplicants')->withUtility($utility);
+        return view('SMS.Coordinator.Scholar.Applicant.CoordinatorApplicants')->withUtility($utility);
     }
     public function postCriteria(Request $request)
     {
@@ -89,6 +89,8 @@ class CoordinatorApplicantsController extends Controller
     }
     private function criteria()
     {
+        $failed = 0;
+        $current = null;
         $user = Application::join('users','users.id','student_details.user_id')
         ->join('user_councilor','users.id','user_councilor.user_id')
         ->select('users.*')
@@ -115,18 +117,36 @@ class CoordinatorApplicantsController extends Controller
                 $grades = Grade::join('grade_details','grades.id','grade_details.grade_id')
                 ->select('grade_details.*','grades.*', 'grades.id as grade_id')
                 ->where('grades.student_detail_user_id',$users->id)
+                ->where('grades.id', function($query) use($users){
+                    $query->from('grades')
+                    ->where('student_detail_user_id',$users->id)
+                    ->oldest('id')
+                    ->select('id')
+                    ->first();
+                })
                 ->count();
                 if ($grades!=0) {
                     $grades = Grade::join('grade_details','grades.id','grade_details.grade_id')
                     ->select('grade_details.*','grades.*', 'grades.id as grade_id')
                     ->where('grades.student_detail_user_id',$users->id)
+                    ->where('grades.id', function($query) use($users){
+                        $query->from('grades')
+                        ->where('student_detail_user_id',$users->id)
+                        ->oldest('id')
+                        ->select('id')
+                        ->first();
+                    })
                     ->get();
                     foreach ($grades as $details) {
                         $grading = GradingDetail::where('grading_id',$details->grading_id)
                         ->where('grade',$details->grade)
                         ->first();
-                        if ($grading->is_passed == 0) {
+                        if ($grading->status == 'F') {
                             $this->declined('Failed Grades', $users);
+                            if ($current != $users->id) {
+                                $failed++;
+                                $current = $users->id;
+                            }
                             break;
                         }
                     }
@@ -136,11 +156,26 @@ class CoordinatorApplicantsController extends Controller
                 $sibling = Sibling::where('student_detail_user_id',$users->id)->count();
                 if ($sibling > 0) {
                     $this->declined('Have a sibling affiliated', $users);
+                    if ($current != $users->id) {
+                        $failed++;
+                        $current = $users->id;
+                    }
                 }
-                $siblings = User::where('middle_name',$users->middle_name)->where('last_name',$users->last_name)->count();
+                $siblings = User::where('middle_name',$users->middle_name)
+                ->where('last_name',$users->last_name)
+                ->where('is_active',1)
+                ->count();
                 if ($siblings > 1) {
                     $this->declined('Have a sibling affiliated', $users);
+                    if ($current != $users->id) {
+                        $failed++;
+                        $current = $users->id;
+                    }
                 }
+            }
+        } if ($utility->no_siblings || $utility->passing_grades) {
+            if ($failed > 0) {
+                Session::flash('success','Declined '.$failed.' Student/s');
             }
         }
     }

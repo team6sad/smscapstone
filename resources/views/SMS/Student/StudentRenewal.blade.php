@@ -197,10 +197,10 @@
 					<h4><b>For Shiftee/Transferee</b></h4>
 				</div>
 				<div class="form-group col-sm-6">
-					<label class="control-label">School Transferred To</label> <br> {{ $shift->school_description }}
+					<label class="control-label">School Transferred To</label> <br> {{ $application->school_description }}
 				</div>
 				<div class="form-group col-sm-6">
-					<label class="control-label">Course Shifted To</label> <br> {{ $shift->course_description }}
+					<label class="control-label">Course Shifted To</label> <br> {{ $application->course_description }}
 				</div>
 			</div>
 		</div>

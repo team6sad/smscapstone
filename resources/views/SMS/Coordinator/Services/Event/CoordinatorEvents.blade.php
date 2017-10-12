@@ -148,7 +148,7 @@
         <li><a href="#tab_2" data-toggle="tab">Finished</a></li>
       </ul>
       <div class="tab-content">
-        <div class="tab-pane active row" id="tab_1">
+        <div class="tab-pane active" id="tab_1">
           <div class="box-body table-responsive">
             {{ Form::button("<i class='fa fa-plus'></i> Add Event", [
               'id' => 'btn-add',
@@ -172,7 +172,7 @@
             </table>
           </div>
         </div>
-        <div class="tab-pane row" id="tab_2">
+        <div class="tab-pane" id="tab_2">
           <div class="box-body table-responsive">
             <table id="table-done" class="table table-bordered table-striped table-hover" cellspacing="0" width="100%">
               <thead>

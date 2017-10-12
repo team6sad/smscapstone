@@ -219,4 +219,7 @@ $(document).ready(function() {
             }
         });
     });
+    $('li').click(function() {
+        $('.btn-xs.android').attr('style', 'width: 85px;');
+    });
 });

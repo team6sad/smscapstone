@@ -61,8 +61,10 @@
 			<div class="form-group col-xs-2">
 				{{ Form::label('name', 'Status') }}
 				{{ Form::select('status[]', [
-					'1' => 'Passed',
-					'0' => 'Failed'
+					'P' => 'Passed',
+					'F' => 'Failed',
+					'D' => 'Drop',
+					'W' => 'Withdraw'
 				], null, [
 					'id' => 'status',
 					'class' => 'form-control academic_status'])
@@ -118,9 +120,11 @@
 <div class="form-group col-xs-2">
 	{{ Form::label('name', 'Status') }}
 	{{ Form::select('status[]', [
-		'1' => 'Passed',
-		'0' => 'Failed'
-	], $gradings->is_passed, [
+		'P' => 'Passed',
+		'F' => 'Failed',
+		'D' => 'Drop',
+		'W' => 'Withdraw'
+	], $gradings->status, [
 		'id' => 'status',
 		'class' => 'form-control academic_status'])
 	}}

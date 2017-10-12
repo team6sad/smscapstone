@@ -1,8 +1,8 @@
 <?php
 namespace App;
 use Illuminate\Database\Eloquent\Model;
-class Shift extends Model
+class Receipt extends Model
 {
 	public $timestamps = false;
-	protected $dates = ['shift_date'];
+	protected $dates = ['date_claimed'];
 }

@@ -8,9 +8,9 @@
 {!! Html::style("css/style.css") !!}
 {!! Html::style("css/parsley.css") !!}
 <style type="text/css">
-  .navbar-toggle {
-    margin-top: -4px;
-  }
+.navbar-toggle {
+  margin-top: -4px;
+}
 </style>
 @endsection
 @section('login')

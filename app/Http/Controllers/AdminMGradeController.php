@@ -67,7 +67,7 @@ class AdminMGradeController extends Controller
                 $gradingDetails = new GradingDetail;
                 $gradingDetails->grading_id = $grade->id;
                 $gradingDetails->grade = $request->grading[$ctr];
-                $gradingDetails->is_passed = $request->status[$ctr];
+                $gradingDetails->status = $request->status[$ctr];
                 $gradingDetails->save();
                 $ctr++;
             }
@@ -106,7 +106,7 @@ class AdminMGradeController extends Controller
                 $gradingDetails = new GradingDetail;
                 $gradingDetails->grading_id = $grade->id;
                 $gradingDetails->grade = $request->grading[$ctr];
-                $gradingDetails->is_passed = $request->status[$ctr];
+                $gradingDetails->status = $request->status[$ctr];
                 $gradingDetails->save();
                 $ctr++;
             }

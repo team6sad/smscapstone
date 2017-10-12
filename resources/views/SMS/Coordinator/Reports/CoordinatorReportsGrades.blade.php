@@ -1,6 +1,5 @@
   @extends('SMS.Coordinator.CoordinatorMain')
   @section('override')
-  {!! Html::style("plugins/select2/select2.min.css") !!}
   @endsection
   @section('content')
   <div class="content-wrapper">
@@ -18,32 +17,49 @@
       <div class="row">
         <div class="col-sm-12">
           <div class="box box-danger container">
+            {{ Form::open(['data-parsley-whitespace' => 'squish', 'target' => '_blank', 'route' => 'reports.postGrades']) }}
+            <br>
+            <table id="table" class="table table-bordered table-striped table-hover" cellspacing="0" width="100%">
+              <thead>
+                <th><input type="checkbox" name="checkbox" id="checkbox"></th>
+                <th>ID</th>
+                <th >Name</th>
+              </thead>
+              <tbody id="list">
+                @foreach ($application as $applications)
+                <tr>
+                  <td><input type="checkbox" name="name[]" class="checkbox" value="{{ $applications->id }}"></td>
+                  <td>{{ $applications->id }}</td>
+                  <td><table><tr><td><div class='col-md-2'><img src='{{ asset('images/'.$applications->picture) }}' class='img-circle' alt='data Image' height='40'></div></td><td>{{ $applications->strStudName }}</td></tr></table></td>
+                </tr>
+                @endforeach
+              </tbody>
+            </table>
+            <br>
             <div class="row">
-              <br>
-              {{ Form::open(['data-parsley-whitespace' => 'squish', 'target' => '_blank', 'route' => 'reports.postGrades']) }}
-              <div class="col-md-12 form-group row">
-                <div class="col-md-6">
-                  <label class="control-label">Student:</label>
-                  <select class="form-control dropdownbox" name="name">
-                    @foreach ($application as $applications)
-                    <option value="{{ $applications->id }}">{{ $applications->strStudName }}</option>
-                    @endforeach
-                  </select>
-                </div>
-              </div>
               <div class="col-md-12 form-group">
                 <button type="submit" class="btn btn-primary pull-right">Generate</button>
               </div>
-              {{ Form::close() }}
             </div>
+            {{ Form::close() }}
           </div>
         </div>
-      </section>
-    </div>
-    @endsection
-    @section('script')
-    {!! Html::script("plugins/select2/select2.min.js") !!}
-    <script type="text/javascript">
-      $('.dropdownbox').select2();
-    </script>
-    @endsection
+      </div>
+    </section>
+  </div>
+  @endsection
+  @section('script')
+  <script type="text/javascript">
+    $('#table').DataTable({
+
+      "aaSorting": [],
+      "columnDefs": [
+      { "width": "30px", "targets": 0 },
+      { orderable: false, targets: 0 }
+      ]
+    });
+    $("#checkbox").click(function(){
+      $('input:checkbox').not(this).prop('checked', this.checked);
+    });
+  </script>
+  @endsection

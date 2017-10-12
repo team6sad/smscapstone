@@ -15,6 +15,7 @@ class AddForeignKeysToShiftsTable extends Migration {
 		Schema::table('shifts', function(Blueprint $table)
 		{
 			$table->foreign('course_id', 'fshift_course_id')->references('id')->on('courses')->onUpdate('CASCADE')->onDelete('RESTRICT');
+			$table->foreign('grade_id', 'fshift_grade_id')->references('id')->on('grades')->onUpdate('CASCADE')->onDelete('RESTRICT');
 			$table->foreign('school_id', 'fshift_school_id')->references('id')->on('schools')->onUpdate('CASCADE')->onDelete('RESTRICT');
 			$table->foreign('user_id', 'fshift_user_id')->references('id')->on('users')->onUpdate('CASCADE')->onDelete('RESTRICT');
 		});
@@ -31,6 +32,7 @@ class AddForeignKeysToShiftsTable extends Migration {
 		Schema::table('shifts', function(Blueprint $table)
 		{
 			$table->dropForeign('fshift_course_id');
+			$table->dropForeign('fshift_grade_id');
 			$table->dropForeign('fshift_school_id');
 			$table->dropForeign('fshift_user_id');
 		});

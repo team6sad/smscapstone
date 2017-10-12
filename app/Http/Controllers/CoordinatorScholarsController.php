@@ -22,13 +22,75 @@ use Carbon\Carbon;
 use Config;
 use App\UserAllocation;
 use App\Credit;
+use App\Receipt;
 use App\UserBudget;
+use Session;
+use PDF;
+use App\Shift;
 class CoordinatorScholarsController extends Controller
 {
     public function __construct()
     {
         $this->middleware('auth');
         $this->middleware('coordinator');
+    }
+    public function data($id)
+    {
+        $receipt = Receipt::where('user_id',$id);
+        $datatables = Datatables::of($receipt)
+        ->editColumn('id', function ($data) {
+            return sprintf("%010d", $data->id);
+        })
+        ->addColumn('date_claimed', function ($data) {
+            return $data->date_claimed ? with(new Carbon($data->date_claimed))->format('M d, Y') : '';
+        })
+        ->addColumn('total', function ($data) {
+            $allocate = UserAllocation::where('receipt_id',$data->id)->sum('amount');
+            return $allocate;
+        })
+        ->addColumn('action', function ($data) {
+            return "<a href=".route('scholars.receipt',$data->id)." target='_blank'><button class='btn btn-info btn-xs' value='$data->id'><i class='fa fa-eye'></i> View</button></a>";
+        })
+        ->setRowId(function ($data) {
+            return $data = 'id'.$data->id;
+        })
+        ->rawColumns(['action']);
+        return $datatables->make(true);
+    }
+    public function getReceipt($id)
+    {
+        try {
+            $councilor = Councilor::join('user_councilor','user_councilor.councilor_id','councilors.id')
+            ->join('districts','districts.id','councilors.district_id')
+            ->where('user_councilor.user_id',Auth::id())
+            ->first();
+            $receipt = Receipt::find($id);
+            $detail = UserAllocation::join('allocations','allocations.id','user_allocation.allocation_id')
+            ->join('allocation_types','allocation_types.id','allocations.allocation_type_id')
+            ->where('user_allocation.receipt_id',$receipt->id)
+            ->select('user_allocation.amount','allocation_types.description')
+            ->get();
+            $application = Application::join('users','student_details.user_id','users.id')
+            ->join('schools','student_details.school_id','schools.id')
+            ->join('courses','student_details.course_id','courses.id')
+            ->join('user_councilor','student_details.user_id','user_councilor.user_id')
+            ->select('users.*','student_details.*','schools.abbreviation as schools_abbreviation','courses.abbreviation as courses_abbreviation',DB::raw("CONCAT(users.last_name,', ',users.first_name,' ',IFNULL(users.middle_name,'')) as strUserName"))
+            ->where('users.id',$receipt->user_id)
+            ->where('user_councilor.councilor_id', function($query){
+                $query->from('user_councilor')
+                ->join('users','user_councilor.user_id','users.id')
+                ->join('councilors','user_councilor.councilor_id','councilors.id')
+                ->select('councilors.id')
+                ->where('users.id',Auth::id())
+                ->first();
+            })
+            ->firstorfail();
+            $pdf = PDF::loadView('SMS.Coordinator.Scholar.list.CoordinatorStudentsReceipt', compact('detail','application','receipt','councilor'))
+            ->setPaper([0,0,360,500]);
+            return $pdf->stream();
+        } catch(\Exception $e) {
+            return redirect()->back();
+        }
     }
     public function index()
     {
@@ -89,7 +151,8 @@ class CoordinatorScholarsController extends Controller
             if ($data->student_status == 'Continuing') {
                 $count = Budgtype::count();
                 $allocate = Allocation::leftjoin('user_allocation','allocations.id','user_allocation.allocation_id')
-                ->where('user_allocation.user_id',$data->id)
+                ->join('receipts','receipts.id','user_allocation.receipt_id')
+                ->where('receipts.user_id',$data->id)
                 ->where('user_allocation.budget_id', function($query) {
                     $query->from('budgets')
                     ->where('user_id', Auth::id())
@@ -127,7 +190,7 @@ class CoordinatorScholarsController extends Controller
         ->setRowId(function ($data) {
             return $data = 'id'.$data->user_id;
         })
-        ->rawColumns(['strStudName','checkbox','action','stipend','counter','student_status']);
+        ->rawColumns(['strStudName','checkbox','action','stipend','counter']);
         return $datatables->make(true);
     }
     public function checkbox(Request $request, $id)
@@ -215,6 +278,7 @@ class CoordinatorScholarsController extends Controller
             }
             $oldallocation = Grade::join('user_allocation','user_allocation.grade_id','grades.id')
             ->join('allocations','allocations.id','user_allocation.allocation_id')
+            ->join('receipts','receipts.id','user_allocation.receipt_id')
             ->join('allocation_types','allocation_types.id','allocations.allocation_type_id')
             ->where('user_allocation.budget_id', '!=', function($query) {
                 $query->from('budgets')
@@ -224,11 +288,12 @@ class CoordinatorScholarsController extends Controller
                 ->first();
             })
             ->where('grades.student_detail_user_id',$id)
-            ->select(DB::raw("DATE_FORMAT(user_allocation.date_claimed, '%M %d, %Y %h:%i %a') as date_claimed"),'user_allocation.grade_id','allocation_types.description')
+            ->select(DB::raw("DATE_FORMAT(receipts.date_claimed, '%M %d, %Y') as date_claimed"),'user_allocation.grade_id','allocation_types.description','user_allocation.amount','user_allocation.receipt_id')
             ->get();
             foreach ($oldallocation as $oldallocations) {
                 $oldallocations->year = $number->number($oldallocations->year);
                 $oldallocations->semester = $number->number($oldallocations->semester);
+                $oldallocations->receipt_id = sprintf("%010d", $oldallocations->receipt_id);
             }
             $allocation = Allocation::leftJoin('allocation_types','allocations.allocation_type_id','allocation_types.id')
             ->leftJoin('user_allocation_type','allocation_types.id','user_allocation_type.allocation_type_id')
@@ -242,9 +307,10 @@ class CoordinatorScholarsController extends Controller
             })
             ->whereNotIn('allocations.id', function($query) use($id) {
                 $query->from('user_allocation')
-                ->select('allocation_id')
-                ->where('user_id',$id)
-                ->where('grade_id', function($subquery) use($id) {
+                ->join('receipts','receipts.id','user_allocation.receipt_id')
+                ->select('user_allocation.allocation_id')
+                ->where('receipts.user_id',$id)
+                ->where('user_allocation.grade_id', function($subquery) use($id) {
                     $subquery->from('grades')
                     ->select('id')
                     ->where('student_detail_user_id',$id)
@@ -271,7 +337,20 @@ class CoordinatorScholarsController extends Controller
                 ->first();
             })
             ->count();
-            return view('SMS.Coordinator.Scholar.List.CoordinatorStudentsListDetails')->withApplication($application)->withRequirement($requirement)->withGrade($grade)->withOldgrade($oldgrade)->withAllgrade($allgrade)->withAllocation($allocation)->withOldallocation($oldallocation)->withCount($count)->withStudentstep($studentstep)->withGetsem($getsem);
+            $shift = Shift::join('grades','grades.id','shifts.grade_id')
+            ->join('schools','shifts.school_id','schools.id')
+            ->join('courses','shifts.course_id','courses.id')
+            ->select('schools.abbreviation as school','courses.abbreviation as course','shifts.shift_date','grades.year','grades.semester')
+            ->where('shifts.user_id',$id)
+            ->get();
+            if (!$shift->isEmpty()) {
+                $number = new NumberToWord;
+                foreach ($shift as $shifts) {
+                    $shifts->year = $number->number($shifts->year);
+                    $shifts->semester = $number->number($shifts->semester);
+                }
+            }
+            return view('SMS.Coordinator.Scholar.List.CoordinatorStudentsListDetails')->withApplication($application)->withRequirement($requirement)->withGrade($grade)->withOldgrade($oldgrade)->withAllgrade($allgrade)->withAllocation($allocation)->withOldallocation($oldallocation)->withCount($count)->withStudentstep($studentstep)->withGetsem($getsem)->withShift($shift);
         } catch (\Exception $e) {
             dd($e->getMessage());
             return redirect()->route('scholars.index');
@@ -331,23 +410,44 @@ class CoordinatorScholarsController extends Controller
                 }
             }
             if ($pass) {
+                $receipt = new Receipt;
+                $receipt->user_id = $id;
+                $receipt->date_claimed = Carbon::now(Config::get('app.timezone'));
+                $receipt->save();
                 foreach ($request->claim as $claim) {
                     $var = 'amount'.$claim;
                     $allocate = new UserAllocation;
-                    $allocate->user_id = $id;
                     $allocate->allocation_id = $claim;
                     $allocate->grade_id = $grade->id;
                     $allocate->budget_id = $userbudget->budget_id;
-                    $allocate->date_claimed = Carbon::now(Config::get('app.timezone'));
+                    $allocate->receipt_id = $receipt->id;
                     $allocate->amount = $request->$var;
                     $allocate->save();
                 }
             }
             DB::commit();
+            Session::flash('success',$receipt->id);
             return redirect()->back();
         } catch (\Exception $e) {
             DB::rollBack();
             dd($e->getMessage());
+        }
+    }
+    public function status(Request $request, $id)
+    {
+        DB::beginTransaction();
+        try {
+            $application = Application::find($id);
+            $application->student_status = $request->student_status;
+            $application->save();
+            $user = User::find($id);
+            $user->is_active = $request->is_active;
+            $user->save();
+            DB::commit();
+            return Response::json('',200);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return Response::json($e->getMessage(),500);
         }
     }
 }

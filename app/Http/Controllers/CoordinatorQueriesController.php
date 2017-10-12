@@ -50,18 +50,41 @@ class CoordinatorQueriesController extends Controller
             ->where('user_councilor.user_id',Auth::id())
             ->select('districts.id')
             ->first();
-        })->get();
+        })
+        ->select('barangay.*')
+        ->get();
         $school = School::join('user_school','schools.id','user_school.school_id')
         ->where('user_school.user_id', Auth::id())
+        ->select('schools.*')
         ->get();
         $course = Course::join('user_course','courses.id','user_course.course_id')
         ->where('user_course.user_id', Auth::id())
+        ->select('courses.*')
         ->get();
         $batch = Batch::where('is_active',1)->get();
         return view('SMS.Coordinator.Queries.CoordinatorQueriesStudents')->withSchool($school)->withCourse($course)->withBarangay($barangay)->withBatch($batch);
     }
     public function postStudents(Request $request)
     {
+        if ($request->status == 'Accepted') {
+            $application_status = 'Accepted';
+            $student_status = 'Continuing';
+        } elseif ($request->status == 'Pending') {
+            $application_status = 'Pending';
+            $student_status = 'Continuing';
+        } elseif ($request->status == 'Declined') {
+            $application_status = 'Declined';
+            $student_status = 'Continuing';
+        } elseif ($request->status == 'Continuing') {
+            $application_status = 'Accepted';
+            $student_status = 'Continuing';
+        } elseif ($request->status == 'Graduated') {
+            $application_status = 'Accepted';
+            $student_status = 'Graduated';
+        } elseif ($request->status == 'Forfeit') {
+            $application_status = 'Accepted';
+            $student_status = 'Forfeit';
+        }
         $councilor = Councilor::join('user_councilor','user_councilor.councilor_id','councilors.id')
         ->join('districts','districts.id','councilors.district_id')
         ->where('user_councilor.user_id',Auth::id())
@@ -83,8 +106,8 @@ class CoordinatorQueriesController extends Controller
             ->first();
         })
         ->where('student_details.batch_id',$request->batch)
-        ->where('student_details.application_status',$request->application_status)
-        ->where('student_details.student_status',$request->student_status);
+        ->where('student_details.application_status',$application_status)
+        ->where('student_details.student_status',$student_status);
         if (!is_null($request->school)) {
             $application = $application->whereIn('student_details.school_id',$request->school);
         }
@@ -95,7 +118,8 @@ class CoordinatorQueriesController extends Controller
             $application = $application->whereIn('student_details.barangay_id',$request->barangay);
         }
         $application = $application->get();
-        $pdf = PDF::loadView('SMS.Coordinator.Queries.CoordinatorQueriesStudentsDocs', compact('application','councilor','today'));
+        $pdf = PDF::loadView('SMS.Coordinator.Queries.CoordinatorQueriesStudentsDocs', compact('application','councilor','today','request'))
+        ->setPaper('a4','landscape');
         return $pdf->stream();
     }
 }

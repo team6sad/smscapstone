@@ -48,9 +48,9 @@
                 <div class="form-group">
                   <div class="checkbox">
                     @if ($utility->passing_grades)
-                    <label><input type="checkbox" name="passing_grades" checked="checked">Passing grades</label>
+                    <label><input type="checkbox" name="passing_grades" checked="checked">Automatically decline "Failed" grades (for applicants and renewal)</label>
                     @else
-                    <label><input type="checkbox" name="passing_grades">Passing grades</label>
+                    <label><input type="checkbox" name="passing_grades">Automatically decline "Failed" grades (for applicants and renewal)</label>
                     @endif
                   </div>
                   <div class="checkbox">
@@ -78,9 +78,9 @@
                 <option value="Declined">Declined</option>
               </select>
             </div>
-            <div class="row pull-right">
-              <a id="cri" style="color: black; cursor: pointer;"><strong><u>Criteria</u></strong></a>
-            </div>
+          </div>
+          <div class="pull-right">
+            <a id="cri" style="color: black; cursor: pointer;"><strong><u>Criteria</u></strong></a>
           </div>
           <table id="table" class="table table-bordered table-striped table-hover" cellspacing="0" width="100%">
             <thead>
@@ -109,8 +109,8 @@
     title: "Success!",
     text: "<center>{{Session::get('success')}}</center>",
     type: "success",
-    timer: 1000,
-    showConfirmButton: false,
+    showConfirmButton: true,
+    confirmButtonClass: "btn-success",
     html: true
   });
   @elseif (Session::has('fail'))

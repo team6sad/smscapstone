@@ -16,6 +16,8 @@ use Auth;
 use App\Grade;
 use App\UserBudget;
 use PDF;
+use App\Councilor;
+use App\Setting;
 class CoordinatorApplicantsDetailsController extends Controller
 {
     public function __construct()
@@ -66,11 +68,17 @@ class CoordinatorApplicantsDetailsController extends Controller
                 $grade = Grade::join('grade_details','grades.id','grade_details.grade_id')
                 ->select('grade_details.*','grades.*', 'grades.id as grade_id')
                 ->where('grades.student_detail_user_id',$id)
-                ->oldest('grades.id')
+                ->where('grades.id', function($query) use($id){
+                    $query->from('grades')
+                    ->where('student_detail_user_id',$id)
+                    ->oldest('id')
+                    ->select('id')
+                    ->first();
+                })
                 ->get();
                 $grading = GradingDetail::where('grading_id',$grade[0]->grading_id)->get();
             }
-            return view('SMS.Coordinator.Scholar.CoordinatorApplicantsDetails')->withApplication($application)->withMother($mother)->withFather($father)->withElem($elem)->withHs($hs)->withSiblings($siblings)->withExist($exist)->withCount($count)->withAffiliation($affiliation)->withGrade($grade)->withGrading($grading)->withGrades($grades)->withGetpdf($getpdf);
+            return view('SMS.Coordinator.Scholar.Applicant.CoordinatorApplicantsDetails')->withApplication($application)->withMother($mother)->withFather($father)->withElem($elem)->withHs($hs)->withSiblings($siblings)->withExist($exist)->withCount($count)->withAffiliation($affiliation)->withGrade($grade)->withGrading($grading)->withGrades($grades)->withGetpdf($getpdf);
         } catch(\Exception $e) {
             dd($e->getMessage());
             return redirect(route('applicants.index'));
@@ -140,14 +148,45 @@ class CoordinatorApplicantsDetailsController extends Controller
     }
     public function form($id)
     {
-        $application = Application::join('users','student_details.user_id','users.id')
-        ->join('schools','student_details.school_id','schools.id')
-        ->select('users.*','schools.description')
-        ->where('student_details.application_status','Accepted')->get();
-        // return view('SMS.Coordinator.Reports.CoordinatorStudentReport')->withApplication($application);
-        view()->share('application',$application);
-        // $pdf = PDF::loadHTML('<h1>Test</h1>');
-        $pdf = PDF::loadView('SMS.Coordinator.Reports.CoordinatorStudentReport', $application);
-        return $pdf->stream();
+        try {
+            $application = Application::join('users','student_details.user_id','users.id')
+            ->join('user_councilor','student_details.user_id','user_councilor.user_id')
+            ->join('districts','student_details.district_id','districts.id')
+            ->join('barangay','student_details.barangay_id','barangay.id')
+            ->join('schools','student_details.school_id','schools.id')
+            ->join('courses','student_details.course_id','courses.id')
+            ->select('users.*','student_details.*','districts.description as districts_description','barangay.description as barangay_description','schools.description as schools_description','courses.description as courses_description')
+            ->where('student_details.user_id',$id)
+            ->where('user_councilor.councilor_id', function($query){
+                $query->from('user_councilor')
+                ->join('users','user_councilor.user_id','users.id')
+                ->join('councilors','user_councilor.councilor_id','councilors.id')
+                ->select('councilors.id')
+                ->where('users.id',Auth::id())
+                ->first();
+            })
+            ->firstorfail();
+            $count = Affiliation::where('student_detail_user_id',$id)->count();
+            $affiliation = Affiliation::where('student_detail_user_id',$id)->get();
+            $exist = Sibling::where('student_detail_user_id',$id)->count();
+            $siblings = Sibling::where('student_detail_user_id',$id)->first();
+            $mother = Familydata::where('student_detail_user_id',$id)
+            ->where('member_type',0)->first();
+            $father = Familydata::where('student_detail_user_id',$id)
+            ->where('member_type',1)->first();
+            $elem = Educback::where('student_detail_user_id',$id)
+            ->where('level',0)->first();
+            $hs = Educback::where('student_detail_user_id',$id)
+            ->where('level',1)->first();
+            $councilor = Councilor::join('user_councilor','user_councilor.councilor_id','councilors.id')
+            ->join('districts','districts.id','councilors.district_id')
+            ->where('user_councilor.user_id',Auth::id())
+            ->first();
+            $setting = Setting::first();
+            $pdf = PDF::loadView('SMS.Coordinator.Scholar.applicant.CoordinatorApplicantsForm', compact('application','mother','father','elem','hs','siblings','exist','count','affiliation','councilor','setting'));
+            return $pdf->stream();
+        } catch(\Exception $e) {
+            return redirect()->back();
+        }
     }
 }

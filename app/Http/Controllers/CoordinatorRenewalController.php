@@ -11,6 +11,11 @@ use App\UserBudget;
 use App\Budget;
 use Response;
 use App\Utility;
+use Session;
+use Carbon\Carbon;
+use Config;
+use App\Message;
+use App\Receiver;
 class CoordinatorRenewalController extends Controller
 {
     public function __construct()
@@ -18,8 +23,18 @@ class CoordinatorRenewalController extends Controller
         $this->middleware('auth');
         $this->middleware('coordinator');
     }
-    public function data()
+    public function data(Request $request)
     {
+        if ($request->status == 'Accepted') {
+            $is_renewal = 0;
+            $student_status = 'Continuing';
+        } elseif ($request->status == 'Pending') {
+            $is_renewal = 1;
+            $student_status = 'Continuing';
+        } else {
+            $is_renewal = 0;
+            $student_status = 'Forfeit';
+        }
         $application = Application::join('users','student_details.user_id','users.id')
         ->join('user_councilor','users.id','user_councilor.user_id')
         ->select([DB::raw("CONCAT(users.last_name,', ',users.first_name,' ',IFNULL(users.middle_name,'')) as strStudName"),'users.*','student_details.*'])
@@ -33,14 +48,18 @@ class CoordinatorRenewalController extends Controller
             ->first();
         })
         ->where('student_details.application_status','Accepted')
-        ->where('student_status','Continuing')
-        ->where('student_details.is_renewal',1);
+        ->where('student_status',$student_status)
+        ->where('student_details.is_renewal',$is_renewal);
         return Datatables::of($application)
-        ->addColumn('action', function ($data) {
+        ->addColumn('action', function ($data) use ($request){
             $pdf = Grade::where('student_detail_user_id',$data->user_id)->latest('id')->select('pdf')->first();
-            return "<a href=".asset('docs/'.$pdf->pdf)." target='_blank'><button class='btn btn-info btn-xs' value='$data->id'><i class='fa fa-eye'></i> View</button></a> <button class='btn btn-success btn-accept btn-xs' value='$data->id'><i class='fa fa-check'></i> Accept</button> <button class='btn btn-danger btn-decline btn-xs' value='$data->id'><i class='fa fa-remove'></i> Decline</button>";
+            if ($request->status == 'Pending') {
+                return "<a href=".asset('docs/'.$pdf->pdf)." target='_blank'><button class='btn btn-info btn-xs' value='$data->id'><i class='fa fa-eye'></i> View</button></a> <button class='btn btn-success btn-accept btn-xs' value='$data->id'><i class='fa fa-check'></i> Accept</button> <button class='btn btn-danger btn-decline btn-xs' value='$data->id'><i class='fa fa-remove'></i> Decline</button>";
+            } else {
+                return "<a href=".asset('docs/'.$pdf->pdf)." target='_blank'><button class='btn btn-info btn-xs' value='$data->id'><i class='fa fa-eye'></i> View</button></a>";
+            }
         })
-        ->addColumn('failed', function ($data) {
+        ->addColumn('withdraw', function ($data) {
             $ctr = 0;
             $grade = Grade::join('grade_details','grades.id','grade_details.grade_id')
             ->where('grade_details.grade_id', function($query) use($data){
@@ -58,7 +77,33 @@ class CoordinatorRenewalController extends Controller
             foreach ($grade as $grades) {
                 foreach ($grading as $gradings) {
                     if ($grades->grade==$gradings->grade) {
-                        if (!$gradings->is_passed) {
+                        if ($gradings->status == 'W') {
+                            $ctr++;
+                        }
+                    }
+                }
+            }
+            return $ctr;
+        })
+        ->addColumn('drop', function ($data) {
+            $ctr = 0;
+            $grade = Grade::join('grade_details','grades.id','grade_details.grade_id')
+            ->where('grade_details.grade_id', function($query) use($data){
+                $query->from('grades')
+                ->select('id')
+                ->where('student_detail_user_id', $data->id)
+                ->latest('id')
+                ->first();
+            })
+            ->select('grade_details.grade','grades.grading_id')
+            ->get();
+            $grading = GradingDetail::where('grading_id',$grade[0]->grading_id)
+            ->select('grading_details.*')
+            ->get();
+            foreach ($grade as $grades) {
+                foreach ($grading as $gradings) {
+                    if ($grades->grade==$gradings->grade) {
+                        if ($gradings->status == 'D') {
                             $ctr++;
                         }
                     }
@@ -78,8 +123,9 @@ class CoordinatorRenewalController extends Controller
     }
     public function index()
     {
-        $this->autodeclined();
-        return view('SMS.Coordinator.Scholar.CoordinatorRenewal');
+        $this->criteria();
+        $utility = Utility::where('user_id',Auth::id())->first();
+        return view('SMS.Coordinator.Scholar.CoordinatorRenewal')->withUtility($utility);
     }
     public function accept($id)
     {
@@ -92,13 +138,7 @@ class CoordinatorRenewalController extends Controller
                 if (($budget->slot_count - $userbudget) == 0) {
                     return Response::json('No available slot',500);
                 }
-                $application = Application::find($id);
-                $application->is_renewal = 0;
-                $application->save();
-                $userbudget = new UserBudget;
-                $userbudget->budget_id = $budget->id;
-                $userbudget->user_id = $id;
-                $userbudget->save();
+                $this->messageAccepted($id, $budget);
             } else {
                 return Response::json('No available slot',500);
             }
@@ -109,23 +149,37 @@ class CoordinatorRenewalController extends Controller
             return dd($e->getMessage(),500);
         }  
     }
-    public function decline($id)
+    public function decline(Request $request,$id)
     {
         DB::beginTransaction();
         try {
-            $application = Application::find($id);
-            $application->is_renewal = 0;
-            $application->student_status = 'Forfeit';
-            $application->save();
+            $this->messageDecline($id,$request->title,$request->description);
             DB::commit();
-            return Response::json($application);
+            return Response::json('',200);
         } catch(\Exception $e) {
             DB::rollBack();
             return dd($e->getMessage(),500);
         }  
     }
-    private function autodeclined()
+    public function postCriteria(Request $request)
     {
+        $utility = Utility::find(Auth::id());
+        if (is_null($request->passing_grades))
+            $utility->passing_grades = 0;
+        else 
+            $utility->passing_grades = 1;
+        if (is_null($request->renewal_auto_accept))
+            $utility->renewal_auto_accept = 0;
+        else
+            $utility->renewal_auto_accept = 1;
+        $utility->save();
+        Session::flash('success','Data Stored');
+        return redirect()->back();
+    }
+    private function criteria()
+    {
+        $failed = 0;
+        $passed = 0;
         $user = Application::join('users','student_details.user_id','users.id')
         ->join('user_councilor','users.id','user_councilor.user_id')
         ->select('users.*')
@@ -148,21 +202,117 @@ class CoordinatorRenewalController extends Controller
                 $grades = Grade::join('grade_details','grades.id','grade_details.grade_id')
                 ->select('grade_details.*','grades.*', 'grades.id as grade_id')
                 ->where('grades.student_detail_user_id',$users->id)
+                ->where('grades.id', function($query) use($users){
+                    $query->from('grades')
+                    ->where('student_detail_user_id',$users->id)
+                    ->latest('id')
+                    ->select('id')
+                    ->first();
+                })
                 ->get();
                 foreach ($grades as $details) {
                     $grading = GradingDetail::where('grading_id',$details->grading_id)
                     ->where('grade',$details->grade)
                     ->first();
-                    if ($grading->is_passed == 0) {
-                        $application = Application::find($users->id);
-                        $application->is_renewal = 0;
-                        $application->student_status = 'Forfeit';
-                        $application->remarks = 'Failed Grades';
-                        $application->save();
+                    if ($grading->status == 'F') {
+                        DB::beginTransaction();
+                        try {
+                            $this->messageDecline($users->id,'Failed Grades','The system detected you have a failed grade');
+                            $failed++;
+                            DB::commit();
+                        } catch(\Exception $e) {
+                            DB::rollBack();
+                        }
                         break;
                     }
                 }
             }
+            if ($utility->renewal_auto_accept) {
+                $pass = true;
+                $grades = Grade::join('grade_details','grades.id','grade_details.grade_id')
+                ->select('grade_details.*','grades.*', 'grades.id as grade_id')
+                ->where('grades.student_detail_user_id',$users->id)
+                ->where('grades.id', function($query) use($users){
+                    $query->from('grades')
+                    ->where('student_detail_user_id',$users->id)
+                    ->latest('id')
+                    ->select('id')
+                    ->first();
+                })
+                ->get();
+                foreach ($grades as $details) {
+                    $grading = GradingDetail::where('grading_id',$details->grading_id)
+                    ->where('grade',$details->grade)
+                    ->first();
+                    if ($grading->status == 'F' || $grading->status == 'D' || $grading->status == 'W') {
+                        $pass = false;
+                        break;
+                    }
+                } if ($pass) {
+                    $budget = Budget::where('user_id',Auth::id())
+                    ->latest('id')->first();
+                    if ($budget != null) {
+                        $userbudget = UserBudget::where('budget_id',$budget->id)->count();
+                        if (($budget->slot_count - $userbudget) == 0) {
+                            $utility->renewal_auto_accept = 0;
+                            $utility->save();
+                        }
+                        DB::beginTransaction();
+                        try {
+                            $this->messageAccepted($users->id, $budget);
+                            $passed++;
+                            DB::commit();
+                        } catch(\Exception $e) {
+                            DB::rollBack();
+                        }  
+                    } else {
+                        $utility->renewal_auto_accept = 0;
+                        $utility->save();
+                    }
+                }
+            }
+        } if ($utility->renewal_auto_accept || $utility->passing_grades) {
+            if ($passed > 0 || $failed > 0) {
+                Session::flash('success','Accepted '.$passed.' & Declined '.$failed.' Student/s');
+            }
         }
+    }
+    private function messageDecline($id, $remarks, $description)
+    {
+        $application = Application::find($id);
+        $application->is_renewal = 0;
+        $application->student_status = 'Forfeit';
+        $application->remarks = $remarks;
+        $application->save();
+        $message = new Message;
+        $message->user_id = Auth::id();
+        $message->title = $remarks;
+        $message->description = $description;
+        $message->date_created = Carbon::now(Config::get('app.timezone'));
+        $message->save();
+        $receiver = new Receiver;
+        $receiver->message_id = $message->id;
+        $receiver->user_id = $id;
+        $receiver->save();
+    }
+    private function messageAccepted($id, $budget)
+    {
+        $application = Application::find($id);
+        $application->is_renewal = 0;
+        $application->save();
+        $userbudget = new UserBudget;
+        $userbudget->budget_id = $budget->id;
+        $userbudget->user_id = $id;
+        $userbudget->save();
+        $message = new Message;
+        $message->user_id = Auth::id();
+        $message->title = "Accepted in Renewal Phase";
+        $message->description = "Passed Requirements";
+        $message->date_created = Carbon::now(Config::get('app.timezone'));
+        $message->save();
+        $receiver = new Receiver;
+        $receiver->message_id = $message->id;
+        $receiver->user_id = $id;
+        $receiver->save();
     }
 }

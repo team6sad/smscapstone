@@ -111,12 +111,24 @@ $(document).ready(function() {
     var link_id = $(this).val();
     id = link_id;
     $.get(url + '/' + link_id + '/edit', function(data) {
-      $('#budget_amount').val(data[0].amount);
-      $('#budget_per_student').val(data[0].budget_per_student);
-      $('#slot_count').val(data[0].slot_count);
+      var amount = 0;
+      $('#budget_last').val(data[1].amount);
+      if (data[0][0].add_excess) {
+        $('#add_to_current').prop('checked',true);
+        amount = data[0][0].amount - data[1].amount;
+      }
+      else {
+        $('#add_to_current').prop('checked',false);
+        amount = data[0][0].amount;
+      }
+      $('#budget_amount').val(amount);
+      $('#budget_per_student').val(data[0][0].budget_per_student);
+      $('#slot_count').val(data[0][0].slot_count);
       $.each(data, function(index, value){
-        $('#id'+value.allocation_id).val(value.allocation_amount);
-        $('.allocate').append("<input type='hidden' name='allocation_id[]' value='"+value.allocate_id+"'>");
+        $.each(value, function(index, value2){
+          $('#id'+value2.allocation_id).val(value2.allocation_amount);
+          $('.allocate').append("<input type='hidden' name='allocation_id[]' value='"+value2.allocate_id+"'>");
+        });
       });
       $('#h4').text('Edit Budget');
       $('#btn-save').val("update");

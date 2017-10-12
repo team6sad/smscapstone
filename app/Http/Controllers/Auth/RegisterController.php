@@ -93,4 +93,8 @@ class RegisterController extends Controller
             return dd($e->getMessage());
         }  
     }
+    public function showRegistrationForm()
+    {
+        return view('SMS.Account.SMSAccountRegister');
+    }
 }

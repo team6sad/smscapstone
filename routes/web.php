@@ -63,11 +63,12 @@ Route::group(['prefix' => 'coordinator/'], function () {
 	//Coordinator Notification
 	Route::get('messages/notification', ['uses' => 'CoordinatorMessagesController@unreadmessage', 'as' => 'coordinatormessage.unreadmessage']);
 	//Coordinator DataTable
+	Route::get('receipt/data/{id}', ['uses' => 'CoordinatorScholarsController@data', 'as' => 'coordinatorreceipt.data']);
 	Route::get('claiming/data', ['uses' => 'CoordinatorChecklistController@dataClaiming', 'as' => 'coordinatorclaiming.data']);
 	Route::get('course/data', ['uses' => 'CoordinatorChecklistController@dataCourse', 'as' => 'coordinatorcourse.data']);
 	Route::get('school/data', ['uses' => 'CoordinatorChecklistController@dataSchool', 'as' => 'coordinatorschool.data']);
 	Route::get('requirements/data', ['uses' => 'CoordinatorRequirementController@data', 'as' => 'coordinatorrequirements.data']);
-	Route::get('renewal/data', ['uses' => 'CoordinatorRenewalController@data', 'as' => 'coordinatorrenewal.data']);
+	Route::post('renewal/data', ['uses' => 'CoordinatorRenewalController@data', 'as' => 'coordinatorrenewal.data']);
 	Route::get('events/data', ['uses' => 'CoordinatorEventsController@data', 'as' => 'coordinatorevents.data']);
 	Route::post('applicants/data', ['uses' => 'CoordinatorApplicantsController@data', 'as' => 'applicants.data']);
 	Route::get('budget/data', ['uses' => 'CoordinatorBudgetController@data', 'as' => 'budget.data']);
@@ -106,8 +107,9 @@ Route::group(['prefix' => 'coordinator/'], function () {
 	Route::post('reports/grades', ['uses' => 'CoordinatorReportsController@postGrades', 'as' => 'reports.postGrades']);
 	//Coordinator Renewal
 	Route::get('renewal/accept/{id}', ['uses' => 'CoordinatorRenewalController@accept', 'as' => 'coordinatorrenewal.accept']);
-	Route::get('renewal/decline/{id}', ['uses' => 'CoordinatorRenewalController@decline', 'as' => 'coordinatorrenewal.decline']);
+	Route::post('renewal/decline/{id}', ['uses' => 'CoordinatorRenewalController@decline', 'as' => 'coordinatorrenewal.decline']);
 	Route::get('renewal', ['uses' => 'CoordinatorRenewalController@index', 'as' => 'coordinatorrenewal.index']);
+	Route::post('renewal', ['uses' => 'CoordinatorRenewalController@postCriteria', 'as' => 'coordinatorrenewal.postCriteria']);
 	//Coordinator Checklist
 	Route::get('checklist', ['uses' => 'CoordinatorChecklistController@index', 'as' => 'checklist.index']);
 	//Coordinator Requirement
@@ -150,9 +152,11 @@ Route::group(['prefix' => 'coordinator/'], function () {
 	//Coordinator Scholars
 	Route::get('scholars', ['uses' => 'CoordinatorScholarsController@index', 'as' => 'scholars.index']);
 	Route::post('scholars', ['uses' => 'CoordinatorScholarsController@store', 'as' => 'scholars.store']);
+	Route::get('scholars/receipt/{id}', ['uses' => 'CoordinatorScholarsController@getReceipt', 'as' => 'scholars.receipt']);
 	Route::get('scholars/{id}', ['uses' => 'CoordinatorScholarsController@show', 'as' => 'scholars.show']);
 	Route::post('scholars/requirements/{id}', ['uses' => 'CoordinatorScholarsController@requirements', 'as' => 'scholars.requirements']);
 	Route::post('scholars/stipend/{id}', ['uses' => 'CoordinatorScholarsController@stipend', 'as' => 'scholars.stipend']);
+	Route::post('scholars/status/{id}', ['uses' => 'CoordinatorScholarsController@status', 'as' => 'scholars.status']);
 	//Coordinator Applicants Details
 	Route::get('details/{id}/form', ['uses' => 'CoordinatorApplicantsDetailsController@form', 'as' => 'details.form']);
 	Route::get('details/{id}', ['uses' => 'CoordinatorApplicantsDetailsController@show', 'as' => 'details.show']);

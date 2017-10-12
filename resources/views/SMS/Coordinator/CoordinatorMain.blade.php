@@ -103,28 +103,28 @@
       <ul class="sidebar-menu" data-widget="tree">
         <li class="header">NAVIGATION</li>
         <li class="{{Request::path() == 'coordinator/dashboard' ? 'active' : ''}}"><a href="{{ url('coordinator/dashboard') }}"><i class="fa fa-dashboard"></i><span>Dashboard</span></a></li>
-        <li class="treeview {{Request::path() == 'coordinator/renewal' ? 'active' : ''}} {{Request::path() == 'coordinator/applicants' ? 'active' : ''}}">
+        <li class="treeview {{Request::path() == 'coordinator/renewal' ? 'active' : ''}} {{Request::path() == 'coordinator/applicants' ? 'active' : ''}}{{Request::segment(2) == 'details' ? 'active' : ''}}">
           <a href="#"><i class="fa fa-wpforms"></i><span>Applications</span>
             <span class="pull-right-container">
               <i class="fa fa-angle-left pull-right"></i>
             </span>
           </a>
           <ul class="treeview-menu">
-            <li class="{{Request::path() == 'coordinator/applicants' ? 'active' : ''}}"><a href="{{ url('coordinator/applicants') }}"><i class="fa fa-users"></i><span>Applicants</span></a></li>
+            <li class="{{Request::path() == 'coordinator/applicants' ? 'active' : ''}}{{Request::segment(2) == 'details' ? 'active' : ''}}"><a href="{{ url('coordinator/applicants') }}"><i class="fa fa-users"></i><span>Applicants</span></a></li>
             <li class="{{Request::path() == 'coordinator/renewal' ? 'active' : ''}}"><a href="{{ url('coordinator/renewal') }}"><i class="fa fa-refresh"></i><span>Renewal</span></a></li>
           </ul>
         </li>
-        <li class="{{Request::path() == 'coordinator/scholars' ? 'active' : ''}}"><a href="{{ url('coordinator/scholars') }}"><i class="fa fa-graduation-cap"></i><span>Scholars</span></a></li>
-        <li class="treeview {{Request::path() == 'coordinator/messages' ? 'active' : ''}} {{Request::path() == 'coordinator/messages/create' ? 'active' : ''}} {{Request::path() == 'coordinator/messages/sent' ? 'active' : ''}} {{Request::path() == 'coordinator/announcements' ? 'active' : ''}} {{Request::path() == 'coordinator/events' ? 'active' : ''}}">
+        <li class="{{Request::segment(2) == 'scholars' ? 'active' : ''}}"><a href="{{ url('coordinator/scholars') }}"><i class="fa fa-graduation-cap"></i><span>Scholars</span></a></li>
+        <li class="treeview {{Request::segment(2) == 'messages' ? 'active' : ''}}{{Request::path() == 'coordinator/announcements' ? 'active' : ''}} {{Request::segment(2) == 'events' ? 'active' : ''}}">
           <a href="#"><i class="fa fa-phone"></i><span>Communication&emsp;&emsp;&emsp;<small class="label bg-green panelnotif"></small></span>
             <span class="pull-right-container">
               <i class="fa fa-angle-left pull-right"></i>
             </span>
           </a>
           <ul class="treeview-menu">
-            <li class="{{Request::path() == 'coordinator/messages' ? 'active' : ''}}{{Request::path() == 'coordinator/messages/create' ? 'active' : ''}} {{Request::path() == 'coordinator/messages/sent' ? 'active' : ''}}"><a href="{{ url('coordinator/messages') }}"><i class="fa fa-envelope"></i><span>Messages<small class="label pull-right bg-green panelnotif"></small></span></a></li>
+            <li class="{{Request::segment(2) == 'messages' ? 'active' : ''}}"><a href="{{ url('coordinator/messages') }}"><i class="fa fa-envelope"></i><span>Messages<small class="label pull-right bg-green panelnotif"></small></span></a></li>
             <li class="{{Request::path() == 'coordinator/announcements' ? 'active' : ''}}"><a href="{{ url('coordinator/announcements') }}"><i class="fa fa-bullhorn"></i><span>Announcements</span></a></li>
-            <li class="{{Request::path() == 'coordinator/events' ? 'active' : ''}}"><a href="{{ url('coordinator/events') }}"><i class="fa fa-flag"></i><span>Events</span></a></li>
+            <li class="{{Request::segment(2) == 'events' ? 'active' : ''}}"><a href="{{ url('coordinator/events') }}"><i class="fa fa-flag"></i><span>Events</span></a></li>
           </ul>
         </li>
         <li class="treeview {{Request::path() == 'coordinator/queries/events' ? 'active' : ''}}{{Request::path() == 'coordinator/queries/students' ? 'active' : ''}}{{Request::path() == 'coordinator/queries/grades' ? 'active' : ''}}">
@@ -138,7 +138,7 @@
             <li class="{{Request::path() == 'coordinator/queries/students' ? 'active' : ''}}"><a href="{{ url('coordinator/queries/students') }}"><i class="fa fa-graduation-cap"></i><span>Students</span></a></li>
           </ul>
         </li>
-        <li class="treeview {{Request::path() == 'coordinator/reports' ? 'active' : ''}}">
+        <li class="treeview {{Request::path() == 'coordinator/reports' ? 'active' : ''}}{{Request::path() == 'coordinator/reports/grades' ? 'active' : ''}}">
           <a href="#"><i class="fa fa-trophy"></i><span>Reports</span>
             <span class="pull-right-container">
               <i class="fa fa-angle-left pull-right"></i>

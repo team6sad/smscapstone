@@ -16,7 +16,7 @@ class CreateGradingDetailsTable extends Migration {
 		{
 			$table->integer('grading_id')->unsigned()->index('facademic_grading_detail_id_idx');
 			$table->string('grade', 4);
-			$table->boolean('is_passed')->default(0);
+			$table->char('status', 1);
 		});
 	}
 

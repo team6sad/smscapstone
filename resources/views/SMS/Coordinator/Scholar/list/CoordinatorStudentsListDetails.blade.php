@@ -39,7 +39,7 @@
 								<b>Age</b> <a class="pull-right">{{ $application->birthday->diffInYears() }}</a>
 							</li>
 							<li class="list-group-item">
-								<b>Status</b> <a class="pull-right">{{ $application->student_status }}</a>
+								<b>Status</b> <a class="pull-right student_status">{{ $application->student_status }}</a>
 							</li>
 							@if ($application->student_status != 'Continuing')
 							<li class="list-group-item">
@@ -100,10 +100,69 @@
 						<li id="available" class="active"><a href="#tab_1" data-toggle="tab">Details</a></li>
 						<li><a href="#tab_2" data-toggle="tab">Requirements</a></li>
 						<li><a href="#tab_3" data-toggle="tab">Claiming</a></li>
+						<li><a href="#tab_4" data-toggle="tab">Receipts</a></li>
 						<li class="pull-right header"><span class="mailbox-read-time"><a href="{{ route('details.form',$application->user_id) }}" target="_blank" class="btn btn-default btn-sm text-muted"><i class="fa fa-print"></i></a></span></li>
 					</ul>
 					<div class="tab-content">
-						<div class="tab-pane active row" id="tab_1">
+						<div class="tab-pane active" id="tab_1">
+							<div class="row">
+								<div class="form-group col-sm-6">
+									<label>Scholarship Status</label>
+									{{ Form::select('student_status', [
+										'Continuing' => 'Continuing',
+										'Graduated' => 'Graduated',
+										'Forfeit' => 'Forfeit'
+									], $application->student_status, [
+										'id' => 'student_status',
+										'class' => 'form-control'])
+									}}
+								</div>
+								<div class="form-group col-sm-6">
+									<label>Account Status</label><br>
+									@if ($application->is_active)
+									<input type='checkbox' id='isActive' name='isActive' value='{{ $application->id }}' data-toggle='toggle' data-style='android' data-onstyle='success' data-offstyle='danger' data-on="<i class='fa fa-check-circle'></i> Active" data-off="<i class='fa fa-times-circle'></i> Inactive" data-size='small' checked="checked">
+									@else
+									<input type='checkbox' id='isActive' name='isActive' value='{{ $application->id }}' data-toggle='toggle' data-style='android' data-onstyle='success' data-offstyle='danger' data-on="<i class='fa fa-check-circle'></i> Active" data-off="<i class='fa fa-times-circle'></i> Inactive" data-size='small'>
+									@endif
+								</div>
+							</div>
+							<div class="form-group">
+								<label>Tranfer History</label>
+								<div class="table-responsive">
+									<table class="table table-striped">
+										<thead>
+											<tr>
+												<th>Old School</th>
+												<th>Old Course</th>
+												<th>Year</th>
+												<th>Semester</th>
+												<th>Date</th>
+											</tr>
+										</thead>
+										<tbody>
+											@if ($shift->isEmpty())
+											<tr>
+												<td>N/A</td>
+												<td>N/A</td>
+												<td>N/A</td>
+												<td>N/A</td>
+												<td>N/A</td>
+											</tr>
+											@else
+											@foreach ($shift as $shifts)
+											<tr>
+												<td>{{ $shifts->school }}</td>
+												<td>{{ $shifts->course }}</td>
+												<td>{{ $shifts->year }}</td>
+												<td>{{ $shifts->semester }}</td>
+												<td>{{ $shifts->shift_date->format('F d, Y') }}</td>
+											</tr>
+											@endforeach
+											@endif
+										</tbody>
+									</table>
+								</div>
+							</div>
 						</div>
 						<div class="tab-pane" id="tab_2">
 							@foreach ($allgrade as $allgrades)
@@ -196,7 +255,7 @@
 								<ul>
 									@foreach ($oldallocation as $oldallocations)
 									@if ($allgrades->id == $oldallocations->grade_id)
-									<li>{{ $oldallocations->description }} - {{ $oldallocations->date_claimed }}</li>
+									<li>{{ $oldallocations->description }} - {{ $oldallocations->date_claimed }} // Amount: {{ $oldallocations->amount }} // OR: {{ $oldallocations->receipt_id }}</li>
 									@endif
 									@endforeach
 								</ul>
@@ -260,10 +319,34 @@
 			{{ Form::close() }}
 			@endif
 		</div>
+		<div class="tab-pane" id="tab_4">
+			<div class="box-body table-responsive">
+				<table id="table" class="table table-bordered table-striped table-hover" cellspacing="0" width="100%">
+					<thead>
+						<th>OR No.</th>
+						<th>Total</th>
+						<th>Date</th>
+						<th>Action</th>
+					</thead>
+					<tbody id="list">
+					</tbody>
+				</table>
+			</div>
+		</div>
 	</div>
 </div>
 </div>
 </div>
 </section>
 </div>
+@endsection
+@section('script')
+{!! Html::script("custom/CoordinatorScholarAjax.min.js") !!}
+<script type="text/javascript">
+	var dataurl = "{{ route('coordinatorreceipt.data', $application->user_id) }}";
+	var url = "{{ route('scholars.status', $application->user_id) }}";
+	@if (Session::has('success'))
+	window.open("{{ route('scholars.receipt',Session::get('success')) }}", '_blank');
+	@endif
+</script>
 @endsection

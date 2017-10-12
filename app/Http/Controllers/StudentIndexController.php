@@ -20,8 +20,9 @@ class StudentIndexController extends Controller
 		if($deactivate->student_status == 'Graduated' || $deactivate->student_status == 'Forfeit')
 			return view('SMS.Student.StudentDeactivate');
 		$allocation = UserAllocation::join('allocations','allocations.id','user_allocation.allocation_id')
+		->join('receipts','receipts.id','user_allocation.receipt_id')
 		->join('allocation_types','allocations.allocation_type_id','allocation_types.id')
-		->select('allocation_types.description','allocations.amount','user_allocation.id','user_allocation.date_claimed')
+		->select('allocation_types.description','allocations.amount','user_allocation.id','receipts.date_claimed')
 		->where('allocations.budget_id', function($query){
 			$query->from('budgets')
 			->where('councilor_id', function($subquery) {
@@ -41,7 +42,7 @@ class StudentIndexController extends Controller
 			->latest('id')
 			->first(); 
 		})
-		->where('user_allocation.user_id',Auth::id())
+		->where('receipts.user_id',Auth::id())
 		->get();
 		$grade = Grade::where('student_detail_user_id',Auth::id())->count();
 		$type = 0;

@@ -4,9 +4,9 @@
 @section('override')
 {!! Html::style("css/stylesheet.css") !!}
 <style type="text/css">
-  .btn-default{
-   position: bottom; 
- }
+.btn-default{
+ position: bottom; 
+}
 </style>
 @endsection
 @section('login')
@@ -40,7 +40,7 @@
          <li>Latest Registration (Xerox Copy)</li>
          <li>FORM 138 for High School Graduate (Xerox Copy)</li>
        </ul>
-       <button class="btn btn-large btn-block"><a href="{{ url('apply') }}" style="color: white;">Apply Now!</a></button>    
+       <a href="{{ url('apply') }}" style="color: white;"><button class="btn btn-large btn-block">Apply Now!</button></a>
      </div>
    </div> <!-- end of column-->
  </div>

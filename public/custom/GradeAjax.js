@@ -69,9 +69,12 @@ $(document).ready(function() {
       "<div class='form-group col-md-12'><label>Description:</label> "+data[0].description+"</div><div class='row'>";
       $.each(data, function(index, value) {
         var status = "Failed";
-        if (value.is_passed) {
+        if (value.status == 'P')
           status = "Passed";
-        }
+        else if (value.status == 'D')
+          status = "Drop";
+        else if (value.status == 'W')
+          status = "Withdraw";
         modalbody += "<div class='form-group col-md-6'>"+
         "<div class='col-md-6'><label>Grade:</label> "+value.grade+"</div>"+
         "<div class='col-md-6'><label>Status:</label> "+status+"</div>"+

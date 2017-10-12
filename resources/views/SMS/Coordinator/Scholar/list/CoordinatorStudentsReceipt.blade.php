@@ -2,24 +2,10 @@
 <html>
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-	<title>Students Query</title>
+	<title>Official Receipt</title>
 	<style type="text/css">
-	table {
-		border-collapse: collapse;
-	}
-
-	table, th, td {
-		border: 1px solid black;
-		padding: 5px;
-	}
-	tr:nth-child(even) {background-color: #f2f2f2}
-	th {
-		background-color: #DD4B39;
-		color: white;
-	}
-	img {
-		height: 20px;
-		width: 20px;
+	.text-right {
+		text-align: right;
 	}
 </style>
 </head>
@@ -33,29 +19,28 @@
 		</big></center><br><br>
 		<hr>
 		<hr><br>
-		<b>{{ $today->format('F d, Y') }}<br>
-		</b><br>
-		<p>Transmitted herewith is the list of {{ $request->status }} students. </p>
+		<b>{{ $receipt->date_claimed->format('F d, Y') }}<br>
+		</b>
+		<p>OR# {{ sprintf("%010d", $receipt->id) }}</p><br>
+		<p>{{ $application->strUserName }} from {{ $application->schools_abbreviation }} taking {{ $application->courses_abbreviation }} has claimed the ff:</p>
 		<table width="100%">
 			<thead>
 				<tr>
-					<th>ID</th>
-					<th>Name</th>
-					<th>School</th>
-					<th>Course</th>
+					<th>Description</th>
+					<th class="text-right">Amount</th>
 				</tr>
 			</thead>
-			@foreach ($application as $applications)
+			@foreach ($detail as $details)
 			<tbody>
 				<tr>
-					<td>{{$applications->id}}</td>
-					<td>{{$applications->strUserName}}</td>
-					<td>{{$applications->schools_abbreviation}}</td>
-					<td>{{$applications->courses_abbreviation}}</td>
+					<td>{{$details->description}}</td>
+					<td class="text-right">{{$details->amount}}</td>
 				</tr>
 			</tbody>
 			@endforeach
 		</table>
+		<hr>
+		<p class="text-right">Total: {{ $detail->sum('amount') }}</p>
 		<br>
 		<br>
 		Legislative Staff Officer<br>

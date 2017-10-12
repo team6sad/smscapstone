@@ -68,7 +68,7 @@ class CoordinatorBudgetController extends Controller
             if ($request->add_to_current) {
                 $request->budget_amount += $request->budget_last;
             }
-            if ($request->slot_count == 0) {
+            if ($request->slot_count < 1) {
                 return Response::json('Slot must be more than 0',500);
             }
             $budget = Budget::where('user_id',Auth::id())
@@ -149,7 +149,22 @@ class CoordinatorBudgetController extends Controller
             ->select('budgets.*','allocations.amount as allocation_amount','allocation_types.id as allocation_id','allocations.id as allocate_id')
             ->where('allocations.budget_id',$id)
             ->get();
-            return Response::json($allocation);
+            $budget = Budget::whereIn('id', function($query) {
+                $query->from('user_budget')
+                ->select('budget_id')
+                ->get();
+            })->where('user_id',Auth::id())
+            ->latest('id')
+            ->first();
+            if (!is_null($budget)) {
+                $allocate = UserAllocation::where('budget_id', $budget->id)->get();
+                foreach ($allocate as $allocations) {
+                    $budget->amount -= $allocations->amount;
+                }
+            } else {
+                $budget = (object)['amount' => '0'];
+            }
+            return Response::json([$allocation,$budget]);
         } 
     }
     public function end()
@@ -194,6 +209,10 @@ class CoordinatorBudgetController extends Controller
             $budget->budget_per_student=$request->budget_per_student;
             $budget->slot_count=$request->slot_count;
             $budget->budget_date=Carbon::now(Config::get('app.timezone'));
+            if ($request->add_to_current) 
+                $budget->add_excess = 1;
+            else
+                $budget->add_excess = 0;
             $budget->save();
             foreach ($request->amount as $amount) {
                 $allocation = Allocation::find($request->allocation_id[$ctr]);

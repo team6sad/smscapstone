@@ -21,7 +21,7 @@
             <div class="row">
               <br>
               {{ Form::open(['data-parsley-whitespace' => 'squish', 'target' => '_blank', 'route' => 'queries.postStudents']) }}
-              <div class="col-md-4 form-group">
+              <div class="col-md-6 form-group">
                 <label class="control-label">Batch:</label>
                 <select class="form-control" name="batch">
                   @foreach ($batch as $batches)
@@ -29,21 +29,16 @@
                   @endforeach
                 </select>
               </div>
-              <div class="col-md-4 form-group">
-                <label class="control-label">Applcation:</label>
-                <div class="container">
-                  <label class="radio-inline"><input type="radio" name="application_status" value="Accepted" checked="checked">Accepted</label>
-                  <label class="radio-inline"><input type="radio" name="application_status" value="Pending">Pending</label>
-                  <label class="radio-inline"><input type="radio" name="application_status" value="Declined">Declined</label>
-                </div>
-              </div>
-              <div class="col-md-4 form-group">
-                <label class="control-label">Scholarship:</label>
-                <div class="container">
-                  <label class="radio-inline"><input type="radio" name="student_status" value="Continuing" checked="checked">Continuing</label>
-                  <label class="radio-inline"><input type="radio" name="student_status" value="Graduated">Graduated</label>
-                  <label class="radio-inline"><input type="radio" name="student_status" value="Forfeited">Forfeited</label>
-                </div>
+              <div class="col-md-6 form-group">
+                <label class="control-label">Type:</label>
+                <select class="form-control" name="status">
+                  <option value="Accepted">Accepted (Application)</option>
+                  <option value="Pending">Pending (Application)</option>
+                  <option value="Decline">Declined (Application)</option>
+                  <option value="Continuing">Continuing (Scholarship)</option>
+                  <option value="Graduated">Graduated (Scholarship)</option>
+                  <option value="Forfeit">Forfeited (Scholarship)</option>
+                </select>
               </div>
               <div class="col-md-12 form-group">
                 <div class="col-md-12 row">

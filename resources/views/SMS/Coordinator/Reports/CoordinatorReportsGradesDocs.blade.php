@@ -36,13 +36,15 @@
 		<hr>
 		<hr><br>
 		<b>{{ $today->format('F d, Y') }}<br></b><br>
-		Scholarship ID: <b>{{ $application->id }}</b><br>
-		Name: <b>{{ $application->strUserName }}</b><br>
-		School: <b>{{ $application->schools_description }}</b><br>
-		Course: <b>{{ $application->courses_description }}</b><br><br>
 		<big><center><b>List of Grades Submitted per Semester</b></center></big><br>
+		@foreach ($application as $applications)<br><br>
+		Scholarship ID: <b>{{ $applications->id }}</b><br>
+		Name: <b>{{ $applications->strUserName }}</b><br>
+		School: <b>{{ $applications->schools_description }}</b><br>
+		Course: <b>{{ $applications->courses_description }}</b><br><br>
 		@foreach ($allgrade as $allgrades)
-		@if ($allgrades->year != 1 && $allgrades->semester != '')
+		@if ($allgrades->student_detail_user_id == $applications->user_id)
+		@if ($allgrades->getOriginal('year') != 1 && $allgrades->getOriginal('semester') != '')
 		<b>{{ $allgrades->year }} Year {{ $allgrades->semester }} Semester</b>
 		<table width="100%">
 			<thead>
@@ -77,6 +79,8 @@
 			@endforeach
 		</table>
 		@endif
+		@endif
+		@endforeach
 		@endforeach
 		<br>
 		<br>
