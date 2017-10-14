@@ -18,8 +18,17 @@
 		color: white;
 	}
 	img {
-		height: 20px;
-		width: 20px;
+		width: 100px; 
+		height: 100px;
+		border: 1px solid;
+	}
+	.img-right {
+		float: right;
+		clear: left;
+	}
+	.img-left {
+		float: left;
+		clear: right;
 	}
 	.col {
 		width: 150px;
@@ -30,6 +39,12 @@
 </style>
 </head>
 <body>
+	<div class="img-left">
+		<img src="./img/icon.png">
+	</div>
+	<div class="img-right">
+		<img src="./img/logo.png">
+	</div>
 	<center><b>REPUBLIC OF THE PHILIPPINES</b><br>
 		<small>QUEZON CITY<br>
 			City Councilor<br>
@@ -81,7 +96,7 @@
 			Passed
 			@else
 			Failed
-			@endif Students: <b>{{ $ctr }}/{{ $userbudget->where('budget_id',$budgets->id)->count() }} (<?php $result = ($ctr/$userbudget->where('budget_id',$budgets->id)->count())*100; ?>{{ $result }}%)</b>
+			@endif Students: <b>{{ $ctr }}/{{ $userbudget->where('budget_id',$budgets->id)->count() }}</b>
 		</p>
 		@endforeach
 		<br>

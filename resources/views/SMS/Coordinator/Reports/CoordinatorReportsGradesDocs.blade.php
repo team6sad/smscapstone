@@ -17,8 +17,17 @@
 		color: white;
 	}
 	img {
-		height: 20px;
-		width: 20px;
+		width: 100px; 
+		height: 100px;
+		border: 1px solid;
+	}
+	.img-right {
+		float: right;
+		clear: left;
+	}
+	.img-left {
+		float: left;
+		clear: right;
 	}
 	.col {
 		width: 70px;
@@ -26,6 +35,12 @@
 </style>
 </head>
 <body>
+	<div class="img-left">
+		<img src="./img/icon.png">
+	</div>
+	<div class="img-right">
+		<img src="./img/logo.png">
+	</div>
 	<center><b>REPUBLIC OF THE PHILIPPINES</b><br>
 		<small>QUEZON CITY<br>
 			City Councilor<br>

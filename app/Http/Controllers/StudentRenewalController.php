@@ -86,7 +86,6 @@ class StudentRenewalController extends Controller
             ->select('users.id');
         })
         ->select('schools.*')
-        ->where('schools.id','!=',$application->school_id)
         ->get();
         $course = Course::join('user_course','courses.id','user_course.course_id')
         ->where('user_course.user_id', function($query) {
@@ -150,6 +149,11 @@ class StudentRenewalController extends Controller
         ->latest('id')
         ->first();
         $application = Application::find(Auth::id());
+        if ($request->rad == 'yes') {
+            if ($request->school_transfer == $application->school_id && $request->course_transfer == $application->course_id) {
+                return redirect()->back();
+            }
+        }
         $credit = Credit::where('school_id',$application->school_id)->where('course_id',$application->course_id)->first();
         $grade->semester += 1;
         if ($grade->semester > $credit->semester) {

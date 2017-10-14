@@ -66,10 +66,8 @@ class CoordinatorRenewalController extends Controller
             ->latest('id')
             ->first();
             $grading = GradingDetail::where('grading_id',$grade->grading_id)
-            ->select('grading_details.grade')
             ->get();
             $detail = GradeDetail::where('grade_id',$grade->id)
-            ->select('grade_details.grade')
             ->get();
             foreach ($detail as $details) {
                 foreach ($grading as $gradings) {

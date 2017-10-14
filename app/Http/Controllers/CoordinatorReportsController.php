@@ -10,6 +10,10 @@ use Auth;
 use App\Councilor;
 use Carbon\Carbon;
 use App\Credit;
+use App\Budget;
+use App\Allocation;
+use App\UserAllocation;
+use App\UserBudget;
 class CoordinatorReportsController extends Controller
 {
     public function __construct()
@@ -83,6 +87,56 @@ class CoordinatorReportsController extends Controller
             ->get();
             $grading = GradingDetail::all();
             $pdf = PDF::loadView('SMS.Coordinator.Reports.CoordinatorReportsGradesDocs', compact('grading','allgrade','grade','application','councilor','today'));
+            return $pdf->stream();
+        } catch(\Exception $e) {
+            return redirect()->back();
+        }
+    }
+    public function budgets()
+    {
+        $budget = Budget::where('user_id',Auth::id())->get();
+        return view('SMS.Coordinator.Reports.CoordinatorReportsBudgets')->withBudget($budget);
+    }
+    public function postBudgets(Request $request)
+    {
+        try {
+            $councilor = Councilor::join('user_councilor','user_councilor.councilor_id','councilors.id')
+            ->join('districts','districts.id','councilors.district_id')
+            ->where('user_councilor.user_id',Auth::id())
+            ->first();
+            $today = Carbon::today();
+            $user = UserBudget::join('student_details','student_details.user_id','user_budget.user_id')
+            ->join('users','users.id','user_budget.user_id')
+            ->join('user_councilor','student_details.user_id','user_councilor.user_id')
+            ->select('users.*','student_details.*',DB::raw("CONCAT(users.last_name,', ',users.first_name,' ',IFNULL(users.middle_name,'')) as strUserName"),'user_budget.budget_id')
+            ->where('user_councilor.councilor_id', function($query){
+                $query->from('user_councilor')
+                ->join('users','user_councilor.user_id','users.id')
+                ->join('councilors','user_councilor.councilor_id','councilors.id')
+                ->select('councilors.id')
+                ->where('users.id',Auth::id())
+                ->first();
+            })
+            ->whereIn('user_budget.budget_id',$request->checked)
+            ->where('student_details.application_status','Accepted')
+            ->get();
+            $budget = Budget::whereIn('id',$request->checked)->get();
+            $getId = $budget->map(function ($budget) {
+                return collect($budget->toArray())
+                ->only(['id'])
+                ->all();
+            });
+            $allocation = Allocation::join('allocation_types','allocation_types.id','allocations.allocation_type_id')
+            ->whereIn('allocations.budget_id',$getId)
+            ->select('allocations.*','allocation_types.description')
+            ->get();
+            $allocate = UserAllocation::join('receipts','receipts.id','user_allocation.receipt_id')
+            ->join('users','users.id','receipts.user_id')
+            ->whereIn('user_allocation.budget_id',$getId)
+            ->select('user_allocation.*','receipts.user_id',DB::raw("CONCAT(users.last_name,', ',users.first_name,' ',IFNULL(users.middle_name,'')) as strUserName"))
+            ->get();
+            $pdf = PDF::loadView('SMS.Coordinator.Reports.CoordinatorReportsBudgetsDocs', compact('user','allocate','allocation','budget','councilor','today'))
+            ->setPaper('a4','landscape');
             return $pdf->stream();
         } catch(\Exception $e) {
             return redirect()->back();

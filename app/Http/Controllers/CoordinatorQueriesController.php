@@ -197,6 +197,7 @@ class CoordinatorQueriesController extends Controller
             ->setPaper('a4','landscape');
             return $pdf->stream();
         } catch(\Exception $e) {
+            dd($e->getMessage());
             return redirect()->back();
         }
     }

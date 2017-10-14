@@ -5,7 +5,7 @@
 	<title>Application Form</title>
 	<style type="text/css">
 	img {
-		style=width: 100px; 
+		width: 100px; 
 		height: 100px;
 		border: 1px solid;
 	}
@@ -20,13 +20,13 @@
 </style>
 </head>
 <body>
+	<div class="left">
+		<img src="./images/{{ $councilor->picture }}">
+	</div>
+	<div class="right">
+		<img src="./img/{{ $setting->logo }}">
+	</div>
 	<center><b>REPUBLIC OF THE PHILIPPINES</b><br>
-		<div class="left">
-			<img src="./images/{{ $councilor->picture }}">
-		</div>
-		<div class="right">
-			<img src="./img/{{ $setting->logo }}">
-		</div>
 		<small>QUEZON CITY<br>
 			<i>Office of the City Mayor</i><br>
 		</small>

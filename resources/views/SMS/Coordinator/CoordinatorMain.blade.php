@@ -148,7 +148,7 @@
           </a>
           <ul class="treeview-menu">
             <li class="{{Request::path() == 'coordinator/reports/grades' ? 'active' : ''}}"><a href="{{ url('coordinator/reports/grades') }}"><i class="fa fa-level-up"></i><span>Grades</span></a></li>
-            <li class="{{Request::path() == 'coordinator/reports' ? 'active' : ''}}"><a href="{{ url('coordinator/reports') }}"><i class="fa fa-money"></i><span>Budgets</span></a></li>
+            <li class="{{Request::path() == 'coordinator/reports/budgets' ? 'active' : ''}}"><a href="{{ url('coordinator/reports/budgets') }}"><i class="fa fa-money"></i><span>Budgets</span></a></li>
           </ul>
         </li>
         <li class="{{Request::path() == 'coordinator/utilities' ? 'active' : ''}}"><a href="{{ url('coordinator/utilities') }}"><i class="fa fa-gear"></i><span>Utilities</span></a></li>

@@ -106,6 +106,8 @@ Route::group(['prefix' => 'coordinator/'], function () {
 	//Coordinator Reports
 	Route::get('reports/grades', ['uses' => 'CoordinatorReportsController@grades', 'as' => 'reports.grades']);
 	Route::post('reports/grades', ['uses' => 'CoordinatorReportsController@postGrades', 'as' => 'reports.postGrades']);
+	Route::get('reports/budgets', ['uses' => 'CoordinatorReportsController@budgets', 'as' => 'reports.budgets']);
+	Route::post('reports/budgets', ['uses' => 'CoordinatorReportsController@postBudgets', 'as' => 'reports.postBudgets']);
 	//Coordinator Renewal
 	Route::get('renewal/accept/{id}', ['uses' => 'CoordinatorRenewalController@accept', 'as' => 'coordinatorrenewal.accept']);
 	Route::post('renewal/decline/{id}', ['uses' => 'CoordinatorRenewalController@decline', 'as' => 'coordinatorrenewal.decline']);
