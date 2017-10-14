@@ -17,6 +17,8 @@ use App\UserBudget;
 use App\Credit;
 use App\Grade;
 use App\UserAllocation;
+use App\Message;
+use App\Receiver;
 class CoordinatorBudgetController extends Controller
 {
     public function __construct()
@@ -96,6 +98,64 @@ class CoordinatorBudgetController extends Controller
                         $applications->student_status = 'Graduated';
                         $applications->save();
                     }
+                }
+                $user = Application::join('users','users.id','student_details.user_id')
+                ->join('user_councilor','users.id','user_councilor.user_id')
+                ->select('users.*','student_details.*')
+                ->where('student_details.application_status','Pending')
+                ->where('user_councilor.councilor_id', function($query){
+                    $query->from('user_councilor')
+                    ->join('users','user_councilor.user_id','users.id')
+                    ->join('councilors','user_councilor.councilor_id','councilors.id')
+                    ->select('councilors.id')
+                    ->where('user_councilor.user_id',Auth::id())
+                    ->first();
+                })
+                ->where('student_details.batch_id', function($query){
+                    $query->from('batches')
+                    ->select('id')
+                    ->latest('id')
+                    ->first();
+                })
+                ->where('users.is_active',0)
+                ->where('users.type','Student')
+                ->get();
+                foreach ($user as $users) {
+                    $users->application_status = 'Declined';
+                    $users->remarks = 'Declined';
+                    $users->save();
+                }
+                $renewal = Application::join('users','student_details.user_id','users.id')
+                ->join('user_councilor','users.id','user_councilor.user_id')
+                ->select([DB::raw("CONCAT(users.last_name,', ',users.first_name,' ',IFNULL(users.middle_name,'')) as strStudName"),'users.*','student_details.*'])
+                ->where('users.type','Student')
+                ->where('user_councilor.councilor_id', function($query){
+                    $query->from('user_councilor')
+                    ->join('users','user_councilor.user_id','users.id')
+                    ->join('councilors','user_councilor.councilor_id','councilors.id')
+                    ->select('councilors.id')
+                    ->where('user_councilor.user_id',Auth::id())
+                    ->first();
+                })
+                ->where('student_details.application_status','Accepted')
+                ->where('student_details.student_status','Continuing')
+                ->where('student_details.is_renewal',1)
+                ->get();
+                foreach ($renewal as $renewals) {
+                    $renewals->is_renewal = 0;
+                    $renewals->student_status = 'Forfeit';
+                    $renewals->remarks = 'Declined';
+                    $renewals->save();
+                    $message = new Message;
+                    $message->user_id = Auth::id();
+                    $message->title = $renewals->remarks;
+                    $message->description = $renewals->remarks;
+                    $message->date_created = Carbon::now(Config::get('app.timezone'));
+                    $message->save();
+                    $receiver = new Receiver;
+                    $receiver->message_id = $message->id;
+                    $receiver->user_id = $renewals->id;
+                    $receiver->save();
                 }
             }
             $connection = Connection::where('user_id',Auth::id())->first();

@@ -18,11 +18,12 @@ $(document).ready(function() {
 			}
 		},
 		"columnDefs": [
-		{ "width": "200px", "targets": 3 },
-		{ "width": "130px", "targets": 2 },
-		{ "width": "130px", "targets": 1 }
+		{ "width": "200px", "targets": 4 },
+		{ "width": "130px", "targets": 3 },
+		{ "width": "130px", "targets": 2 }
 		],
 		columns: [
+		{ data: 'id', name: 'users.id' },
 		{ data: 'strStudName', name: 'strStudName' },
 		{ data: 'withdraw', name: 'withdraw', orderable: false, searchable: false },
 		{ data: 'drop', name: 'drop', orderable: false, searchable: false },

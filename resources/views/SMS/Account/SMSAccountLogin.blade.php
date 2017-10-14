@@ -1,6 +1,6 @@
 @extends('SMS.SMSMain')
 @section('title')
-<title>ScholarMS|Login</title>
+<title>ScholarMS | Login</title>
 @endsection
 @section('override')
 {!! Html::style("css/form-elementslogin.css") !!}

@@ -45,16 +45,16 @@
 					<th>Time</th>
 				</tr>
 			</thead>
-			@foreach ($event as $events)
 			<tbody>
+				@foreach ($event as $events)
 				<tr>
 					<td>{{$events->title}}</td>
 					<td>{{$events->place_held}}</td>
 					<td>{{$events->date_held->format('M d, Y')}}</td>
 					<td>{{date('h:i A',strtotime($events->time_from))}} - {{date('h:i A',strtotime($events->time_to))}}</td>
 				</tr>
+				@endforeach
 			</tbody>
-			@endforeach
 		</table>
 		<br>
 		<br>

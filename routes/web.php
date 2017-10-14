@@ -90,18 +90,19 @@ Route::group(['prefix' => 'coordinator/'], function () {
 	Route::post('email', ['uses' => 'CoordinatorProfileController@email', 'as' => 'coordinatoremail.store']);
 	Route::post('contact', ['uses' => 'CoordinatorProfileController@contact', 'as' => 'coordinatorcontact.store']);
 	Route::post('password', ['uses' => 'CoordinatorProfileController@password', 'as' => 'coordinatorpassword.store']);
-	Route::post('image', ['uses' => 'CoordinatorProfileController@image', 'as' => 'coordinatorimage.store']);//Coordinator Utilities
+	Route::post('image', ['uses' => 'CoordinatorProfileController@image', 'as' => 'coordinatorimage.store']);
+	//Coordinator Utilities
 	Route::get('utilities', ['uses' => 'CoordinatorUtilitiesController@index', 'as' => 'coordinatorutilities.index']);
-	Route::get('utilities/create/{id}', ['uses' => 'CoordinatorUtilitiesController@create', 'as' => 'coordinatorutilities.create']);
-	Route::get('utilities/allocation/{id}', ['uses' => 'CoordinatorUtilitiesController@allocation', 'as' => 'coordinatorutilities.allocation']);
-	Route::post('utilities/question', ['uses' => 'CoordinatorUtilitiesController@question', 'as' => 'coordinatorutilities.question']);
-	Route::put('utilities/{id}', ['uses' => 'CoordinatorUtilitiesController@update', 'as' => 'coordinatorutilities.update']);
-	Route::put('utilities/allocation/{id}', ['uses' => 'CoordinatorUtilitiesController@stipend', 'as' => 'coordinatorutilities.stipend']);
+	Route::post('utilities', ['uses' => 'CoordinatorUtilitiesController@utility', 'as' => 'coordinatorutilities.utility']);
 	//Coordinator Queries
 	Route::get('queries/students', ['uses' => 'CoordinatorQueriesController@students', 'as' => 'queries.students']);
 	Route::get('queries/events', ['uses' => 'CoordinatorQueriesController@events', 'as' => 'queries.events']);
+	Route::get('queries/grades', ['uses' => 'CoordinatorQueriesController@grades', 'as' => 'queries.grades']);
+	Route::get('queries/claiming', ['uses' => 'CoordinatorQueriesController@claiming', 'as' => 'queries.claiming']);
 	Route::post('queries/students', ['uses' => 'CoordinatorQueriesController@postStudents', 'as' => 'queries.postStudents']);
 	Route::post('queries/events', ['uses' => 'CoordinatorQueriesController@postEvents', 'as' => 'queries.postEvents']);
+	Route::post('queries/grades', ['uses' => 'CoordinatorQueriesController@postGrades', 'as' => 'queries.postGrades']);
+	Route::post('queries/claiming', ['uses' => 'CoordinatorQueriesController@postClaiming', 'as' => 'queries.postClaiming']);
 	//Coordinator Reports
 	Route::get('reports/grades', ['uses' => 'CoordinatorReportsController@grades', 'as' => 'reports.grades']);
 	Route::post('reports/grades', ['uses' => 'CoordinatorReportsController@postGrades', 'as' => 'reports.postGrades']);

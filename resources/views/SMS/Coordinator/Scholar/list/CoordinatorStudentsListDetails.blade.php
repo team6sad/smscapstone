@@ -74,7 +74,7 @@
 							{{ $application->course }}
 						</p>
 						<hr>
-						<strong><i class="fa fa-map-marker margin-r-5"></i> Location</strong>
+						<strong><i class="fa fa-map-marker margin-r-5"></i> Address</strong>
 						<p class="text-muted">{{ $application->house_no }} {{ $application->street }} {{ $application->barangay }} {{ $application->district }}</p>
 						<hr>
 						<strong><i class="fa fa-plus margin-r-5"></i> Religion</strong>
@@ -126,6 +126,31 @@
 									@endif
 								</div>
 							</div>
+							<hr>
+							<div class="form-group">
+								<label>Grades PDF</label>
+								<div class="table-responsive">
+									<table class="table table-striped">
+										<thead>
+											<tr>
+												<th>Year</th>
+												<th>Semester</th>
+												<th>Action</th>
+											</tr>
+										</thead>
+										<tbody>
+											@foreach ($pdf as $pdfs)
+											<tr>
+												<td>{{ $pdfs->year }}</td>
+												<td>{{ $pdfs->semester }}</td>
+												<td><a href="{{ asset('docs/'.$pdfs->pdf) }}" target="_blank"><button type="button" class="btn btn-info btn-xs"><i class='fa fa-eye'></i> View</button></a></td>
+											</tr>
+											@endforeach
+										</tbody>
+									</table>
+								</div>
+							</div>
+							<hr>
 							<div class="form-group">
 								<label>Tranfer History</label>
 								<div class="table-responsive">
@@ -189,7 +214,7 @@
 							@endforeach
 							@if ($application->student_status=='Continuing')
 							{{ Form::open([
-								'id' => 'frmStep',
+								'id' => 'frmRequirement',
 								'route' => ['scholars.requirements',$application->id]
 							])
 						}}
@@ -229,7 +254,7 @@
 							<div class="col-xs-12">
 								<div class="form-group">
 									{{ Form::button("<i class='fa fa-paper-plane'></i> Submit", [
-										'class' => 'btn btn-success pull-right',
+										'class' => 'btn btn-success btn-requirement pull-right',
 										'type' => ''
 									]) 
 								}}
@@ -265,7 +290,7 @@
 					@endforeach
 					@if ($application->student_status=='Continuing')
 					{{ Form::open([
-						'id' => 'frmStep',
+						'id' => 'frmClaiming',
 						'route' => ['scholars.stipend',$application->id]
 					])
 				}}
@@ -307,7 +332,7 @@
 					<div class="col-xs-12">
 						<div class="form-group">
 							{{ Form::button("<i class='fa fa-paper-plane'></i> Submit", [
-								'class' => 'btn btn-success pull-right',
+								'class' => 'btn btn-success btn-claiming pull-right',
 								'type' => ''
 							]) 
 						}}
@@ -347,6 +372,24 @@
 	var url = "{{ route('scholars.status', $application->user_id) }}";
 	@if (Session::has('success'))
 	window.open("{{ route('scholars.receipt',Session::get('success')) }}", '_blank');
+	swal({
+		title: "Success!",
+		text: "<center>Data Stored</center>",
+		type: "success",
+		showConfirmButton: true,
+		confirmButtonClass: "btn-success",
+		html: true
+	});
+	@endif
+	@if (Session::has('confirm'))
+	swal({
+		title: "Success!",
+		text: "<center>Data Stored</center>",
+		type: "success",
+		showConfirmButton: true,
+		confirmButtonClass: "btn-success",
+		html: true
+	});
 	@endif
 </script>
 @endsection

@@ -21,7 +21,7 @@
 		width: 20px;
 	}
 	.col {
-		width: 30px;
+		width: 70px;
 	}
 </style>
 </head>
@@ -36,7 +36,7 @@
 		<hr>
 		<hr><br>
 		<b>{{ $today->format('F d, Y') }}<br></b><br>
-		<big><center><b>List of Grades Submitted per Semester</b></center></big><br>
+		<big><center><b>List of Grades Submitted</b></center></big><br>
 		@foreach ($application as $applications)<br><br>
 		Scholarship ID: <b>{{ $applications->id }}</b><br>
 		Name: <b>{{ $applications->strUserName }}</b><br>
@@ -55,9 +55,9 @@
 					<th class="col">Status</th>
 				</tr>
 			</thead>
-			@foreach ($grade as $grades)
-			@if ($allgrades->id == $grades->grade_id)
 			<tbody>
+				@foreach ($grade as $grades)
+				@if ($allgrades->id == $grades->grade_id)
 				<tr>
 					<td>{{$grades->description}}</td>
 					<td>{{$grades->units}}</td>
@@ -65,8 +65,12 @@
 					@foreach ($grading as $gradings)
 					@if ($allgrades->grading_id == $gradings->grading_id)
 					@if ($grades->grade == $gradings->grade)
-					@if ($gradings->is_passed)
+					@if ($gradings->status == 'P')
 					<td>Passed</td>
+					@elseif ($gradings->status == 'D')
+					<td>Drop</td>
+					@elseif ($gradings->status == 'W')
+					<td>Withdraw</td>
 					@else
 					<td>Failed</td>
 					@endif
@@ -74,9 +78,9 @@
 					@endif
 					@endforeach
 				</tr>
+				@endif
+				@endforeach
 			</tbody>
-			@endif
-			@endforeach
 		</table>
 		@endif
 		@endif

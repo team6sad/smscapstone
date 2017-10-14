@@ -9,6 +9,7 @@ use DB;
 use Auth;
 use App\Councilor;
 use Carbon\Carbon;
+use App\Credit;
 class CoordinatorReportsController extends Controller
 {
     public function __construct()
@@ -36,45 +37,55 @@ class CoordinatorReportsController extends Controller
     }
     public function postGrades(Request $request)
     {
-        $councilor = Councilor::join('user_councilor','user_councilor.councilor_id','councilors.id')
-        ->join('districts','districts.id','councilors.district_id')
-        ->where('user_councilor.user_id',Auth::id())
-        ->first();
-        $today = Carbon::today(); 
-        $application = Application::join('users','student_details.user_id','users.id')
-        ->join('user_councilor','student_details.user_id','user_councilor.user_id')
-        ->join('districts','student_details.district_id','districts.id')
-        ->join('barangay','student_details.barangay_id','barangay.id')
-        ->join('schools','student_details.school_id','schools.id')
-        ->join('courses','student_details.course_id','courses.id')
-        ->select('users.*','student_details.*','districts.description as districts_description','barangay.description as barangay_description','schools.description as schools_description','courses.description as courses_description',DB::raw("CONCAT(users.last_name,', ',users.first_name,' ',IFNULL(users.middle_name,'')) as strUserName"))
-        ->where('user_councilor.councilor_id', function($query){
-            $query->from('user_councilor')
-            ->join('users','user_councilor.user_id','users.id')
-            ->join('councilors','user_councilor.councilor_id','councilors.id')
-            ->select('councilors.id')
-            ->where('users.id',Auth::id())
+        try {
+            $councilor = Councilor::join('user_councilor','user_councilor.councilor_id','councilors.id')
+            ->join('districts','districts.id','councilors.district_id')
+            ->where('user_councilor.user_id',Auth::id())
             ->first();
-        })
-        ->whereIn('users.id',$request->name)
-        ->get();
-        $allgrade = Grade::whereIn('student_detail_user_id',$request->name)->get();
-        $number = new NumberToWord;
-        foreach ($allgrade as $allgrades) {
-            $allgrades->semester -= 1;
-            $allgrades->year = $number->number($allgrades->year);
-            $allgrades->semester = $number->number($allgrades->semester);
+            $today = Carbon::today(); 
+            $application = Application::join('users','student_details.user_id','users.id')
+            ->join('user_councilor','student_details.user_id','user_councilor.user_id')
+            ->join('districts','student_details.district_id','districts.id')
+            ->join('barangay','student_details.barangay_id','barangay.id')
+            ->join('schools','student_details.school_id','schools.id')
+            ->join('courses','student_details.course_id','courses.id')
+            ->select('users.*','student_details.*','districts.description as districts_description','barangay.description as barangay_description','schools.description as schools_description','courses.description as courses_description',DB::raw("CONCAT(users.last_name,', ',users.first_name,' ',IFNULL(users.middle_name,'')) as strUserName"))
+            ->where('user_councilor.councilor_id', function($query){
+                $query->from('user_councilor')
+                ->join('users','user_councilor.user_id','users.id')
+                ->join('councilors','user_councilor.councilor_id','councilors.id')
+                ->select('councilors.id')
+                ->where('users.id',Auth::id())
+                ->first();
+            })
+            ->whereIn('users.id',$request->name)
+            ->get();
+            $allgrade = Grade::whereIn('student_detail_user_id',$request->name)->get();
+            $number = new NumberToWord;
+            foreach ($allgrade as $allgrades) {
+                $user = Application::where('user_id',$allgrades->student_detail_user_id)->first();
+                $credit = Credit::where('school_id',$user->school_id)->where('course_id',$user->course_id)->first();
+                $allgrades->semester -= 1;
+                if ($allgrades->semester < 1) {
+                    $allgrades->year -= 1;
+                    $allgrades->semester = $credit->semester;
+                }
+                $allgrades->year = $number->number($allgrades->year);
+                $allgrades->semester = $number->number($allgrades->semester);
+            }
+            $getId = $allgrade->map(function ($allgrade) {
+                return collect($allgrade->toArray())
+                ->only(['id'])
+                ->all();
+            });
+            $grade = Grade::join('grade_details','grade_details.grade_id','grades.id')
+            ->whereIn('grade_details.grade_id',$getId)
+            ->get();
+            $grading = GradingDetail::all();
+            $pdf = PDF::loadView('SMS.Coordinator.Reports.CoordinatorReportsGradesDocs', compact('grading','allgrade','grade','application','councilor','today'));
+            return $pdf->stream();
+        } catch(\Exception $e) {
+            return redirect()->back();
         }
-        $getId = $allgrade->map(function ($allgrade) {
-            return collect($allgrade->toArray())
-            ->only(['id'])
-            ->all();
-        });
-        $grade = Grade::join('grade_details','grade_details.grade_id','grades.id')
-        ->whereIn('grade_details.grade_id',$getId)
-        ->get();
-        $grading = GradingDetail::all();
-        $pdf = PDF::loadView('SMS.Coordinator.Reports.CoordinatorReportsGradesDocs', compact('grading','allgrade','grade','application','councilor','today'));
-        return $pdf->stream();
     }
 }

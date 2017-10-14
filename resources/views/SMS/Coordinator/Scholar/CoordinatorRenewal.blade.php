@@ -65,7 +65,6 @@
 			</div>
 			<div class="modal-body">
 				{{ Form::open([
-					'id' => 'frm', 'data-parsley-whitespace' => 'squish',
 					'route' => 'coordinatorrenewal.postCriteria'
 				])
 			}}
@@ -108,7 +107,8 @@
 	</div>
 	<table id="table" class="table table-bordered table-striped table-hover" cellspacing="0" width="100%">
 		<thead>
-			<th>Student Name</th>
+			<th>ID</th>
+			<th>Student</th>
 			<th>No of Withdraw</th>
 			<th>No of Drop</th>
 			<th>Action</th>

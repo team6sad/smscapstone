@@ -17,6 +17,7 @@ class CreateUserBudgetTable extends Migration {
 			$table->increments('id');
 			$table->string('user_id', 30)->index('f_user_budget_user_id_idx');
 			$table->integer('budget_id')->unsigned()->index('f_user_budget_budget_id_idx');
+			$table->integer('grade_id')->unsigned()->index('f_user_budget_grade_id_idx');
 		});
 	}
 

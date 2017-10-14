@@ -8,7 +8,6 @@ $(document).ready(function() {
     var table = $('#student-table').DataTable({
         processing: true,
         serverSide: true,
-        "order": [1, 'desc'],
         "columnDefs": [
         { "width": "70px", "targets": 5 },
         { "width": "70px", "targets": 4 },

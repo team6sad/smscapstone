@@ -28,7 +28,6 @@
                 </div>
                 <div class="modal-body">
                   {{ Form::open([
-                    'id' => 'frm', 'data-parsley-whitespace' => 'squish',
                     'route' => 'applicants.postCriteria'
                   ])
                 }}

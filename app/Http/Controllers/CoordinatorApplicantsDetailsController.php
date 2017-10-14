@@ -109,9 +109,11 @@ class CoordinatorApplicantsDetailsController extends Controller
                     $user = User::find($id);
                     $user->is_active = 1;
                     $user->save();
+                    $getGrade = Grade::where('student_detail_user_id',$id)->latest('id')->first();
                     $userbudget = new UserBudget;
                     $userbudget->user_id = $id;
                     $userbudget->budget_id = $budget->id;
+                    $userbudget->grade_id = $getGrade->id;
                     $userbudget->save();
                     DB::commit();
                     Session::flash('success','Student Accepted');

@@ -38,6 +38,7 @@ $(document).ready(function() {
     } else {
       swal({
         title: "Are you sure?",
+        text: "Budget Remaining: "+ $('.budget').text(),
         type: "warning",
         showCancelButton: true,
         confirmButtonClass: "btn-danger",
@@ -78,6 +79,7 @@ $(document).ready(function() {
           }
         }, 500);
       });
+      $('.lead').addClass('text-center');
     }
   });
   $('#budget-list').on('click', '.btn-view', function() {

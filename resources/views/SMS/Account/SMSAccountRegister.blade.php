@@ -1,6 +1,6 @@
 @extends('SMS.SMSMain')
 @section('title')
-<title>ScholarMS|Login</title>
+<title>ScholarMS | Register</title>
 @endsection
 @section('override')
 {!! Html::style("css/parsley.css") !!}
@@ -36,7 +36,7 @@
             <div class="form-group{{ $errors->has('middle_name') ? ' has-error' : '' }}">
               <label for="middle_name" class="col-md-4 control-label">Middle Name</label>
               <div class="col-md-6">
-                <input id="middle_name" type="text" class="form-control" name="middle_name" value="{{ old('middle_name') }}" required>
+                <input id="middle_name" type="text" class="form-control" name="middle_name" value="{{ old('middle_name') }}">
                 @if ($errors->has('middle_name'))
                 <span class="help-block">
                   <strong>{{ $errors->first('middle_name') }}</strong>

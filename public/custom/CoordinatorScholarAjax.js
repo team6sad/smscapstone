@@ -5,6 +5,8 @@ $(document).ready(function() {
         }
     });
     $('li').click(function() {
+        $("[data-toggle='toggle']").bootstrapToggle('destroy');   
+        $("[data-toggle='toggle']").bootstrapToggle();
         $('.btn-sm.android').attr('style', 'width: 88px;');
     });
     $('#student_status').change(function(){
@@ -59,5 +61,49 @@ $(document).ready(function() {
         { data: 'date_claimed', name: 'date_claimed'},
         { data: 'action', name: 'action', orderable: false, searchable: false }
         ]
+    });
+    $('.btn-requirement').on('click',function(e){
+        e.preventDefault();
+        swal({
+            title: "Are you sure?",
+            type: "warning",
+            showCancelButton: true,
+            confirmButtonClass: "btn-success",
+            confirmButtonText: "Submit",
+            cancelButtonText: "Cancel",
+            closeOnConfirm: false,
+            allowOutsideClick: true,
+            showLoaderOnConfirm: true,
+            closeOnCancel: true
+        },
+        function(isConfirm) {
+            setTimeout(function() {
+                if (isConfirm) {
+                    $('#frmRequirement').submit();
+                }
+            }, 500);
+        });
+    });
+    $('.btn-claiming').on('click',function(e){
+        e.preventDefault();
+        swal({
+            title: "Are you sure?",
+            type: "warning",
+            showCancelButton: true,
+            confirmButtonClass: "btn-success",
+            confirmButtonText: "Submit",
+            cancelButtonText: "Cancel",
+            closeOnConfirm: false,
+            allowOutsideClick: true,
+            showLoaderOnConfirm: true,
+            closeOnCancel: true
+        },
+        function(isConfirm) {
+            setTimeout(function() {
+                if (isConfirm) {
+                    $('#frmClaiming').submit();
+                }
+            }, 500);
+        });
     });
 });

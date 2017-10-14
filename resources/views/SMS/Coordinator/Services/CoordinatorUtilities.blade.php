@@ -16,138 +16,78 @@
 	<section class="content">
 		<div class="nav-tabs-custom">
 			<ul class="nav nav-tabs">
-				<li class="active"><a href="#tab_1" data-toggle="tab">Undo Checklist</a></li>
-				<li><a href="#tab_2" data-toggle="tab">Essay Question</a></li>
-				<li><a href="#tab_3" data-toggle="tab">Backup</a></li>
+				<li class="active"><a href="#tab_1" data-toggle="tab">Misc.</a></li>
+				<li><a href="#tab_2" data-toggle="tab">Backup</a></li>
 			</ul>
 			<div class="tab-content">
 				<div class="tab-pane active" id="tab_1">
-					<div class="modal fade" id="view_step">
-						<div class="modal-dialog">
-							<div class="modal-content">
-								<div class="modal-header">
-									{{ Form::button('&times;', [
-										'class' => 'close',
-										'type' => '',
-										'data-dismiss' => 'modal'
-									]) 
-								}}
-								<h4>Checklist</h4>
+					<div class="box-body pad row">
+						{{ Form::open(['route' => 'coordinatorutilities.utility'])}}
+						<div class="col-md-6">
+							<div class="form-group">
+								<label>Essay Question</label>
+								<textarea class="textarea" name="essay" placeholder="Place some text here"
+								style="width: 100%; height: 400px; font-size: 14px; line-height: 18px; border: 1px solid #dddddd; padding: 10px;" required="required">{{ $utility->essay }}</textarea>
 							</div>
-							<div class="modal-body">
-								{{ Form::open([
-									'id' => 'frmStep'
-								])
+						</div>
+						<div class="col-md-6">
+							<label>Criteria</label>
+							<p>Parent Monthly Income Cap</p>
+							{{ Form::select('income_cap', [
+								'35,000 and Above' => '35,000 and Above',
+								'30,000 - 35,000' => '30,000',
+								'25,000 - 30,000' => '25,000',
+								'20,000 - 25,000' => '20,000',
+								'15,000 - 20,000' => '15,000',
+								'10,000 - 15,000' => '10,000',
+								'10,000 and Below' => '10,000 and Below'
+							], $utility->income_cap, [
+								'id' => 'income_cap',
+								'class' => 'form-control'])
 							}}
 							<div class="form-group">
-								<ul class="todo-list steps">
-								</ul>
+								<div class="checkbox">
+									@if ($utility->passing_grades)
+									<label><input type="checkbox" name="passing_grades" checked="checked">Automatically decline "Failed" grades (for applicants and renewal)</label>
+									@else
+									<label><input type="checkbox" name="passing_grades">Automatically decline "Failed" grades (for applicants and renewal)</label>
+									@endif
+								</div>
+								<div class="checkbox">
+									@if ($utility->no_siblings)
+									<label><input type="checkbox" name="no_siblings" checked="checked">Does not have sibling affiliated</label>
+									@else
+									<label><input type="checkbox" name="no_siblings">Does not have sibling affiliated</label>
+									@endif
+								</div>
+								<div class="checkbox">
+									@if ($utility->renewal_auto_accept)
+									<label><input type="checkbox" name="renewal_auto_accept" checked="checked">Automatically accept scholars with only "Passed" grades</label>
+									@else
+									<label><input type="checkbox" name="renewal_auto_accept">Automatically accept scholars with only "Passed" grades</label>
+									@endif
+								</div>
 							</div>
+						</div>
+						<div class="col-md-12">
 							<div class="form-group">
-								{{ Form::button('Submit', [
-									'id' => 'btn-submit',
-									'class' => 'btn btn-success btn-block',
-									'value' => 'add',
-									'type' => ''
-								]) 
-							}}
+								<button type="submit" class="btn btn-success pull-right"><i class='fa fa-paper-plane'></i> Submit</button>
+							</div>
 						</div>
 						{{ Form::close() }}
 					</div>
 				</div>
+				<div class="tab-pane" id="tab_2">
+				</div>
 			</div>
 		</div>
-		<div class="modal fade" id="view_claim">
-			<div class="modal-dialog">
-				<div class="modal-content">
-					<div class="modal-header">
-						{{ Form::button('&times;', [
-							'class' => 'close',
-							'type' => '',
-							'data-dismiss' => 'modal'
-						]) 
-					}}
-					<h4>Claim Stipend</h4>
-				</div>
-				<div class="modal-body">
-					{{ Form::open([
-						'id' => 'frmClaim'
-					])
-				}}
-				<div class="form-group">
-					<ul class="todo-list stipend">
-					</ul>
-				</div>
-				<div class="form-group">
-					{{ Form::button('Submit', [
-						'id' => 'btn-save',
-						'class' => 'btn btn-success btn-block',
-						'value' => 'add',
-						'type' => ''
-					]) 
-				}}
-			</div>
-			{{ Form::close() }}
-		</div>
-	</div>
-</div>
-</div>
-<div class="box-body table-responsive">
-	<table class="table table-bordered table-striped table-hover" cellspacing="0" width="100%">
-		<thead>
-			<th>Student</th>
-			<th>Action</th>
-		</thead>
-		<tbody>
-			@foreach ($application as $applications)
-			<tr>
-				<td>
-					<table><tr><td><div class='col-md-2'><img src='{{ asset('images/'.$applications->picture) }}' class='img-circle' alt='data Image' height='40'></div></td><td>{{ $applications->last_name }}, {{ $applications->first_name }} {{ $applications->middle_name }}</td></tr></table>
-				</td>
-				<td>
-					<button class='btn btn-primary btn-xs btn-progress' value='{{ $applications->id }}'><i class='fa fa-files-o'></i> List</button> <button class='btn btn-success btn-xs open-modal' value='{{ $applications->id }}'><i class='fa fa-money'></i> Claim</button>
-				</td>
-			</tr>
-			@endforeach
-		</tbody>
-	</table>
-</div>
-</div>
-<div class="tab-pane" id="tab_2">
-	<div class="box-body pad">
-		{{ Form::open([
-			'id' => 'frm',
-			'route' => 'coordinatorutilities.question'
-		])
-	}}
-	<div class="form-group">
-		<textarea class="textarea" name="essay" placeholder="Place some text here"
-		style="width: 100%; height: 400px; font-size: 14px; line-height: 18px; border: 1px solid #dddddd; padding: 10px;" required="required">{{ $utility->essay }}</textarea>
-	</div>
-	<div class="form-group">
-		{{ Form::button("<i class='fa fa-paper-plane'></i> Submit", [
-			'id' => 'btn-save',
-			'class' => 'btn btn-success pull-right',
-			'value' => 'add',
-			'type' => ''
-		]) 
-	}}
-</div>
-{{ Form::close() }}
-</div>
-</div>
-<div class="tab-pane" id="tab_3">
-</div>
-</div>
-</div>
-</section>
+	</section>
 </div>
 @endsection
 @section('script')
 {!! Html::script("plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.all.min.js") !!}
-{!! Html::script("custom/CoordinatorUtilitiesAjax.min.js") !!}
 <script type="text/javascript">
-	var dataurl = "{!! route('coordinatorclaiming.data') !!}";
 	$('.textarea').wysihtml5();
+	$('.wysihtml5-toolbar').remove();
 </script>
 @endsection

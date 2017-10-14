@@ -11,7 +11,7 @@
       <ol class="breadcrumb">
         <li><a href="{{ url('coordinator/dashboard') }}"><i class="fa fa-dashboard"></i> Dashboard</a></li>
         <li class="active"><i class="fa fa-list"></i> Queries</li>
-        <li class="active"><i class="fa fa-users"></i> Students</li>
+        <li class="active"><i class="fa fa-graduation-cap"></i> Students</li>
       </ol>
     </section>
     <section class="content">
@@ -34,7 +34,7 @@
                 <select class="form-control" name="status">
                   <option value="Accepted">Accepted (Application)</option>
                   <option value="Pending">Pending (Application)</option>
-                  <option value="Decline">Declined (Application)</option>
+                  <option value="Declined">Declined (Application)</option>
                   <option value="Continuing">Continuing (Scholarship)</option>
                   <option value="Graduated">Graduated (Scholarship)</option>
                   <option value="Forfeit">Forfeited (Scholarship)</option>

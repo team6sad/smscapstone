@@ -7,6 +7,24 @@
 		</h1>
 	</section>
 	<section class="content">
+		@if ($utility->phase_status && !$application->is_new)
+		@if (!$application->is_renewal && !$userbudget)
+		<div class="callout callout-success">
+			<h4><i class="icon fa fa-info"></i> Renewal Status</h4>
+			Renewal Phase Ongoing
+		</div>
+		@else
+		<div class="callout callout-success">
+			<h4><i class="icon fa fa-info"></i> Renewal Status</h4>
+			Renewal request has been submitted
+		</div>
+		@endif
+		@else
+		<div class="callout callout-danger">
+			<h4><i class="icon fa fa-info"></i> Renewal Status</h4>
+			Renewal Phase Closed
+		</div>
+		@endif
 		<div class="row">
 			<div class="col-md-6">
 				<div class="box box-danger">
@@ -23,21 +41,25 @@
 								<thead>
 									<tr>
 										<th>Description</th>
-										<th>Date Passed</th>
+										<th>Status</th>
 									</tr>
 								</thead>
 								<tbody>
-									@foreach ($requirement as $requirements)
-									@foreach ($userbudget as $userbudgets)
+									@foreach ($list as $lists)
 									<tr>
-										<td>{{ $requirements->description }}</td>
-										@if ($requirements->id == $userbudgets->requirement_id)
+										<td>{{ $lists->description }}</td>
+										@if ($list->count() == $requirement->count())
+										<td>Not Passed</td>
+										@elseif ($requirement->isEmpty())
+										<td>Passed</td>
+										@else
+										@if ($requirement->where('id',$lists->id)->count() < 1)
 										<td>Passed</td>
 										@else
 										<td>Not Passed</td>
 										@endif
+										@endif
 									</tr>
-									@endforeach
 									@endforeach
 								</tbody>
 							</table>
@@ -48,7 +70,7 @@
 			<div class="col-md-6">
 				<div class="box box-danger">
 					<div class="box-header with-border">
-						<h3 class="box-title">Claimed Stipend</h3>
+						<h3 class="box-title">Claiming</h3>
 						<div class="box-tools pull-right">
 							<button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
 							</button>
@@ -59,17 +81,30 @@
 							<table class="table no-margin">
 								<thead>
 									<tr>
-										<th>Name</th>
+										<th>Description</th>
 										<th>Amount</th>
-										<th>Date Claimed</th>
+										<th>Status</th>
 									</tr>
 								</thead>
 								<tbody>
-									@foreach ($allocation as $allocations)
+									@foreach ($allocate as $allocates)
 									<tr>
-										<td>{{ $allocations->description }}</td>
-										<td>{{ $allocations->amount }}</td>
-										<td>{{ $allocations->date_claimed->format('l M d, Y') }}</td>
+										<td>{{ $allocates->description }}</td>
+										@if ($allocate->count() == $claiming->count())
+										<td>{{ $allocates->amount }}</td>
+										<td>Not Claimed</td>
+										@elseif ($claiming->isEmpty())
+										<td>{{ $allocates->amount }}</td>
+										<td>Claimed</td>
+										@else
+										@if ($claiming->where('id',$allocates->id)->count() < 1)
+										<td>{{ $allocates->amount }}</td>
+										<td>Claimed</td>
+										@else
+										<td>{{ $allocates->amount }}</td>
+										<td>Not Claimed</td>
+										@endif
+										@endif
 									</tr>
 									@endforeach
 								</tbody>

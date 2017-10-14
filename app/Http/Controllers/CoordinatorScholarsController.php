@@ -350,7 +350,18 @@ class CoordinatorScholarsController extends Controller
                     $shifts->semester = $number->number($shifts->semester);
                 }
             }
-            return view('SMS.Coordinator.Scholar.List.CoordinatorStudentsListDetails')->withApplication($application)->withRequirement($requirement)->withGrade($grade)->withOldgrade($oldgrade)->withAllgrade($allgrade)->withAllocation($allocation)->withOldallocation($oldallocation)->withCount($count)->withStudentstep($studentstep)->withGetsem($getsem)->withShift($shift);
+            $pdf = Grade::where('student_detail_user_id',$id)->get();
+            foreach ($pdf as $pdfs) {
+                $credit = Credit::where('school_id',$application->school_id)->where('course_id',$application->course_id)->first();
+                $pdfs->semester -= 1;
+                if ($pdfs->semester < 1) {
+                    $pdfs->year -= 1;
+                    $pdfs->semester = $credit->semester;
+                }
+                $pdfs->year = $number->number($pdfs->year);
+                $pdfs->semester = $number->number($pdfs->semester);
+            }
+            return view('SMS.Coordinator.Scholar.List.CoordinatorStudentsListDetails')->withApplication($application)->withRequirement($requirement)->withGrade($grade)->withOldgrade($oldgrade)->withAllgrade($allgrade)->withAllocation($allocation)->withOldallocation($oldallocation)->withCount($count)->withStudentstep($studentstep)->withGetsem($getsem)->withShift($shift)->withPdf($pdf);
         } catch (\Exception $e) {
             dd($e->getMessage());
             return redirect()->route('scholars.index');
@@ -378,6 +389,7 @@ class CoordinatorScholarsController extends Controller
                 $steps->save();
             }
             DB::commit();
+            Session::flash('confirm','Data Stored');
             return redirect()->back();
         } catch (\Exception $e) {
             DB::rollBack();

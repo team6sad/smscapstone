@@ -288,7 +288,7 @@
     $('#frmRemarks').trigger("reset");
     $('#remarks').modal('show');
   });
-  $('.btn-accept').on('click',function(e){  
+  $('.btn-accept').on('click',function(e){
     e.preventDefault();
     swal({
       title: "Are you sure?",

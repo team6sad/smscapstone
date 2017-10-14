@@ -2,7 +2,7 @@
 <html>
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-	<title>Students Query</title>
+	<title>Claimings Query</title>
 	<style type="text/css">
 	table {
 		border-collapse: collapse;
@@ -21,6 +21,9 @@
 		height: 20px;
 		width: 20px;
 	}
+	.col {
+		width: 150px;
+	}
 </style>
 </head>
 <body>
@@ -35,27 +38,47 @@
 		<hr><br>
 		<b>{{ $today->format('F d, Y') }}<br>
 		</b><br>
-		<p>Transmitted herewith is the list of {{ $request->status }} students. </p>
+		<p>Transmitted herewith is the list of scholars claiming status. </p>
+		@foreach ($budget as $budgets)
+		<br>
+		<p>Semester in <b>{{ $budgets->budget_date->format('F d, Y') }}</b></p>
+		@foreach ($allocation as $allocations)
+		@if ($allocations->budget_id == $budgets->id)
+		<b>{{ $allocations->description }}</b>
 		<table width="100%">
 			<thead>
 				<tr>
-					<th>ID</th>
+					<th class="col">ID</th>
 					<th>Name</th>
-					<th>School</th>
-					<th>Course</th>
+					<th class="col">Status</th>
 				</tr>
 			</thead>
 			<tbody>
-				@foreach ($application as $applications)
+				<?php $current = collect([]); ?>
+				@foreach ($custom as $customs)
+				@if ($allocations->id == $customs['allocation_id'])
+				<?php $current->push($customs['user_id']); ?>
 				<tr>
-					<td>{{$applications->id}}</td>
-					<td>{{$applications->strUserName}}</td>
-					<td>{{$applications->schools_abbreviation}}</td>
-					<td>{{$applications->courses_abbreviation}}</td>
+					<td>{{ $customs['user_id'] }}</td>
+					<td>{{ $customs['strUserName'] }}</td>
+					<td>Claimed</td>
 				</tr>
+				@endif
+				@endforeach
+				@foreach ($user as $users)
+				@if ($users->budget_id == $budgets->id && !$current->contains($users->user_id))
+				<tr>
+					<td>{{ $users->user_id }}</td>
+					<td>{{ $users->strUserName }}</td>
+					<td>Not Claimed</td>
+				</tr>
+				@endif
 				@endforeach
 			</tbody>
 		</table>
+		@endif
+		@endforeach
+		@endforeach
 		<br>
 		<br>
 		Legislative Staff Officer<br>

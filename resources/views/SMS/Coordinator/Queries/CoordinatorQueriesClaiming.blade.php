@@ -5,32 +5,38 @@
   <div class="content-wrapper">
     <section class="content-header">
       <h1>
-        Grades
+        Claiming
       </h1>
       <ol class="breadcrumb">
         <li><a href="{{ url('coordinator/dashboard') }}"><i class="fa fa-dashboard"></i> Dashboard</a></li>
-        <li class="active"><i class="fa fa-trophy"></i> Reports</li>
-        <li class="active"><i class="fa fa-users"></i> Grades</li>
+        <li class="active"><i class="fa fa-list"></i> Queries</li>
+        <li class="active"><i class="fa fa-money"></i> Claiming</li>
       </ol>
     </section>
     <section class="content">
       <div class="row">
         <div class="col-sm-12">
           <div class="box box-danger container">
-            {{ Form::open(['data-parsley-whitespace' => 'squish', 'target' => '_blank', 'route' => 'reports.postGrades']) }}
+            {{ Form::open(['data-parsley-whitespace' => 'squish', 'target' => '_blank', 'route' => 'queries.postClaiming']) }}
             <br>
+            <div class="form-group">
+              <label>Type</label><br>
+              @foreach ($type as $types)
+              <label class="checkbox-inline"><input type="checkbox" name="type[]" value="{{ $types->id }}">{{ $types->description }}</label>
+              @endforeach
+            </div>
             <table id="table" class="table table-bordered table-striped table-hover" cellspacing="0" width="100%">
               <thead>
                 <th><input type="checkbox" name="checkbox" id="checkbox"></th>
-                <th>ID</th>
-                <th>Name</th>
+                <th>No.</th>
+                <th>Semester Date</th>
               </thead>
               <tbody id="list">
-                @foreach ($application as $applications)
+                @foreach ($budget as $key => $budgets)
                 <tr>
-                  <td><input type="checkbox" name="name[]" class="checkbox" value="{{ $applications->id }}"></td>
-                  <td>{{ $applications->id }}</td>
-                  <td><table><tr><td><div class='col-md-2'><img src='{{ asset('images/'.$applications->picture) }}' class='img-circle' alt='data Image' height='40'></div></td><td>{{ $applications->strStudName }}</td></tr></table></td>
+                  <td><input type="checkbox" name="checked[]" class="checkbox" value="{{ $budgets->id }}"></td>
+                  <td>{{ $key + 1 }}</td>
+                  <td>{{ $budgets->budget_date->format('M d, Y') }}</td>
                 </tr>
                 @endforeach
               </tbody>
@@ -54,11 +60,12 @@
       "aaSorting": [],
       "columnDefs": [
       { "width": "30px", "targets": 0 },
+      { "width": "40px", "targets": 1 },
       { orderable: false, targets: 0 }
       ]
     });
     $("#checkbox").click(function(){
-      $('input:checkbox').not(this).prop('checked', this.checked);
+      $('.checkbox').not(this).prop('checked', this.checked);
     });
   </script>
   @endsection

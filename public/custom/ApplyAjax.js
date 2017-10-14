@@ -192,8 +192,8 @@ $(document).ready(function() {
       "</div>";
       if (checker) {
         div += "<div class='col-md-6'>" +
-        "<label>From:</label> " + $('#strSiblFirstName').val() + " " + $('#strSiblLastName').val() + " <br>" +
-        "<label>To:</label> " + $('#strSiblDateFrom').val() + " To: " + $('#strSiblDateTo').val() + " <br>" +
+        "<label>Name:</label> " + $('#strSiblFirstName').val() + " " + $('#strSiblLastName').val() + " <br>" +
+        "<label>From:</label> " + $('#strSiblDateFrom').val() + " <label>To:</label> " + $('#strSiblDateTo').val() + " <br>" +
         "</div>";
       }
       div += "</div>" +

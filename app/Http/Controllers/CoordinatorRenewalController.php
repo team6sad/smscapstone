@@ -6,6 +6,7 @@ use DB;
 use Auth;
 use Datatables;
 use App\Grade;
+use App\GradeDetail;
 use App\GradingDetail;
 use App\UserBudget;
 use App\Budget;
@@ -48,7 +49,7 @@ class CoordinatorRenewalController extends Controller
             ->first();
         })
         ->where('student_details.application_status','Accepted')
-        ->where('student_status',$student_status)
+        ->where('student_details.student_status',$student_status)
         ->where('student_details.is_renewal',$is_renewal);
         return Datatables::of($application)
         ->addColumn('action', function ($data) use ($request){
@@ -61,22 +62,18 @@ class CoordinatorRenewalController extends Controller
         })
         ->addColumn('withdraw', function ($data) {
             $ctr = 0;
-            $grade = Grade::join('grade_details','grades.id','grade_details.grade_id')
-            ->where('grade_details.grade_id', function($query) use($data){
-                $query->from('grades')
-                ->select('id')
-                ->where('student_detail_user_id', $data->id)
-                ->latest('id')
-                ->first();
-            })
-            ->select('grade_details.grade','grades.grading_id')
+            $grade = Grade::where('student_detail_user_id', $data->id)
+            ->latest('id')
+            ->first();
+            $grading = GradingDetail::where('grading_id',$grade->grading_id)
+            ->select('grading_details.grade')
             ->get();
-            $grading = GradingDetail::where('grading_id',$grade[0]->grading_id)
-            ->select('grading_details.*')
+            $detail = GradeDetail::where('grade_id',$grade->id)
+            ->select('grade_details.grade')
             ->get();
-            foreach ($grade as $grades) {
+            foreach ($detail as $details) {
                 foreach ($grading as $gradings) {
-                    if ($grades->grade==$gradings->grade) {
+                    if ($details->grade==$gradings->grade) {
                         if ($gradings->status == 'W') {
                             $ctr++;
                         }
@@ -87,22 +84,16 @@ class CoordinatorRenewalController extends Controller
         })
         ->addColumn('drop', function ($data) {
             $ctr = 0;
-            $grade = Grade::join('grade_details','grades.id','grade_details.grade_id')
-            ->where('grade_details.grade_id', function($query) use($data){
-                $query->from('grades')
-                ->select('id')
-                ->where('student_detail_user_id', $data->id)
-                ->latest('id')
-                ->first();
-            })
-            ->select('grade_details.grade','grades.grading_id')
+            $grade = Grade::where('student_detail_user_id', $data->id)
+            ->latest('id')
+            ->first();
+            $grading = GradingDetail::where('grading_id',$grade->grading_id)
             ->get();
-            $grading = GradingDetail::where('grading_id',$grade[0]->grading_id)
-            ->select('grading_details.*')
+            $detail = GradeDetail::where('grade_id',$grade->id)
             ->get();
-            foreach ($grade as $grades) {
+            foreach ($detail as $details) {
                 foreach ($grading as $gradings) {
-                    if ($grades->grade==$gradings->grade) {
+                    if ($details->grade==$gradings->grade) {
                         if ($gradings->status == 'D') {
                             $ctr++;
                         }
@@ -300,8 +291,10 @@ class CoordinatorRenewalController extends Controller
         $application = Application::find($id);
         $application->is_renewal = 0;
         $application->save();
+        $getGrade = Grade::where('student_detail_user_id',$id)->latest('id')->first();
         $userbudget = new UserBudget;
         $userbudget->budget_id = $budget->id;
+        $userbudget->grade_id = $getGrade->id;
         $userbudget->user_id = $id;
         $userbudget->save();
         $message = new Message;
