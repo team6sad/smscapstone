@@ -49,6 +49,9 @@ class CoordinatorApplicantsController extends Controller
         ->where('users.is_active',$is_active)
         ->where('users.type','Student');
         return Datatables::of($users)
+        ->filterColumn('strUserName', function($query, $keyword) {
+            $query->whereRaw("CONCAT(users.last_name,', ',users.first_name,' ',IFNULL(users.middle_name,'')) like ?", ["%{$keyword}%"]);
+        })
         ->editColumn('strUserName', function ($data) {
             $images = url('images/'.$data->picture);
             return "<table><tr><td><div class='col-md-2'><img src='$images' class='img-circle' alt='data Image' height='40'></div></td><td>$data->last_name, $data->first_name $data->middle_name</td></tr></table>";

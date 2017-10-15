@@ -62,6 +62,9 @@ class CoordinatorRenewalController extends Controller
         ->where('student_details.student_status',$student_status)
         ->where('student_details.is_renewal',$is_renewal);
         return Datatables::of($application)
+        ->filterColumn('strStudName', function($query, $keyword) {
+            $query->whereRaw("CONCAT(users.last_name,', ',users.first_name,' ',IFNULL(users.middle_name,'')) like ?", ["%{$keyword}%"]);
+        })
         ->addColumn('action', function ($data) use ($request){
             $pdf = Grade::where('student_detail_user_id',$data->user_id)->latest('id')->select('pdf')->first();
             if ($request->status == 'Pending') {

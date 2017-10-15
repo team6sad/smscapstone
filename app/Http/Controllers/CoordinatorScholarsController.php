@@ -113,6 +113,9 @@ class CoordinatorScholarsController extends Controller
         ->where('student_details.student_status',$request->status)
         ->where('student_details.application_status','Accepted');
         $datatables = Datatables::of($application)
+        ->filterColumn('strStudName', function($query, $keyword) {
+            $query->whereRaw("CONCAT(users.last_name,', ',users.first_name,' ',IFNULL(users.middle_name,'')) like ?", ["%{$keyword}%"]);
+        })
         ->addColumn('counter', function ($data) {
             if ($data->student_status == 'Continuing') {
                 $grade = Grade::where('student_detail_user_id',$data->id)->count();
@@ -149,7 +152,9 @@ class CoordinatorScholarsController extends Controller
         })
         ->addColumn('stipend', function ($data) {
             if ($data->student_status == 'Continuing') {
-                $count = Budgtype::count();
+                $count = Budgtype::join('user_allocation_type','user_allocation_type.allocation_type_id','allocation_types.id')
+                ->where('user_allocation_type.user_id',Auth::id())
+                ->count();
                 $allocate = Allocation::leftjoin('user_allocation','allocations.id','user_allocation.allocation_id')
                 ->join('receipts','receipts.id','user_allocation.receipt_id')
                 ->where('receipts.user_id',$data->id)
