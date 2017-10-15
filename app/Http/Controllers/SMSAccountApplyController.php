@@ -98,7 +98,7 @@ class SMSAccountApplyController extends Controller
         $application->brothers=$request->intPersBrothers;
       }
       if ($request->intPersSisters!=null) {
-        $application->brothers=$request->intPersSisters;
+        $application->sisters=$request->intPersSisters;
       }
       $application->batch_id=$batch;
       $application->application_date=$dtm;

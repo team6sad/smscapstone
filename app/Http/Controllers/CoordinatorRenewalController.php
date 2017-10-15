@@ -39,8 +39,18 @@ class CoordinatorRenewalController extends Controller
         $application = Application::join('users','student_details.user_id','users.id')
         ->join('user_councilor','users.id','user_councilor.user_id')
         ->select([DB::raw("CONCAT(users.last_name,', ',users.first_name,' ',IFNULL(users.middle_name,'')) as strStudName"),'users.*','student_details.*'])
-        ->where('users.type','Student')
-        ->where('user_councilor.councilor_id', function($query){
+        ->where('users.type','Student');
+        if ($request->status == 'Accepted') {
+            $application = $application->join('user_budget','user_budget.user_id','users.id')
+            ->where('user_budget.budget_id', function($query) {
+                $query->from('budgets')
+                ->where('user_id',Auth::id())
+                ->latest('id')
+                ->select('id')
+                ->first();
+            });
+        }
+        $application = $application->where('user_councilor.councilor_id', function($query) {
             $query->from('user_councilor')
             ->join('users','user_councilor.user_id','users.id')
             ->join('councilors','user_councilor.councilor_id','councilors.id')

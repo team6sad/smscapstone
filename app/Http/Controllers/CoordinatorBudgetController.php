@@ -94,8 +94,12 @@ class CoordinatorBudgetController extends Controller
                 foreach ($application as $applications) {
                     $credit = Credit::where('school_id',$applications->school_id)->where('course_id',$applications->course_id)->first();
                     $grade = Grade::where('student_detail_user_id',$applications->user_id)->latest('id')->first();
+                    $forfeit = UserBudget::where('user_id',$applications->user_id)->where('budget_id',$budget->id)->first();
                     if ($grade->year == $credit->year && $grade->semester == $credit->semester) {
                         $applications->student_status = 'Graduated';
+                        $applications->save();
+                    } elseif (is_null($forfeit)) {
+                        $applications->student_status = 'Forfeit';
                         $applications->save();
                     }
                 }

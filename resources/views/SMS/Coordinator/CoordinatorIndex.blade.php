@@ -30,7 +30,7 @@
 						<span class="info-box-text">Remaining Budget</span>
 						<span class="info-box-number remaining-budget">0</span>
 						<div class="progress">
-							<div class="progress-bar remaining-budget-bar" style="width: 50%"></div>
+							<div class="progress-bar remaining-budget-bar" style="width: 0%"></div>
 						</div>
 						<span class="progress-description remaining-budget-progress">
 						</span>
@@ -44,7 +44,7 @@
 						<span class="info-box-text">Remaining Slot</span>
 						<span class="info-box-number remaining-slot">0</span>
 						<div class="progress">
-							<div class="progress-bar remaining-slot-bar" style="width: 50%"></div>
+							<div class="progress-bar remaining-slot-bar" style="width: 0%"></div>
 						</div>
 						<span class="progress-description remaining-slot-progress">
 						</span>
@@ -95,11 +95,15 @@
 <script type="text/javascript">
 	$('.remaining-budget').text($('.budget').text());
 	$('.remaining-slot').text($('.slot').text());
-	var budget = ($('.remaining-budget').text()/{{ $latest->amount }})*100 + '%';
-	var slot = ($('.remaining-slot').text()/{{ $latest->slot_count }})*100 + '%';
-	$('.remaining-budget-bar').css('width', budget);
-	$('.remaining-slot-bar').css('width', slot);
-	$('.remaining-budget-progress').text(budget);
-	$('.remaining-slot-progress').text(slot);
+	var budget = Math.floor((100-($('.remaining-budget').text()/{{ $latest->amount }})*100));
+	var slot = Math.floor((100-($('.remaining-slot').text()/{{ $latest->slot_count }})*100));
+	if (isNaN(budget) && isNaN(slot)) {
+		budget = 0;
+		slot = 0;
+	}
+	$('.remaining-budget-bar').css('width', budget + '%');
+	$('.remaining-slot-bar').css('width', slot + '%');
+	$('.remaining-budget-progress').text('Accumulated '+budget + '%');
+	$('.remaining-slot-progress').text('Accumulated '+slot + '%');
 </script>
 @endsection

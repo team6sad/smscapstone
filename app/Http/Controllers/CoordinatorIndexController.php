@@ -16,6 +16,8 @@ class CoordinatorIndexController extends Controller
 	{
 		$utility = Utility::find(Auth::id());
 		$latest = Budget::where('user_id',Auth::id())->latest('id')->first();
+		if (is_null($latest))
+			$latest = (object)['amount' => 0, 'slot_count' => 0];
 		$applicants = Application::join('users','users.id','student_details.user_id')
 		->join('user_councilor','users.id','user_councilor.user_id')
 		->where('student_details.application_status','Pending')
